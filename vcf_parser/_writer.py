@@ -38,6 +38,14 @@ STOCK_WIDTH = 1220.0
 STOCK_HEIGHT = 2900.0
 POST_STOCK_HEADER = struct.pack('<I', 0) + struct.pack('<d', 100.0) + struct.pack('<H', 1)
 
+GEOMETRY_HEADER_TEMPLATE = bytes([
+    0, 0, 0, 0,
+    0, 0, 0, 240, 63, 0, 0, 0,
+    0, 0, 0, 240, 63, 0, 0, 0,
+    0, 0, 0, 240, 63, 0, 0, 0,
+    0, 0, 0, 240, 63,
+])
+
 
 class VcfLayer:
     def __init__(self, paths=None, speed=None, cutter_type="Vibrate cutter",
@@ -56,6 +64,7 @@ class VcfLayer:
         self._end_ext = end_ext
         self._is_output = is_output
         self._feed_count = feed_count
+        self._path_types = []
 
     def _compute_bbox(self):
         if not self._paths:
@@ -133,8 +142,12 @@ class VcfWriter:
         for layer_idx, layer in enumerate(self._layers):
             if not layer._paths:
                 continue
-            for path in layer._paths:
-                data += self.encode_geometry_element(path, layer, layer_idx)
+            for pi, path in enumerate(layer._paths):
+                if pi < len(layer._path_types) and layer._path_types[pi] == "Circle":
+                    cx, cy, radius = self._compute_circle_params(path)
+                    data += self.encode_circle_element(cx, cy, radius, layer, layer_idx)
+                else:
+                    data += self.encode_geometry_element(path, layer, layer_idx)
         return bytes(data)
 
     # ── Trailer ──
@@ -214,8 +227,11 @@ class VcfWriter:
         expected_geom_color = (color_bgr << 8) & 0xffffffff
         struct.pack_into('<I', data, 8, expected_geom_color)
 
+        data[12:45] = GEOMETRY_HEADER_TEMPLATE
+
         type_offset = 45
-        is_closed = len(path) >= 2 and path[0] == path[-1]
+        EPS = 0.001
+        is_closed = len(path) >= 2 and abs(path[0][0] - path[-1][0]) < EPS and abs(path[0][1] - path[-1][1]) < EPS
         geom_type = 1 if is_closed else 0
         subtype = 0
         struct.pack_into('<I', data, type_offset, geom_type)
@@ -234,8 +250,18 @@ class VcfWriter:
         return bytes(data)
 
     @staticmethod
+    def _compute_circle_params(path):
+        xs = [p[0] for p in path]
+        ys = [p[1] for p in path]
+        cx = (min(xs) + max(xs)) / 2.0
+        cy = (min(ys) + max(ys)) / 2.0
+        radius = (max(xs) - min(xs)) / 2.0
+        return cx, cy, radius
+
+    @staticmethod
     def encode_circle_element(cx: float, cy: float, radius: float, layer: VcfLayer, layer_idx: int) -> bytes:
-        element_size = 45 + 1 * 74
+        pt_count = 4
+        element_size = 45 + pt_count * 74
         data = bytearray(element_size)
 
         data[0:8] = GEOMETRY_SIG
@@ -244,16 +270,26 @@ class VcfWriter:
         expected_geom_color = (color_bgr << 8) & 0xffffffff
         struct.pack_into('<I', data, 8, expected_geom_color)
 
+        data[12:45] = GEOMETRY_HEADER_TEMPLATE
+
         type_offset = 45
         struct.pack_into('<I', data, type_offset, 1)
-        struct.pack_into('<I', data, type_offset + 4, 1)
+        struct.pack_into('<I', data, type_offset + 4, pt_count)
         struct.pack_into('<I', data, type_offset + 8, 3)
 
-        seg_start = type_offset
-        struct.pack_into('<d', data, seg_start + 14, cx)
-        struct.pack_into('<d', data, seg_start + 22, cy)
-        struct.pack_into('<d', data, seg_start + 30, cx + radius)
-        struct.pack_into('<d', data, seg_start + 38, cy)
+        arcs = [
+            (cx - radius, cy, cx, cy + radius),
+            (cx, cy + radius, cx + radius, cy),
+            (cx + radius, cy, cx, cy - radius),
+            (cx, cy - radius, cx - radius, cy),
+        ]
+
+        for i, (x1, y1, x2, y2) in enumerate(arcs):
+            seg_start = type_offset + i * 74
+            struct.pack_into('<d', data, seg_start + 14, x1)
+            struct.pack_into('<d', data, seg_start + 22, y1)
+            struct.pack_into('<d', data, seg_start + 30, x2)
+            struct.pack_into('<d', data, seg_start + 38, y2)
 
         return bytes(data)
 
@@ -284,6 +320,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013") -> No
     for lidx, ld in enumerate(layers_dict):
         color_rgb = ld.get("color_rgb", [255, 0, 0])
         paths = []
+        path_types = []
         layer_element_indices = [ei for ei, el in enumerate(elements) if el.get("layer_index", 0) == lidx]
 
         for ei in layer_element_indices:
@@ -291,6 +328,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013") -> No
             vertices = el.get("vertices", [])
             if vertices and len(vertices) >= 2:
                 paths.append(vertices)
+                path_types.append(el.get("geom_type", "Polyline"))
 
         layer = VcfLayer(
             paths=paths,
@@ -305,6 +343,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013") -> No
             is_output=ld.get("is_output_yes", True),
             feed_count=ld.get("number_of_feeding", 1),
         )
+        layer._path_types = path_types
         vcf_layers.append(layer)
 
     writer = VcfWriter(layers=vcf_layers, version=version)

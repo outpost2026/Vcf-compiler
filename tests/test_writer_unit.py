@@ -157,12 +157,10 @@ def test_circle_element():
     pt_count = struct.unpack('<I', data[p+4:p+8])[0]
     subtype = struct.unpack('<I', data[p+8:p+12])[0]
     assert type_id == 1
-    assert pt_count == 1
+    assert pt_count == 4
     assert subtype == 3
-
-    seg_start = 45
-    cx = struct.unpack('<d', data[seg_start + 14:seg_start + 22])[0]
-    assert cx == 500.0
+    seg0_x1 = struct.unpack('<d', data[45+14:45+22])[0]
+    assert seg0_x1 == 400.0  # cx - radius
 
 
 def test_header_magic():
