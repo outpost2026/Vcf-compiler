@@ -1,0 +1,136 @@
+{
+  "project": "Vcf-compiler",
+  "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife",
+  "version": "1.0.0",
+  "last_updated": "2026-06-27",
+  "git_commits": [
+    "171e2e7 — Initial VcfWriter implementation with clean-slate serialization",
+    "6423903 — [DOCS] add README.md, narrative report, open source references, B2B-Knowledge-Base docs"
+  ],
+  "package_structure": {
+    "vcf_parser/__init__.py": "Exports write(), VcfWriterError",
+    "vcf_parser/_writer.py": "VcfWriter — header/body/trailer serialization, VcfLayer, VcfWriterError hierarchy, top-level write() API",
+    "vcf_parser/_reader.py": "extract_active_layers_details(), extract_strings(), color/cutter/direction maps, GEOMETRY_SIG",
+    "vcf_parser/_config.py": "Machine profile loader (JSON), kinematic parameter defaults, material damping config",
+    "vcf_parser/_geometry.py": "Bbox, path_length, version detection, block_size_for_version"
+  },
+  "implementation_status": {
+    "writer": {
+      "status": "functional",
+      "features": [
+        "Header with magic (1.0.012/1.0.013) + layer blocks (210 B / 610 B)",
+        "Layer block encoding: output_flag, speed, color_bgr, cutter_type, H1, feed_count, H2, V-slot direction/comp/extensions",
+        "Body with GEOMETRY_SIG elements (polyline/polygon path encoding)",
+        "Circle element encoding (type_id=1, subtype=3)",
+        "Trailer byte 0xD7",
+        "Top-level write(spec, path) API with SerializationError handling",
+        "Error hierarchy: VcfWriterError → InvalidGeometryError, UnsupportedFeatureError, SerializationError"
+      ],
+      "not_implemented": [
+        "Scrambling (raises UnsupportedFeatureError)",
+        "DXF inline embedding",
+        "Multi-segment geometry subtypes beyond polyline"
+      ]
+    },
+    "reader": {
+      "status": "functional",
+      "features": [
+        "Layer extraction: speed validation, color matching, cutter type, H1/H2, feed_count, output_flag",
+        "V-slot direction parsing (Left/Right/Cut both side)",
+        "Extension values (start/end) with NaN/Inf guards",
+        "Color name mapping (14 known colors + custom fallback)",
+        "String extraction from binary",
+        "Version detection (1.0.012 vs 1.0.013)"
+      ],
+      "limitations": [
+        "No full geometry element re-parsing (only layer metadata extraction)",
+        "No DXF extraction"
+      ]
+    },
+    "tests": {
+      "total": 28,
+      "pass": 28,
+      "skip": 2,
+      "test_files": [
+        "tests/test_writer_unit.py — 25 unit tests (layer block, geometry encoding, circle, header, trailer, write roundtrip)",
+        "tests/test_roundtrip.py — 5 integration tests (known file roundtrip, synthetic line, two layers, V-slot params, determinism)"
+      ],
+      "demo_files": [
+        "demo_data/1ks.VCF",
+        "demo_data/empty_01.VCF",
+        "demo_data/fluenz_l.VCF",
+        "demo_data/line_x0_y1000.VCF",
+        "demo_data/test_primitive.VCF",
+        "demo_data/vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF"
+      ]
+    },
+    "documentation": {
+      "README.md": "Quick start, package structure, binary format spec, test instructions, open source references",
+      "docs/narrative_report_v1.md": "Architecture, format spec, import paths, RE references (V1)",
+      "docs/narrative_report_v2_b2b_pipeline.md": "B2B pipeline analysis — viability, ROI, implementation steps, unknown unknowns (NEW)",
+      "docs/dxf_to_vcf_pipeline_design.md": "Full DXF→VCF pipeline architecture, component spec, entity mapping, test strategy, risk register (NEW)",
+      "docs/vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config, 10 colors with validation statuses (NEW)",
+      "docs/VCF_Reverse_Engineering_Inference_Workflow_2026.md": "Full RE methodology (v1.1, 1276 lines)",
+      "docs/RE_CASE_STUDY_VCUTWORKS_LIGHTBURN_v2.md": "29-day RE case study: V1→V22 parser evolution",
+      "docs/SYSTEQ_VCF_STACK_ANATOMY_V2.md": "Architectural analysis of the vcf_parser_b2b stack",
+      "docs/KNOWLEDGE_CORPUS_VCUTWORKS_LIGHTBURN.md": "VCF + DXF format knowledge corpus",
+      "docs/DXF_PREDICTIVE_PARSER_METHODOLOGY.md": "DXF predictive parser methodology (LightBurn vs AutoCAD)"
+    },
+  "session_state": {
+    "current_session_start": "2026-06-27",
+    "files_examined_in_session": [
+      ".ai_state.json (created)",
+      "pyproject.toml",
+      "README.md",
+      "vcf_parser/__init__.py",
+      "vcf_parser/_writer.py",
+      "vcf_parser/_reader.py",
+      "vcf_parser/_config.py",
+      "vcf_parser/_geometry.py",
+      "tests/conftest.py",
+      "tests/test_writer_unit.py",
+      "tests/test_roundtrip.py",
+      "demo_data/ (directory listing)",
+      "docs/ (directory listing)"
+    ],
+    "dxf_integrace_explored": {
+      "repo_path": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\dxf_integrace",
+      "key_file": "src/dxf_geometry_indexer_v2.py (2072 lines, v2.3.0)",
+      "tool_config": "src/dxf_tool_config.json (10 ACI colors mapped)",
+      "tests": ["test_smoke.py", "test_golden_master.py", "test_determinism.py", "test_layer_card.py", "test_ml_vector.py"],
+      "key_finding": "Layer card + entity vertices are directly compatible with VcfWriter spec format",
+      "missing_bridge": "~150 lines adaptér needed (dxf_to_spec())"
+    },
+    "artifacts_created_in_session": [
+      ".ai_state.json — project state tracker",
+      "docs/dxf_to_vcf_pipeline_design.md — full pipeline architecture (8 sections, Appendix A/B)",
+      "docs/vcf_compiler_map_config.json — ACI→VCF mapping config (10 colors, validated statuses)",
+      "docs/narrative_report_v2_b2b_pipeline.md — B2B narrative report (8 chapters, ROI estimation)"
+    ],
+    "pending_tasks": [
+      "Implement vcf_parser/_dxf_adapter.py (dxf_to_spec() + ACI→RGB + closed-loop fix)",
+      "Implement compile_dxf() top-level API",
+      "Write tests: test_dxf_adapter.py, test_dxf_to_vcf_roundtrip.py",
+      "Create CLI: scripts/vcf_compile.py",
+      "Move vcf_compiler_map_config.json from docs/ to project root",
+      "VCutWorks validation of generated VCF"
+    ],
+    "decisions_made": [
+      "Group entities by ACI color, not DXF layer name",
+      "ARC → resample to polyline (native arc encoding is future work)",
+      "dxf_integrace as pip dependency for development",
+      "vcf_compiler_map_config.json in project root"
+    ],
+    "open_questions": [
+      "How to handle unknown ACI colors? (fallback vs abort vs prompt)",
+      "How to resolve ACI 4 (Cyan) ambiguity? (density heuristic vs always V-slot)",
+      "Feed count for bidirectional V-slot \"Cut both side\"? (always 2 vs config)",
+      "LightBurn DXF INSERT block explosion — does ezdxf handle it?"
+    ]
+  },
+  "dependencies": {
+    "runtime": [],
+    "dev": ["pytest>=8.0"],
+    "python": ">=3.11"
+  }
+}
