@@ -25,11 +25,11 @@ def _parse_vcf_simple(binary_data: bytes) -> dict:
 
         vertices = []
         for i in range(pt_count):
-            seg_start = pos + 14 + i * 74
-            x1 = struct.unpack('<d', binary_data[seg_start:seg_start + 8])[0]
-            y1 = struct.unpack('<d', binary_data[seg_start + 8:seg_start + 16])[0]
-            x2 = struct.unpack('<d', binary_data[seg_start + 16:seg_start + 24])[0]
-            y2 = struct.unpack('<d', binary_data[seg_start + 24:seg_start + 32])[0]
+            seg_start = pos + 45 + i * 74
+            x1 = struct.unpack('<d', binary_data[seg_start + 14:seg_start + 22])[0]
+            y1 = struct.unpack('<d', binary_data[seg_start + 22:seg_start + 30])[0]
+            x2 = struct.unpack('<d', binary_data[seg_start + 30:seg_start + 38])[0]
+            y2 = struct.unpack('<d', binary_data[seg_start + 38:seg_start + 46])[0]
             if i == 0:
                 vertices.append((x1, y1))
             vertices.append((x2, y2))

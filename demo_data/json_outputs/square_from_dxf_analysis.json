@@ -1,0 +1,73 @@
+{
+  "layers": [
+    {
+      "speed_mms": 200,
+      "cutter_type": "Vibrate cutter",
+      "cutter_type_id": 1,
+      "number_of_feeding": 1,
+      "start_height_h1_mm": 2.0,
+      "travel_safety_height_mm": 2.0,
+      "end_height_h2_mm": -0.3,
+      "total_cut_length_mm": 0.0,
+      "color_hex": "0x00ffffff",
+      "color_val": 16777215,
+      "color_rgb": [
+        255,
+        255,
+        255
+      ],
+      "direction": "N/A",
+      "direction_id": 0,
+      "v_slot_width_comp_mm": 0.0,
+      "starting_extension_mm": 0.0,
+      "ending_extension_mm": 0.0,
+      "is_output_yes": true,
+      "operation_type": "N/A",
+      "complexity": {
+        "avg_segment_length_mm": 0.0,
+        "curvature_index": 0.0,
+        "sharp_corners_count": 0,
+        "total_direction_changes": 0
+      }
+    }
+  ],
+  "file_size": 157165,
+  "has_prefix": true,
+  "version": "1.0.013",
+  "elements": [
+    {
+      "type": 0,
+      "pt_count": 4,
+      "subtype": 0,
+      "geom_color": "0xffffff00",
+      "vertices": [
+        {
+          "x": 42.5,
+          "y": 2237.5,
+          "bulge": 0.0
+        },
+        {
+          "x": 1042.5,
+          "y": 2237.5,
+          "bulge": 0.0
+        },
+        {
+          "x": 1042.5,
+          "y": 1237.5,
+          "bulge": 0.0
+        },
+        {
+          "x": 42.5,
+          "y": 1237.5,
+          "bulge": 0.0
+        },
+        {
+          "x": 42.5,
+          "y": 2237.5,
+          "bulge": 0.0
+        }
+      ]
+    }
+  ],
+  "element_count": 1
+}
