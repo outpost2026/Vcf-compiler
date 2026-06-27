@@ -1,0 +1,104 @@
+{
+  "_schema": "vcf_compiler_map_config_v1.0",
+  "_description": "Mapování ACI barev z DXF na VCF parametry pro RDD6584G oscilační nůž. Seed values čerpány z dxf_tool_config.json (dxf_integrace repo) a reverzního inženýrství produkčních VCF souborů.",
+
+  "aci_color_mapping": {
+    "1": {
+      "cutter_type": "Vibrate cutter", "speed_mms": 150, "direction": "N/A",
+      "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "hypothesis",
+      "_note": "Red — outer contours. Empiricky neověřeno napříč všemi zakázkami."
+    },
+    "2": {
+      "cutter_type": "V-slot", "speed_mms": 300, "direction": "Left",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.1,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "empirical",
+      "_note": "Yellow — chamfers. One-sided V-slot, confirmed on production VCF."
+    },
+    "3": {
+      "cutter_type": "V-slot", "speed_mms": 200, "direction": "Cut both side",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "start_extension_mm": 2.0, "end_extension_mm": 2.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "empirical",
+      "_note": "Green — standard V-slot pattern. 7 correct matches."
+    },
+    "4": {
+      "cutter_type": "ambiguous", "speed_mms": 200, "direction": "Cut both side",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "start_extension_mm": 2.0, "end_extension_mm": 2.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "hypothesis",
+      "_note": "Cyan — AMBIGUOUS. Resolved by point density: >30 pts/m → Vibrate 50 mm/s, else V-slot 200 mm/s.",
+      "density_rules": {
+        "vibrate_if_density_gt": 30.0, "vibrate_speed_mms": 50,
+        "vslot_speed_mms": 200, "vslot_direction": "Cut both side",
+        "vslot_start_extension_mm": 2.0, "vslot_end_extension_mm": 2.0
+      }
+    },
+    "5": {
+      "cutter_type": "Vibrate cutter", "speed_mms": 100, "direction": "N/A",
+      "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "empirical",
+      "_note": "Blue — small holes/circles. Vibrate cutter, slow for precision."
+    },
+    "6": {
+      "cutter_type": "Vibrate cutter", "speed_mms": 300, "direction": "N/A",
+      "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "calibrated",
+      "_note": "Magenta — high-speed chop. Confirmed by time measurement."
+    },
+    "7": {
+      "cutter_type": "Vibrate cutter", "speed_mms": 200, "direction": "N/A",
+      "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "empirical",
+      "_note": "White/Black — main contours. Standard Vibrate cutter."
+    },
+    "30": {
+      "cutter_type": "V-slot", "speed_mms": 100, "direction": "Cut both side",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "start_extension_mm": 2.0, "end_extension_mm": 2.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "calibrated",
+      "_note": "Orange — special V-slot. Slow speed for complex patterns."
+    },
+    "52": {
+      "cutter_type": "V-slot", "speed_mms": 200, "direction": "Cut both side",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "start_extension_mm": 3.0, "end_extension_mm": 3.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "hypothesis",
+      "_note": "Lime — few samples, speculative mapping."
+    },
+    "92": {
+      "cutter_type": "V-slot", "speed_mms": 300, "direction": "Cut both side",
+      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "start_extension_mm": 10.0, "end_extension_mm": 10.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "hypothesis",
+      "_note": "Azure — long extensions, few samples."
+    }
+  },
+
+  "defaults": {
+    "h1_mm": 2.0,
+    "number_of_feeding": 1,
+    "fallback_cutter_type": "Vibrate cutter",
+    "fallback_speed_mms": 200.0,
+    "fallback_direction": "N/A",
+    "fallback_h2_mm": -0.3,
+    "fallback_start_extension_mm": 0.0,
+    "fallback_end_extension_mm": 0.0,
+    "fallback_is_output": true
+  }
+}

@@ -170,7 +170,8 @@ def test_header_magic():
     writer = VcfWriter(layers=[layer], version="1.0.013")
     h = writer.header()
     MAGIC_013 = b"RDVCUTFILEVER1.0.013"
-    assert h[:len(MAGIC_013)] == MAGIC_013
+    assert h[0] == 0x13
+    assert h[1:21] == MAGIC_013
 
 
 def test_header_magic_012():
@@ -178,7 +179,8 @@ def test_header_magic_012():
     writer = VcfWriter(layers=[layer], version="1.0.012")
     h = writer.header()
     MAGIC_012 = b"RDVCUTFILEVER1.0.012"
-    assert h[:len(MAGIC_012)] == MAGIC_012
+    assert h[0] == 0x13
+    assert h[1:21] == MAGIC_012
 
 
 def test_header_layer_order():
@@ -186,17 +188,24 @@ def test_header_layer_order():
     layer2 = VcfLayer(color=[0, 255, 0], speed=200.0)
     writer = VcfWriter(layers=[layer1, layer2])
     h = writer.header()
-    offset_layer2_start = len(HEADER_MAGIC := b"RDVCUTFILEVER1.0.013") + 4
-    speed_layer1 = struct.unpack('<d', h[offset_layer2_start + 4:offset_layer2_start + 12])[0]
-    speed_layer2 = struct.unpack('<d', h[offset_layer2_start + 610 + 4:offset_layer2_start + 610 + 12])[0]
-    assert speed_layer1 == 100.0
-    assert speed_layer2 == 200.0
+    HEADER_PREAMBLE_SIZE = 54
+    TOTAL_LAYER_BLOCKS = 257
+    LAYER_BLOCK_SIZE = 610
+    EMPTY_COUNT = TOTAL_LAYER_BLOCKS - 2
+    layer2_off = HEADER_PREAMBLE_SIZE + EMPTY_COUNT * LAYER_BLOCK_SIZE
+    layer1_off = HEADER_PREAMBLE_SIZE + (EMPTY_COUNT + 1) * LAYER_BLOCK_SIZE
+    speed_layer2 = struct.unpack('<d', h[layer2_off + 4:layer2_off + 12])[0]
+    speed_layer1 = struct.unpack('<d', h[layer1_off + 4:layer1_off + 12])[0]
+    assert speed_layer1 == 200.0
+    assert speed_layer2 == 100.0
 
 
 def test_trailer():
     writer = VcfWriter()
-    t = writer.trailer()
-    assert t == b'\xd7'
+    h = writer.header()
+    b = writer.body()
+    raw = h + b
+    assert raw[-1] != 0xd7
 
 
 def test_write_roundtrip_single_line(tmp_path):
@@ -233,9 +242,10 @@ def test_write_roundtrip_single_line(tmp_path):
     assert out.stat().st_size > 0
 
     raw = out.read_bytes()
+    assert raw[0] == 0x13
     MAGIC_013 = b"RDVCUTFILEVER1.0.013"
-    assert raw[:len(MAGIC_013)] == MAGIC_013
-    assert raw[-1:] == b'\xd7'
+    assert raw[1:21] == MAGIC_013
+    assert raw[-1] != 0xd7
 
 
 def test_subminimal_path_ok(tmp_path):

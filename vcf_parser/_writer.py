@@ -30,7 +30,13 @@ class SerializationError(VcfWriterError):
 
 HEADER_MAGIC = b"RDVCUTFILEVER1.0.013"
 HEADER_MAGIC_012 = b"RDVCUTFILEVER1.0.012"
-GLOBAL_AFTER_MAGIC = b"\x00" * 4
+VCF_PREFIX = b"\x13"
+VCF_POST_MAGIC = b"\x20\x0a\x00"
+TOTAL_LAYER_BLOCKS = 257
+LAYER_BLOCK_SIZE = 610
+STOCK_WIDTH = 1220.0
+STOCK_HEIGHT = 2900.0
+POST_STOCK_HEADER = struct.pack('<I', 0) + struct.pack('<d', 100.0) + struct.pack('<H', 1)
 
 
 class VcfLayer:
@@ -83,19 +89,26 @@ class VcfWriter:
     def header(self) -> bytes:
         data = bytearray()
 
+        data += VCF_PREFIX
+
         if self._version == "1.0.012":
             data += HEADER_MAGIC_012
         else:
             data += HEADER_MAGIC
 
-        data += GLOBAL_AFTER_MAGIC
+        data += VCF_POST_MAGIC
 
-        bbox = self._globalbbox or self._compute_global_bbox()
+        data += self.encode_float64(STOCK_WIDTH)
+        data += self.encode_float64(STOCK_HEIGHT)
 
-        block_size = 210 if self._version == "1.0.012" else 610
+        data += POST_STOCK_HEADER
+
+        empty_count = TOTAL_LAYER_BLOCKS - len(self._layers)
+        if empty_count > 0:
+            data += b'\x00' * (LAYER_BLOCK_SIZE * empty_count)
 
         for layer in self._layers:
-            data += self.encode_layer_block(layer, block_size)
+            data += self.encode_layer_block(layer, LAYER_BLOCK_SIZE)
 
         return bytes(data)
 
@@ -122,8 +135,7 @@ class VcfWriter:
             raise UnsupportedFeatureError("VCF format does not support scrambling")
         h = self.header()
         b = self.body()
-        t = self.trailer()
-        fd.write(h + b + t)
+        fd.write(h + b)
 
     # ── Encoding utilities ──
 
