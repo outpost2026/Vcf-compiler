@@ -189,15 +189,10 @@ def test_header_layer_order():
     writer = VcfWriter(layers=[layer1, layer2])
     h = writer.header()
     HEADER_PREAMBLE_SIZE = 54
-    TOTAL_LAYER_BLOCKS = 257
-    LAYER_BLOCK_SIZE = 610
-    EMPTY_COUNT = TOTAL_LAYER_BLOCKS - 2
-    layer2_off = HEADER_PREAMBLE_SIZE + EMPTY_COUNT * LAYER_BLOCK_SIZE
-    layer1_off = HEADER_PREAMBLE_SIZE + (EMPTY_COUNT + 1) * LAYER_BLOCK_SIZE
-    speed_layer2 = struct.unpack('<d', h[layer2_off + 4:layer2_off + 12])[0]
-    speed_layer1 = struct.unpack('<d', h[layer1_off + 4:layer1_off + 12])[0]
-    assert speed_layer1 == 200.0
-    assert speed_layer2 == 100.0
+    speed_layer1 = struct.unpack('<d', h[HEADER_PREAMBLE_SIZE + 4:HEADER_PREAMBLE_SIZE + 12])[0]
+    speed_layer2 = struct.unpack('<d', h[HEADER_PREAMBLE_SIZE + 610 + 4:HEADER_PREAMBLE_SIZE + 610 + 12])[0]
+    assert speed_layer1 == 100.0
+    assert speed_layer2 == 200.0
 
 
 def test_trailer():

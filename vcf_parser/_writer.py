@@ -103,12 +103,12 @@ class VcfWriter:
 
         data += POST_STOCK_HEADER
 
+        for layer in self._layers:
+            data += self.encode_layer_block(layer, LAYER_BLOCK_SIZE)
+
         empty_count = TOTAL_LAYER_BLOCKS - len(self._layers)
         if empty_count > 0:
             data += b'\x00' * (LAYER_BLOCK_SIZE * empty_count)
-
-        for layer in self._layers:
-            data += self.encode_layer_block(layer, LAYER_BLOCK_SIZE)
 
         return bytes(data)
 
