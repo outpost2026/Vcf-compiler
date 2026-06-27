@@ -43,7 +43,7 @@ class VcfLayer:
     def __init__(self, paths=None, speed=None, cutter_type="Vibrate cutter",
                  h1=2.0, h2=12.0, color=None, direction="N/A",
                  start_ext=0.0, end_ext=0.0, is_output=True,
-                 feed_count=0):
+                 feed_count=1):
         self._paths = paths or []
         self._bbox = None
         self._speed = speed or 800.0
@@ -289,7 +289,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013") -> No
             start_ext=ld.get("starting_extension_mm", 0.0),
             end_ext=ld.get("ending_extension_mm", 0.0),
             is_output=ld.get("is_output_yes", True),
-            feed_count=ld.get("number_of_feeding", 0),
+            feed_count=ld.get("number_of_feeding", 1),
         )
         vcf_layers.append(layer)
 

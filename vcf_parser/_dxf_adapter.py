@@ -74,7 +74,7 @@ def _get_dxf_indexer():
 
 _CONFIG_DEFAULTS = {
     "h1_mm": 2.0,
-    "number_of_feeding": 0,
+    "number_of_feeding": 1,
     "fallback_cutter_type": "Vibrate cutter",
     "fallback_speed_mms": 200.0,
     "fallback_direction": "N/A",
@@ -236,7 +236,7 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
 # ---------------------------------------------------------------------------
 
 
-def compile_dxf(dxf_path, output_path, config_path=None, h1_default=2.0, feed_default=0):
+def compile_dxf(dxf_path, output_path, config_path=None, h1_default=2.0, feed_default=1):
     """
     Kompletní DXF → VCF pipeline.
 
