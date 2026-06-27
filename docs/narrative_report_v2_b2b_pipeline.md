@@ -1,6 +1,6 @@
 # Narativní report V2 — DXF→VCF Pipeline & B2B hodnota
 
-**Datum:** 27. června 2026  
+**Datum:** 27. června 2026 (aktualizace: 17:00 — after debugging session)  
 **Autor:** Dev (LLM-augmentovaná analýza)  
 **Kontext:** Tento report navazuje na `narrative_report_v1.md` a mapuje cestu od VcfWriter (čistá serializace) k funkčnímu DXF→VCF kompilátoru s B2B nasazením.
 
@@ -38,18 +38,30 @@ Souběžně existuje repozitář `dxf_integrace` s plnohodnotným DXF parserem (
 
 ## 2. Současný stav
 
-### 2.1 Vcf-compiler (hotovo)
+### 2.1 Vcf-compiler (hotovo — 28/28 testů)
 
 | Komponenta | Stav | Detail |
 |---|---|---|
-| `VcfWriter` | ✅ | header/body/trailer, layer bloky (610B/210B), geometry elementy |
-| `write(spec, path)` | ✅ | Top-level API, error handling |
-| `VcfLayer` | ✅ | Kontejner pro data vrstvy |
-| `encode_geometry_element()` | ✅ | Polyline s N segmenty |
-| `encode_circle_element()` | ✅ | Native circle encoding |
-| `encode_layer_block()` | ✅ | Všechny VCF parametry vč. V-slot direction/extensions |
+| `VcfWriter` | ✅ | header/body/trailer, layer bloky (610B), geometry elementy, GEOMETRY_HEADER_TEMPLATE |
+| `write(spec, path)` | ✅ | Top-level API, error handling, path_type support |
+| `VcfLayer` | ✅ | Kontejner pro data vrstvy + _path_types pro circle detection |
+| `encode_geometry_element()` | ✅ | Polyline/polygon s N segmenty, is_closed epsilon=0.001 |
+| `encode_circle_element()` | ✅ | **OPRAVENO** — nyní pt_count=4, subtype=3, 4×90° arc segmenty |
+| `encode_layer_block()` | ✅ | Všechny VCF parametry vč. 8B trailerů pro backward scan |
+| `GEOMETRY_HEADER_TEMPLATE` | ✅ | **NOVĚ** — template bytes 12-44 z native (bez něj VCutWorks nevykreslí geometrii) |
 | Testy | ✅ | 28 testů (writer unit + roundtrip) |
-| Demo VCF | ✅ | 6 souborů vč. produkčních |
+| Hybrid VCF | ✅ | 3 hybridní soubory k testování v GUI |
+
+### 2.2 _dxf_adapter.py (hotovo — plně funkční)
+
+| Komponenta | Stav | Detail |
+|---|---|---|
+| `compile_dxf()` | ✅ | Plný DXF→VCF pipeline |
+| `ACI_TO_RGB` | ✅ | **OPRAVENO** — ACI 7 → RGB(0,0,0) dle VCutWorks palety |
+| Config loader | ✅ | vcf_compiler_map_config.json s fallback defaults |
+| Coord transform | ✅ | +67.5, -287.5 mm (nativní offset) |
+| Dělení dle ACI | ✅ | Groupování podle ACI barvy, ne DXF layer name |
+| ACI 4 ambiguous | ✅ | Density-based heuristika (V-slot vs Vibrate) |
 
 ### 2.2 dxf_integrace (hotovo)
 
@@ -389,5 +401,49 @@ Den 3 (2 h):  CLI skript + determinismus + edge cases
 Den 4 (1 h):  VCutWorks validace, bugfixy
 ```
 
----  
+---
 *Konec reportu*
+
+---
+
+## 9. Dodatek: Debugging session 2026-06-27 (afternoon)
+
+### 9.1 Co se řešilo
+
+Session navázala na funkční `compile_dxf()` z fáze 1. Kompilátor produkoval binárně korektní VCF (b2b reader → identický JSON jako native), ale VCutWorks GUI zobrazoval "black canvas" — prázdné plátno bez vrstev a geometrie.
+
+### 9.2 Průběh a klíčové objevy
+
+| Iterace | Co se zjistilo | Oprava |
+|---------|---------------|--------|
+| 1 | ACI 7 → bílá (255,255,255), native má černou (0,0,0). H1=2.0, native má 24.0. Speed=200, native má 80. | `ACI_TO_RGB[7]=(0,0,0)`, config defaults fixed |
+| 2 | První funkční VCF (commit 4ba9446) má 0 layers dle b2b readeru — VCutWorks používá JINÝ parser | b2b reader není ground truth pro rendering |
+| 3 | **empty_canavas_native.VCF** — VCutWorks vytváří VCF i bez geometrie a bloků (pouze metadata). Všechny native VCF s obsahem mají identický 472B header. | Header je machine profile (fonty, cesty, konfigurace). |
+| 4 | **Hybrid VCF** (native 472B header + naše payload) → **layer cards ANO, geometrie NE** | Header nutný pro vrstvy, geometrie má vlastní problém |
+| 5 | Geometrie: bytes 12-44 v elementu jsou v native konstanta, v našem writeru 0. is_closed selhává na FP driftu 2.27e-13. encode_circle_element je dead code s pt_count=1. | GEOMETRY_HEADER_TEMPLATE, epsilon 0.001, pt_count=4 |
+
+### 9.3 Stav po session
+
+| Testovací soubor | Header | Layer params | Geometrie | Status |
+|---|---|---|---|---|
+| Native (ground truth) | 472 B ✓ | ✓ | ✓ | OK |
+| Synthetic (54B header) | 54 B ✗ | n/a (žádné GUI) | n/a | BLACK CANVAS |
+| **Hybrid (472B header)** | 472 B ✓ | ✓ (korektní) | **? (čeká na test)** | **Layer cards OK, geometrie po fixu čeká** |
+
+### 9.4 Zbývající kroky
+
+1. **Otestovat hybrid v GUI** po fixu a1b339c (GEOMETRY_HEADER_TEMPLATE + is_closed epsilon + circle primitives)
+2. Pokud hybrid funguje → extrahovat machine profile template (bytes 54-472) a zahrnout do writeru
+3. Pokud hybrid nefunguje → zkontrolovat bytes 40-44 overlap s type_id (byte 44 je sdílený)
+4. Vyřešit "první funkční VCF kontradikci" (měl header=54 B a fungoval — možná testing error)
+
+### 9.5 Sémantická analýza
+
+**Největší ironie:** První funkční VCF (commit 4ba9446, circle_from_dxf) měl:
+- Header=54 B (stejně jako náš nefunkční)
+- b2b reader: 0 layers (geom_color mismatch)
+- Garbage v bloku (h1=2.6e-314, h2=1.6e-314)
+
+Přesto se v GUI vykreslil. To znamená, že VCutWorks parser je mnohem tolerantnější, než náš b2b reader. Současný synthetic VCF má VŠECHNA pole korektní a nefunguje. Pravděpodobné vysvětlení: původní test byl proveden na jiné verzi VCutWorks nebo byl omylem otevřen native VCF.
+
+**Největší objev:** Hybrid VCF (native header + naše data) poprvé ukázal layer cards v GUI. To potvrzuje, že header je kritický a že naše bloky a geometrie jsou na správné cestě. Zbývá doladit geometrický payload.

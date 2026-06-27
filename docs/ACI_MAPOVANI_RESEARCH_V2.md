@@ -1,9 +1,9 @@
 # Výzkumná zpráva: ACI mapování barev a parametrů vrstev DXF → VCF
 
 **Verze:** 5.0
-**Datum:** 27. 6. 2026
+**Datum:** 27. 6. 2026 (17:00)
 **Kontext:** DXF→VCF kompilátor (Vcf-compiler repo) — debugging "black canvas" v VCutWorks GUI
-**Scope:** 5. iterace — circle_diameter_600 DXF→VCF pipeline + kompletní report připravených hybridů
+**Scope:** 5. iterace — circle_diameter_600 DXF→VCF pipeline + fix a1b339c (geometry encoding)
 
 ---
 

@@ -1,50 +1,65 @@
 {
   "project": "Vcf-compiler",
-  "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife",
-  "version": "1.0.0",
+  "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
+  "version": "1.1.0",
   "last_updated": "2026-06-27",
   "git_commits": [
-    "171e2e7 — Initial VcfWriter implementation with clean-slate serialization",
-    "6423903 — [DOCS] add README.md, narrative report, open source references, B2B-Knowledge-Base docs"
+    "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
+    "6423903 — [DOCS] README, narrative, B2B references",
+    "a638509 — [DOCS] pipeline design, narrative V2, ACI config",
+    "0a6de75 — Update README.md",
+    "4ba9446 — feat: VCF header format + dxf adapter + ACI mapping (PRVNÍ FUNKČNÍ)",
+    "5ce3e80 — fix: forward scan reader, active-first writer",
+    "a19084b — fix: coord transform, geom_type=1, ACI 7 calibration",
+    "4ead359 — REVERT: ACI 7 config restore",
+    "ed867c1 — fix: ACI 7→black, H1=24, speed=80, h2=-0.5",
+    "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives"
   ],
   "package_structure": {
-    "vcf_parser/__init__.py": "Exports write(), VcfWriterError",
-    "vcf_parser/_writer.py": "VcfWriter — header/body/trailer serialization, VcfLayer, VcfWriterError hierarchy, top-level write() API",
-    "vcf_parser/_reader.py": "extract_active_layers_details(), extract_strings(), color/cutter/direction maps, GEOMETRY_SIG",
-    "vcf_parser/_config.py": "Machine profile loader (JSON), kinematic parameter defaults, material damping config",
-    "vcf_parser/_geometry.py": "Bbox, path_length, version detection, block_size_for_version"
+    "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
+    "vcf_parser/_writer.py": "VcfWriter — header/body/trailer serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE",
+    "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
+    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
+    "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (10+ colors with validation statuses)"
   },
   "implementation_status": {
     "writer": {
       "status": "functional",
+      "version": "1.1",
       "features": [
-        "Header with magic (1.0.012/1.0.013) + layer blocks (210 B / 610 B)",
-        "Layer block encoding: output_flag, speed, color_bgr, cutter_type, H1, feed_count, H2, V-slot direction/comp/extensions",
-        "Body with GEOMETRY_SIG elements (polyline/polygon path encoding)",
-        "Circle element encoding (type_id=1, subtype=3)",
-        "Trailer byte 0xD7",
-        "Top-level write(spec, path) API with SerializationError handling",
-        "Error hierarchy: VcfWriterError → InvalidGeometryError, UnsupportedFeatureError, SerializationError"
+        "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims",
+        "257 layer blocks × 610 B (empty-first, active-last)",
+        "8B trailers (output_flag + color) on empty blocks for backward scan",
+        "Layer block: output_flag@0, speed@4, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, ext@114/122",
+        "GEOMETRY_HEADER_TEMPLATE (bytes 12-44 from native)",
+        "is_closed with 0.001 epsilon (fixes floating point drift)",
+        "encode_circle_element with 4 arc segments (type=1, sub=3)",
+        "VcfLayer with _path_types for circle detection"
       ],
       "not_implemented": [
         "Scrambling (raises UnsupportedFeatureError)",
-        "DXF inline embedding",
-        "Multi-segment geometry subtypes beyond polyline"
+        "Full 472B machine profile header (uses native template as workaround)"
       ]
     },
     "reader": {
       "status": "functional",
       "features": [
-        "Layer extraction: speed validation, color matching, cutter type, H1/H2, feed_count, output_flag",
-        "V-slot direction parsing (Left/Right/Cut both side)",
-        "Extension values (start/end) with NaN/Inf guards",
-        "Color name mapping (14 known colors + custom fallback)",
-        "String extraction from binary",
+        "Backward scan from geometry (k=1..32 blocks)",
+        "Color from trailer at pos-4 (previous block's last 4 bytes)",
+        "Layer extraction: speed validation, color, cutter, h1, h2, feed, output_flag",
+        "V-slot direction (Left/Right/Cut both side), extensions",
+        "Color name mapping (14 known + custom fallback)",
         "Version detection (1.0.012 vs 1.0.013)"
-      ],
-      "limitations": [
-        "No full geometry element re-parsing (only layer metadata extraction)",
-        "No DXF extraction"
+      ]
+    },
+    "dxf_adapter": {
+      "status": "functional",
+      "features": [
+        "compile_dxf(dxf_path, output_path, config_path)",
+        "ACI_TO_RGB mapping (VCutWorks-calibrated: ACI 7=black)",
+        "Config loader with fallback defaults",
+        "Density-based ACI 4 ambiguity resolution",
+        "Coordinate transform (+67.5, -287.5 mm)"
       ]
     },
     "tests": {
@@ -52,84 +67,73 @@
       "pass": 28,
       "skip": 2,
       "test_files": [
-        "tests/test_writer_unit.py — 25 unit tests (layer block, geometry encoding, circle, header, trailer, write roundtrip)",
-        "tests/test_roundtrip.py — 5 integration tests (known file roundtrip, synthetic line, two layers, V-slot params, determinism)"
-      ],
-      "demo_files": [
-        "demo_data/1ks.VCF",
-        "demo_data/empty_01.VCF",
-        "demo_data/fluenz_l.VCF",
-        "demo_data/line_x0_y1000.VCF",
-        "demo_data/test_primitive.VCF",
-        "demo_data/vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF"
+        "tests/test_writer_unit.py — 25 tests (layer block, geometry, circle, header, trailer, roundtrip)",
+        "tests/test_roundtrip.py — 5 tests (known files, synthetic line, two layers, V-slot, determinism)"
       ]
     },
-    "documentation": {
-      "README.md": "Quick start, package structure, binary format spec, test instructions, open source references",
-      "docs/narrative_report_v1.md": "Architecture, format spec, import paths, RE references (V1)",
-      "docs/narrative_report_v2_b2b_pipeline.md": "B2B pipeline analysis — viability, ROI, implementation steps, unknown unknowns (NEW)",
-      "docs/dxf_to_vcf_pipeline_design.md": "Full DXF→VCF pipeline architecture, component spec, entity mapping, test strategy, risk register (NEW)",
-      "docs/vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config, 10 colors with validation statuses (NEW)",
-      "docs/VCF_Reverse_Engineering_Inference_Workflow_2026.md": "Full RE methodology (v1.1, 1276 lines)",
-      "docs/RE_CASE_STUDY_VCUTWORKS_LIGHTBURN_v2.md": "29-day RE case study: V1→V22 parser evolution",
-      "docs/SYSTEQ_VCF_STACK_ANATOMY_V2.md": "Architectural analysis of the vcf_parser_b2b stack",
-      "docs/KNOWLEDGE_CORPUS_VCUTWORKS_LIGHTBURN.md": "VCF + DXF format knowledge corpus",
-      "docs/DXF_PREDICTIVE_PARSER_METHODOLOGY.md": "DXF predictive parser methodology (LightBurn vs AutoCAD)"
-    },
+    "demo_data": {
+      "native_vcf": [
+        "square_1_aci.VCF",
+        "circle_radius_125.VCF",
+        "circle_diameter_600_native.VCF",
+        "empty_canavas_native.VCF"
+      ],
+      "synthetic_vcf": [
+        "square_from_dxf.VCF",
+        "circle_diameter_600_from_dxf.VCF",
+        "circle_diameter_600_hybrid.VCF",
+        "hybrid_square_from_dxf.VCF"
+      ],
+      "production_vcf": [
+        "1ks.VCF",
+        "fluenz_l.VCF",
+        "vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF"
+      ]
+    }
+  },
   "session_state": {
-    "current_session_start": "2026-06-27",
-    "files_examined_in_session": [
-      ".ai_state.json (created)",
-      "pyproject.toml",
-      "README.md",
-      "vcf_parser/__init__.py",
-      "vcf_parser/_writer.py",
-      "vcf_parser/_reader.py",
-      "vcf_parser/_config.py",
-      "vcf_parser/_geometry.py",
-      "tests/conftest.py",
-      "tests/test_writer_unit.py",
-      "tests/test_roundtrip.py",
-      "demo_data/ (directory listing)",
-      "docs/ (directory listing)"
+    "current_session": "2026-06-27 (afternoon — debugging + geometry fixes)",
+    "files_modified_in_session": [
+      "vcf_parser/_writer.py (3 critical fixes)",
+      "vcf_parser/_dxf_adapter.py (ACI 7→black, H1 default, speed)",
+      "vcf_compiler_map_config.json (ACI 7 calibrated)",
+      "tests/test_writer_unit.py (updated circle test)"
     ],
-    "dxf_integrace_explored": {
-      "repo_path": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\dxf_integrace",
-      "key_file": "src/dxf_geometry_indexer_v2.py (2072 lines, v2.3.0)",
-      "tool_config": "src/dxf_tool_config.json (10 ACI colors mapped)",
-      "tests": ["test_smoke.py", "test_golden_master.py", "test_determinism.py", "test_layer_card.py", "test_ml_vector.py"],
-      "key_finding": "Layer card + entity vertices are directly compatible with VcfWriter spec format",
-      "missing_bridge": "~150 lines adaptér needed (dxf_to_spec())"
-    },
-    "artifacts_created_in_session": [
-      ".ai_state.json — project state tracker",
-      "docs/dxf_to_vcf_pipeline_design.md — full pipeline architecture (8 sections, Appendix A/B)",
-      "docs/vcf_compiler_map_config.json — ACI→VCF mapping config (10 colors, validated statuses)",
-      "docs/narrative_report_v2_b2b_pipeline.md — B2B narrative report (8 chapters, ROI estimation)"
+    "files_created_in_session": [
+      "demo_data/circle_diameter_600_from_dxf.VCF",
+      "demo_data/circle_diameter_600_hybrid.VCF",
+      "demo_data/hybrid_square_from_dxf.VCF",
+      "docs/ACI_MAPOVANI_RESEARCH_V2.md",
+      "docs/handoff_session_2026-06-27.json"
+    ],
+    "key_findings": [
+      "b2b reader != VCutWorks rendering engine (first working VCF had 0 layers in b2b)",
+      "Native header is always 472 B (machine profile) — identical across all native VCFs",
+      "Hybrid VCF (native header + our payload) shows layer cards but NO geometry",
+      "Bytes 12-44 in geometry element are const template from native — zeros cause invisible geometry",
+      "is_closed fails on FP drift (2.27e-13) — fixed with epsilon comparison",
+      "encode_circle_element was dead code with wrong pt_count — now produces 4 arc segments"
     ],
     "pending_tasks": [
-      "Implement vcf_parser/_dxf_adapter.py (dxf_to_spec() + ACI→RGB + closed-loop fix)",
-      "Implement compile_dxf() top-level API",
-      "Write tests: test_dxf_adapter.py, test_dxf_to_vcf_roundtrip.py",
-      "Create CLI: scripts/vcf_compile.py",
-      "Move vcf_compiler_map_config.json from docs/ to project root",
-      "VCutWorks validation of generated VCF"
+      "GUI validation of hybrid VCFs (after a1b339c fix)",
+      "Implement 472B machine profile header template in writer",
+      "Write geometry header byte analysis (understand bytes 12-44 meaning)",
+      "Add more DXF→VCF integration tests"
     ],
     "decisions_made": [
-      "Group entities by ACI color, not DXF layer name",
-      "ARC → resample to polyline (native arc encoding is future work)",
-      "dxf_integrace as pip dependency for development",
-      "vcf_compiler_map_config.json in project root"
+      "ACI 7 → RGB(0,0,0) not white (VCutWorks palette != AutoCAD)",
+      "GEOMETRY_HEADER_TEMPLATE = hardcoded from native (unknown meaning, but functional)",
+      "is_closed epsilon = 0.001 mm",
+      "encode_circle_element pt_count=4 with arc segments (matching native sub=3 format)"
     ],
     "open_questions": [
-      "How to handle unknown ACI colors? (fallback vs abort vs prompt)",
-      "How to resolve ACI 4 (Cyan) ambiguity? (density heuristic vs always V-slot)",
-      "Feed count for bidirectional V-slot \"Cut both side\"? (always 2 vs config)",
-      "LightBurn DXF INSERT block explosion — does ezdxf handle it?"
+      "What do bytes 12-44 in geometry header actually represent?",
+      "Why does empty_canavas have different structure (no 257×610 blocks)?",
+      "Will VCutWorks accept fully synthetic VCF with template bytes but without machine profile header?"
     ]
   },
   "dependencies": {
-    "runtime": [],
+    "runtime": ["dxf_integrace (for compile_dxf)"],
     "dev": ["pytest>=8.0"],
     "python": ">=3.11"
   }

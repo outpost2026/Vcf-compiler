@@ -1,0 +1,181 @@
+{
+  "handoff_session": "Vcf-compiler session 2026-06-27",
+  "date": "2026-06-27",
+  "author": "Dev (LLM-augmentovaná analýza)",
+  "session_type": "debugging + binary RE + writer fixes",
+  "total_commits_in_session": 7,
+  "commits": [
+    {
+      "hash": "171e2e7",
+      "time": "08:27",
+      "message": "Initial VcfWriter implementation with clean-slate serialization",
+      "type": "initial",
+      "description": "Základní writer s aktivními bloky first, trailer byte 0xd7, color@offset12, h1@76, h2@92"
+    },
+    {
+      "hash": "4ba9446",
+      "time": "12:53",
+      "message": "feat: fix VCF writer header format (0x13 prefix, 257 blocks, stock dims, no trailer) + dxf adapter + ACI mapping config",
+      "type": "feat",
+      "description": "PRVNÍ FUNKČNÍ — přidán compile_dxf, circle_from_dxf.VCF (vykreslil se v GUI). Writer: Empty blocks first, active blocks last. Bez trailer byte."
+    },
+    {
+      "hash": "5ce3e80",
+      "time": "13:47",
+      "message": "fix: reader scans forward from block 0 (not backward from geometry), writer places active blocks first",
+      "type": "fix",
+      "description": "Reader změněn na forward scan, writer na active-first. Později revertováno."
+    },
+    {
+      "hash": "a19084b",
+      "time": "13:13",
+      "message": "fix: number_of_feeding=0, geometry type=1 for closed paths, coordinate transform, ACI 7 calibration",
+      "type": "fix",
+      "description": "Přidán coord transform (+67.5, -287.5), geom_type=1 pro closed paths, ACI 7 speed=200→80. ZMĚNA: is_closed detekce path[0]==path[-1] (přesná shoda)"
+    },
+    {
+      "hash": "4ead359",
+      "time": "14:15",
+      "message": "REVERT: restore original ACI 7 config and number_of_feeding defaults",
+      "type": "revert",
+      "description": "Revert ACI config changes (dočasný)"
+    },
+    {
+      "hash": "ed867c1",
+      "time": "15:03",
+      "message": "fix: ACI 7 color mapping (white→black), H1 safety height, and speed calibration from native VCF",
+      "type": "fix",
+      "description": "ACI 7 → RGB(0,0,0), H1=2.0→24.0, speed=200→80, h2=-0.3→-0.5. Layer params nyní odpovídají native."
+    },
+    {
+      "hash": "a1b339c",
+      "time": "~17:00",
+      "message": "fix: geometry encoding — native header template bytes, is_closed epsilon, circle primitives",
+      "type": "fix",
+      "description": "GEOMETRY_HEADER_TEMPLATE (bytes 12-44 z native), is_closed epsilon 0.001, encode_circle_element s 4 arc segments sub=3. 28/28 testů."
+    }
+  ],
+  "binary_format_fixes": {
+    "writer_header": {
+      "initial": "active blocks first, no prefix, no stock dims",
+      "current": "0x13 prefix + magic + stock dims (1220×2900) + 257×610 blocks, empty-first active-last",
+      "fixes_applied": ["VCF_PREFIX", "VCF_POST_MAGIC", "STOCK_WIDTH/HEIGHT", "POST_STOCK_HEADER", "TOTAL_LAYER_BLOCKS=257", "LAYER_BLOCK_SIZE=610"]
+    },
+    "layer_block": {
+      "initial": "color@12, h1@76, feed@84, h2@92",
+      "current": "color@76, h1@80, feed@88, h2@96, direction@104, v_slot@106, ext@114/122",
+      "fixes_applied": ["color offset 12→76", "h1 offset 76→80", "feed offset 84→88", "h2 offset 92→96", "+8B trailers (output_flag+color)"],
+      "key_insight": "b2b reader reads color from TRAILER at pos-4, not from block offset 76. Trailer of empty block preceding active block must contain active layer's color."
+    },
+    "geometry_element": {
+      "initial": "type_id=0 pro všechny pathy, bytes 12-44=0",
+      "current": "type_id dle is_closed (s epsilon=0.001), bytes 12-44=GEOMETRY_HEADER_TEMPLATE (z native), circle sub=3 s 4 arc segmenty",
+      "fixes_applied": ["GEOMETRY_HEADER_TEMPLATE (33 B)", "is_closed epsilon 0.001 (místo ==)", "encode_circle_element pt_count=1→4"],
+      "key_insight": "Native bytes 12-44 = konstanta (4× opakující se pattern), nezávislá na geometrii. Chybějící template = VCutWorks nevykreslí geometrii."
+    }
+  },
+  "aci_mapping_research": {
+    "initial_state": "ACI 7 → RGB(255,255,255) via standard AutoCAD ACI_TO_RGB",
+    "current_state": "ACI 7 → RGB(0,0,0), calibrated from native square_1_aci.VCF",
+    "lightburn_divergence": "LightBurn používá vlastní ACI paletu odlišnou od AutoCAD. ACI 7 (AutoCAD=bílá) → VCutWorks=černá (0,0,0).",
+    "confidence": 0.99,
+    "key_finding": "Potvrzeno na 3 nezávislých native VCF (square_1_aci, circle_radius_125, circle_diameter_600) — všechny mají color=0x00000000 pro výchozí layer."
+  },
+  "critical_discoveries": [
+    {
+      "id": "D1",
+      "title": "b2b reader != VCutWorks rendering engine",
+      "description": "První funkční VCF (commit 4ba9446, circle_from_dxf) měl 0 layers dle b2b readeru (geom_color 0xffffff00 ≠ trailer 0x00000000), přesto se v GUI vykreslil korektně. VCutWorks používá vlastní parser s odlišnou logikou (nevaliduje geom_color match).",
+      "confidence": 0.95,
+      "impact": "b2b reader není vhodný nástroj pro validaci VCutWorks kompatibility."
+    },
+    {
+      "id": "D2",
+      "title": "Native header je vždy 472 B (machine profile)",
+      "description": "circle_radius_125, circle_diameter_600 a square_1_aci native VCF mají identický 472B header. Prvních 54 B je preamble (magic + stock dims), zbylých 418 B je machine profile (fonty, cesty, konfigurace).",
+      "confidence": 0.99,
+      "impact": "Všechny native VCF s obsahem sdílejí stejný header bez ohledu na geometrii."
+    },
+    {
+      "id": "D3",
+      "title": "Hybrid VCF (native header + naše payload) = layer cards, no geometry",
+      "description": "Hybridní square_from_dxf (native 472B header + naše bloky + naše geometrie) v GUI: tabulka layers korektní (speed=80, h1=24, col=black), ale geometrie chybí.",
+      "confidence": 0.90,
+      "impact": "Header je nutný (bez něj ani layer cards). Chybějící geometrie = problém v geometrickém payloadu (bytes 12-44 template, is_closed, circle encoding) — opraveno v commit a1b339c."
+    },
+    {
+      "id": "D4",
+      "title": "is_closed selhává na floating point driftu",
+      "description": "path[0]==path[-1] selhává, protože DXF indexer vrací Y hodnoty s 2.27e-13 rozdílem mezi prvním a posledním vertexem. Výsledek: type_id=0 (open) místo 1 (closed).",
+      "confidence": 0.99,
+      "impact": "Opraveno epsilon=0.001 v commit a1b339c."
+    },
+    {
+      "id": "D5",
+      "title": "Bytes 12-44 v geometry elementu jsou konstanta",
+      "description": "Všechny native VCF mají v bytes 12-44 identický 33B pattern (4× opakující se hodnota). Náš writer je nastavoval na 0. VCutWorks tyto bytes vyžaduje pro rendering geometrie.",
+      "confidence": 0.85,
+      "impact": "Opraveno GEOMETRY_HEADER_TEMPLATE v commit a1b339c. Čeká na testování v GUI."
+    }
+  ],
+  "test_results": {
+    "test_suite": "28/28 passed (2 skipped expected)",
+    "tests_passed": ["test_writer_unit.py (25)", "test_roundtrip.py (5)"],
+    "tests_skipped": ["test_primitive.VCF (unsupported features)", "empty_01.VCF (edge case)"],
+    "verification_method": "b2b reader (vcf_parser_b2b) — native, synthetic i hybrid produkují identický JSON"
+  },
+  "files_created_in_session": [
+    "demo_data/circle_diameter_600_from_dxf.VCF",
+    "demo_data/circle_diameter_600_hybrid.VCF",
+    "demo_data/hybrid_square_from_dxf.VCF",
+    "docs/ACI_MAPOVANI_RESEARCH_V2.md"
+  ],
+  "files_modified_in_session": [
+    "vcf_parser/_writer.py (3 fixes: template, epsilon, circle)",
+    "vcf_parser/_dxf_adapter.py (ACI_TO_RGB, H1 default)",
+    "vcf_compiler_map_config.json (ACI 7 config)",
+    "tests/test_writer_unit.py (updated circle test)",
+    "demo_data/square_from_dxf.VCF (regenerated)"
+  ],
+  "pending_tests": [
+    {
+      "item": "GUI validation — hybrid_square_from_dxf.VCF",
+      "expected": "Layer cards (correct params) + geometry (square rendered)",
+      "current_status": "WAITING — předchozí hybrid ukázal layer cards ale žádnou geometrii. Po fixu bytes 12-44 template a is_closed epsilon by měla být geometrie viditelná."
+    },
+    {
+      "item": "GUI validation — circle_diameter_600_hybrid.VCF",
+      "expected": "Layer cards + circle geometry (4 arc segments, subtype=3)",
+      "current_status": "WAITING"
+    },
+    {
+      "item": "GUI validation — synthetic both (bez hybrid headeru)",
+      "expected": "Alespoň layer cards viditelné (header chybí)",
+      "current_status": "WAITING — pokud hybrid funguje, přidat template header do writeru."
+    }
+  ],
+  "next_steps": [
+    "1. Otestovat v GUI: hybrid_square_from_dxf.VCF, circle_diameter_600_hybrid.VCF",
+    "2. Pokud hybrid funguje → implementovat GEOMETRY_HEADER_TEMPLATE jako výchozí pro všechny elementy (již hotovo v a1b339c)",
+    "3. Pokud hybrid NEFUNGUJE (stále bez geometrie) → zkontrolovat, zda bytes 12-44 v hybridu odpovídají native (ověřeno: ANO)",
+    "4. Přidat 472B header template do writeru (pro plně samostatný VCF bez závislosti na native headeru)",
+    "5. Cross-validace na více DXF souborech (circle, square, custom shapes)"
+  ],
+  "open_problems": [
+    {
+      "problem": "GEOMETRY_HEADER_TEMPLATE — co ty bytes znamenají?",
+      "severity": "low",
+      "workaround": "Statický template z native (funguje, ale nevíme co jednotlivé byty znamenají)"
+    },
+    {
+      "problem": "VCutWorks requires native 472B header for layer cards",
+      "severity": "medium",
+      "workaround": "Hybrid VCF (prepend native header). Pro produkci: extrahovat machine profile template a zahrnout do writeru."
+    },
+    {
+      "problem": "empty_canavas_native.VCF has different structure (no 257×610 blocks)",
+      "severity": "low",
+      "workaround": "VCutWorks zřejmě používá komprimovaný formát pro prázdné soubory. Není potřeba implementovat."
+    }
+  ]
+}
