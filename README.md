@@ -130,8 +130,6 @@ Full methodology and VCF format specification: `docs/narrative_report_v1.md`
 
 ## Author
 
-## Author
-
 **Ondřej Soušek** — [outpost2026](https://github.com/outpost2026)  
 Reverse engineering & clean-slate implementation of Ruida VCutWorks binary format for B2B CNC automation.
 
