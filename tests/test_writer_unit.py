@@ -45,7 +45,7 @@ def test_layer_block_speed():
 def test_layer_block_color_bgr():
     layer = VcfLayer(color=[255, 0, 0])
     block = VcfWriter.encode_layer_block(layer, 610)
-    color_val = struct.unpack('<I', block[12:16])[0]
+    color_val = struct.unpack('<I', block[76:80])[0]
     expected_bgr = (255 << 16) | (0 << 8) | 0
     assert color_val == expected_bgr
 
@@ -60,8 +60,8 @@ def test_layer_block_cutter_id():
 def test_layer_block_h1_h2():
     layer = VcfLayer(h1=3.0, h2=15.0)
     block = VcfWriter.encode_layer_block(layer, 610)
-    h1 = struct.unpack('<d', block[76:84])[0]
-    h2 = struct.unpack('<d', block[92:100])[0]
+    h1 = struct.unpack('<d', block[80:88])[0]
+    h2 = struct.unpack('<d', block[96:104])[0]
     assert h1 == 3.0
     assert h2 == 15.0
 
@@ -81,7 +81,7 @@ def test_layer_block_output_flag():
 def test_layer_block_feed_count():
     layer = VcfLayer(feed_count=3)
     block = VcfWriter.encode_layer_block(layer, 610)
-    feed = struct.unpack('<i', block[84:88])[0]
+    feed = struct.unpack('<i', block[88:92])[0]
     assert feed == 3
 
 
@@ -189,8 +189,10 @@ def test_header_layer_order():
     writer = VcfWriter(layers=[layer1, layer2])
     h = writer.header()
     HEADER_PREAMBLE_SIZE = 54
-    speed_layer1 = struct.unpack('<d', h[HEADER_PREAMBLE_SIZE + 4:HEADER_PREAMBLE_SIZE + 12])[0]
-    speed_layer2 = struct.unpack('<d', h[HEADER_PREAMBLE_SIZE + 610 + 4:HEADER_PREAMBLE_SIZE + 610 + 12])[0]
+    last_block = HEADER_PREAMBLE_SIZE + 256 * 610
+    prev_block = HEADER_PREAMBLE_SIZE + 255 * 610
+    speed_layer2 = struct.unpack('<d', h[last_block + 4:last_block + 12])[0]
+    speed_layer1 = struct.unpack('<d', h[prev_block + 4:prev_block + 12])[0]
     assert speed_layer1 == 100.0
     assert speed_layer2 == 200.0
 

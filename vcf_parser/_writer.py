@@ -103,12 +103,26 @@ class VcfWriter:
 
         data += POST_STOCK_HEADER
 
-        for layer in self._layers:
-            data += self.encode_layer_block(layer, LAYER_BLOCK_SIZE)
+        n_layers = len(self._layers)
+        empty_count = TOTAL_LAYER_BLOCKS - n_layers
 
-        empty_count = TOTAL_LAYER_BLOCKS - len(self._layers)
-        if empty_count > 0:
-            data += b'\x00' * (LAYER_BLOCK_SIZE * empty_count)
+        for i in range(empty_count):
+            block = bytearray(LAYER_BLOCK_SIZE)
+            if i == empty_count - 1 and n_layers > 0:
+                next_layer = self._layers[0]
+                next_color_bgr = (next_layer._color[0] << 16) | (next_layer._color[1] << 8) | next_layer._color[2]
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 8, 1)
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, next_color_bgr)
+            data += bytes(block)
+
+        for i, layer in enumerate(self._layers):
+            block = bytearray(self.encode_layer_block(layer, LAYER_BLOCK_SIZE))
+            if i < n_layers - 1:
+                next_layer = self._layers[i + 1]
+                next_color_bgr = (next_layer._color[0] << 16) | (next_layer._color[1] << 8) | next_layer._color[2]
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 8, 1)
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, next_color_bgr)
+            data += bytes(block)
 
         return bytes(data)
 
@@ -163,24 +177,24 @@ class VcfWriter:
 
         struct.pack_into('<d', block, 4, float(layer._speed))
 
-        color_bgr = (layer._color[0] << 16) | (layer._color[1] << 8) | layer._color[2]
-        struct.pack_into('<I', block, 12, color_bgr)
-
         cutter_idx = CUTTER_NAME_TO_INDEX.get(layer._cutter_type, 0)
         struct.pack_into('<i', block, 32, cutter_idx)
 
-        struct.pack_into('<d', block, 76, layer._h1)
+        color_bgr = (layer._color[0] << 16) | (layer._color[1] << 8) | layer._color[2]
+        struct.pack_into('<I', block, 76, color_bgr)
 
-        struct.pack_into('<i', block, 84, layer._feed_count)
+        struct.pack_into('<d', block, 80, layer._h1)
 
-        struct.pack_into('<d', block, 92, layer._h2)
+        struct.pack_into('<i', block, 88, layer._feed_count)
+
+        struct.pack_into('<d', block, 96, layer._h2)
 
         if layer._cutter_type == "V-slot":
             dir_idx = DIR_NAME_TO_INDEX.get(layer._direction, 0)
-            struct.pack_into('<H', block, 100, dir_idx)
-            struct.pack_into('<d', block, 102, 0.0)
-            struct.pack_into('<d', block, 110, layer._start_ext)
-            struct.pack_into('<d', block, 118, layer._end_ext)
+            struct.pack_into('<H', block, 104, dir_idx)
+            struct.pack_into('<d', block, 106, 0.0)
+            struct.pack_into('<d', block, 114, layer._start_ext)
+            struct.pack_into('<d', block, 122, layer._end_ext)
 
         return bytes(block)
 
@@ -282,7 +296,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013") -> No
             paths=paths,
             speed=ld.get("speed_mms", 800.0),
             cutter_type=ld.get("cutter_type", "Vibrate cutter"),
-            h1=ld.get("start_height_h1_mm", 2.0),
+            h1=ld.get("start_height_h1_mm", 10.0),
             h2=ld.get("end_height_h2_mm", 12.0),
             color=color_rgb,
             direction=ld.get("direction", "N/A"),

@@ -57,12 +57,12 @@
       "_note": "Magenta — high-speed chop. Confirmed by time measurement."
     },
     "7": {
-      "cutter_type": "Vibrate cutter", "speed_mms": 200, "direction": "N/A",
-      "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
+      "cutter_type": "Vibrate cutter", "speed_mms": 80, "direction": "N/A",
+      "h1_mm": 24.0, "h2_mm": -0.5, "vs_comp_mm": 0.0,
       "start_extension_mm": 0.0, "end_extension_mm": 0.0,
       "is_output": true, "number_of_feeding": 1,
       "validation_status": "empirical",
-      "_note": "White/Black — main contours. Standard Vibrate cutter."
+      "_note": "Black — main contours. Calibrated from native square_1_aci.VCF: speed=80, h1=24, h2=-0.5, color=RGB(0,0,0)."
     },
     "30": {
       "cutter_type": "V-slot", "speed_mms": 100, "direction": "Cut both side",
@@ -91,7 +91,7 @@
   },
 
   "defaults": {
-    "h1_mm": 2.0,
+    "h1_mm": 10.0,
     "number_of_feeding": 1,
     "fallback_cutter_type": "Vibrate cutter",
     "fallback_speed_mms": 200.0,
