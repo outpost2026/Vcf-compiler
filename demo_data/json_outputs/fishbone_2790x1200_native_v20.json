@@ -1,0 +1,2133 @@
+{
+  "filename": "fishbone_2790x1200_native.VCF",
+  "file_hash": "7c923d1f8d3d876d39c7764f51e7afd4",
+  "manufacturing_intelligence": {
+    "enabled": true,
+    "semantic_warnings": [
+      {
+        "rule_id": "RULE_SEQ_OUTER_LAST",
+        "rule_class": "CLASS_A",
+        "severity": "CRITICAL",
+        "code": "SEQUENCE_LAYER_ERROR",
+        "message": "Kritická chyba: Obvodový ořez vibračním nožem probíhá před dekorativními operacemi! Hrozí posun panelu.",
+        "confidence": 0.99,
+        "traceable_context": {}
+      }
+    ],
+    "risk_score": 3,
+    "material_thickness_confidence": "LOW"
+  },
+  "kb_overrides_applied": [
+    "MICRO_SEGMENT: disabled by override"
+  ],
+  "warnings": [
+    "⚠️ Kritická chyba sekvence: Obvodový ořez (vibrate cutter) probíhá PŘED fasetováním nebo gravírováním! Hrozí posun materiálu a zničení panelu.",
+    "⚠️ Kritická chyba: Obvodový ořez vibračním nožem probíhá před dekorativními operacemi! Hrozí posun panelu."
+  ],
+  "tech_notes": [
+    "⚠️ Kritická chyba sekvence: Obvodový ořez (vibrate cutter) probíhá PŘED fasetováním nebo gravírováním! Hrozí posun materiálu a zničení panelu.",
+    "📝 Sémantická sekvence: Fasetování hran a tvorba dekoru jsou prokládané (interleaved).",
+    "📝 [CRITICAL] Kritická chyba: Obvodový ořez vibračním nožem probíhá před dekorativními operacemi! Hrozí posun panelu."
+  ],
+  "file_size_bytes": 165421,
+  "extracted_metadata": [
+    "Arial Black",
+    "Documents",
+    "FS.SHX",
+    "Fs.SHX",
+    "LTYPE",
+    "RDVCUTFILEVER1.0.013",
+    "Repozitar_Dev",
+    "Solid line",
+    "Users",
+    "Vcf-compiler",
+    "_github",
+    "demo_data",
+    "dxf_original",
+    "fishbone_2790x1200.dxf",
+    "opravit"
+  ],
+  "elements_parsed": 14,
+  "elements": [
+    {
+      "offset": "0x26afe",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 6434.54,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        310.0,
+        55.0,
+        910.0,
+        2845.0
+      ],
+      "centroid": [
+        610.0,
+        828.56
+      ],
+      "vertices": [
+        [
+          310.00006103515625,
+          2845.0
+        ],
+        [
+          310.0,
+          55.0
+        ],
+        [
+          610.0,
+          359.238525390625
+        ],
+        [
+          910.0,
+          55.0
+        ],
+        [
+          910.0,
+          2845.0
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 1608.64,
+        "curvature_index": 0.001,
+        "sharp_corners_count": 1,
+        "total_direction_changes": 2
+      },
+      "cut_order": 0,
+      "bbox_norm": [
+        0.2504,
+        0.0004,
+        0.7496,
+        0.9996
+      ],
+      "centroid_norm": [
+        0.5,
+        0.2774
+      ],
+      "element_id": "Element_1",
+      "children_ids": [
+        "Element_12"
+      ],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x26d17",
+      "geom_type": "Line",
+      "geom_type_id": 2,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 1,
+      "length_mm": 427.27,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        910.0,
+        55.0,
+        1210.0,
+        359.24
+      ],
+      "centroid": [
+        1060.0,
+        207.12
+      ],
+      "vertices": [
+        [
+          910.0,
+          55.0
+        ],
+        [
+          1210.0,
+          359.238525390625
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0,
+        "sharp_corners_count": 0,
+        "total_direction_changes": 0
+      },
+      "cut_order": 1,
+      "bbox_norm": [
+        0.7496,
+        0.0004,
+        0.9992,
+        0.1093
+      ],
+      "centroid_norm": [
+        0.8744,
+        0.0548
+      ],
+      "element_id": "Element_2",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x26e52",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        365.72,
+        1210.0,
+        669.96
+      ],
+      "centroid": [
+        610.0,
+        517.84
+      ],
+      "vertices": [
+        [
+          1210.0,
+          669.95849609375
+        ],
+        [
+          910.0,
+          365.719970703125
+        ],
+        [
+          610.0,
+          669.95849609375
+        ],
+        [
+          310.0,
+          365.719970703125
+        ],
+        [
+          10.0,
+          669.95849609375
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 2,
+      "bbox_norm": [
+        0.0008,
+        0.1116,
+        0.9992,
+        0.2206
+      ],
+      "centroid_norm": [
+        0.5,
+        0.1661
+      ],
+      "element_id": "Element_3",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x2706b",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        676.44,
+        1210.0,
+        980.68
+      ],
+      "centroid": [
+        610.0,
+        828.56
+      ],
+      "vertices": [
+        [
+          1210.0,
+          980.678466796875
+        ],
+        [
+          910.0,
+          676.43994140625
+        ],
+        [
+          610.0,
+          980.678466796875
+        ],
+        [
+          310.0,
+          676.43994140625
+        ],
+        [
+          10.0,
+          980.678466796875
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 3,
+      "bbox_norm": [
+        0.0008,
+        0.2229,
+        0.9992,
+        0.3319
+      ],
+      "centroid_norm": [
+        0.5,
+        0.2774
+      ],
+      "element_id": "Element_4",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x27284",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        987.16,
+        1210.0,
+        1291.4
+      ],
+      "centroid": [
+        610.0,
+        1139.28
+      ],
+      "vertices": [
+        [
+          1210.0,
+          1291.3985595703125
+        ],
+        [
+          910.0,
+          987.1600341796875
+        ],
+        [
+          610.0,
+          1291.3985595703125
+        ],
+        [
+          310.0,
+          987.1600341796875
+        ],
+        [
+          10.0,
+          1291.3985595703125
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 4,
+      "bbox_norm": [
+        0.0008,
+        0.3342,
+        0.9992,
+        0.4432
+      ],
+      "centroid_norm": [
+        0.5,
+        0.3887
+      ],
+      "element_id": "Element_5",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x2749d",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        1297.88,
+        1210.0,
+        1602.12
+      ],
+      "centroid": [
+        610.0,
+        1450.0
+      ],
+      "vertices": [
+        [
+          1210.0,
+          1602.1185302734375
+        ],
+        [
+          910.0,
+          1297.8800048828125
+        ],
+        [
+          610.0,
+          1602.1185302734375
+        ],
+        [
+          310.0,
+          1297.8800048828125
+        ],
+        [
+          10.0,
+          1602.1185302734375
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 5,
+      "bbox_norm": [
+        0.0008,
+        0.4455,
+        0.9992,
+        0.5545
+      ],
+      "centroid_norm": [
+        0.5,
+        0.5
+      ],
+      "element_id": "Element_6",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x276b6",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        1608.6,
+        1210.0,
+        1912.84
+      ],
+      "centroid": [
+        610.0,
+        1760.72
+      ],
+      "vertices": [
+        [
+          1210.0,
+          1912.83837890625
+        ],
+        [
+          910.0,
+          1608.5999755859375
+        ],
+        [
+          610.0,
+          1912.83837890625
+        ],
+        [
+          310.0,
+          1608.5999755859375
+        ],
+        [
+          10.0,
+          1912.83837890625
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 6,
+      "bbox_norm": [
+        0.0008,
+        0.5568,
+        0.9992,
+        0.6658
+      ],
+      "centroid_norm": [
+        0.5,
+        0.6113
+      ],
+      "element_id": "Element_7",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x278cf",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        1919.32,
+        1210.0,
+        2223.56
+      ],
+      "centroid": [
+        610.0,
+        2071.44
+      ],
+      "vertices": [
+        [
+          1210.0,
+          2223.55859375
+        ],
+        [
+          910.0,
+          1919.320068359375
+        ],
+        [
+          610.0,
+          2223.55859375
+        ],
+        [
+          310.0,
+          1919.320068359375
+        ],
+        [
+          10.0,
+          2223.55859375
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 7,
+      "bbox_norm": [
+        0.0008,
+        0.6681,
+        0.9992,
+        0.7771
+      ],
+      "centroid_norm": [
+        0.5,
+        0.7226
+      ],
+      "element_id": "Element_8",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x27ae8",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        2230.04,
+        1210.0,
+        2534.28
+      ],
+      "centroid": [
+        610.0,
+        2382.16
+      ],
+      "vertices": [
+        [
+          1210.0,
+          2534.278564453125
+        ],
+        [
+          910.0,
+          2230.0400390625
+        ],
+        [
+          610.0,
+          2534.278564453125
+        ],
+        [
+          310.0,
+          2230.0400390625
+        ],
+        [
+          10.0,
+          2534.278564453125
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 8,
+      "bbox_norm": [
+        0.0008,
+        0.7794,
+        0.9992,
+        0.8884
+      ],
+      "centroid_norm": [
+        0.5,
+        0.8339
+      ],
+      "element_id": "Element_9",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x27d01",
+      "geom_type": "Polyline",
+      "geom_type_id": 3,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 1709.09,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        2540.76,
+        1210.0,
+        2845.0
+      ],
+      "centroid": [
+        610.0,
+        2692.88
+      ],
+      "vertices": [
+        [
+          1210.0,
+          2844.99853515625
+        ],
+        [
+          910.0,
+          2540.760009765625
+        ],
+        [
+          610.0,
+          2844.99853515625
+        ],
+        [
+          310.0,
+          2540.760009765625
+        ],
+        [
+          10.0,
+          2844.99853515625
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0028,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 2
+      },
+      "cut_order": 9,
+      "bbox_norm": [
+        0.0008,
+        0.8907,
+        0.9992,
+        0.9996
+      ],
+      "centroid_norm": [
+        0.5,
+        0.9452
+      ],
+      "element_id": "Element_10",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x27f1a",
+      "geom_type": "Line",
+      "geom_type_id": 2,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 1,
+      "length_mm": 427.27,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        55.0,
+        310.0,
+        359.24
+      ],
+      "centroid": [
+        160.0,
+        207.12
+      ],
+      "vertices": [
+        [
+          310.0,
+          55.0
+        ],
+        [
+          10.0,
+          359.238525390625
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 427.27,
+        "curvature_index": 0.0,
+        "sharp_corners_count": 0,
+        "total_direction_changes": 0
+      },
+      "cut_order": 10,
+      "bbox_norm": [
+        0.0008,
+        0.0004,
+        0.2504,
+        0.1093
+      ],
+      "centroid_norm": [
+        0.1256,
+        0.0548
+      ],
+      "element_id": "Element_11",
+      "children_ids": [],
+      "parent_id": "Element_13"
+    },
+    {
+      "offset": "0x28055",
+      "geom_type": "Line",
+      "geom_type_id": 2,
+      "type_id": 0,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 1,
+      "length_mm": 2790.0,
+      "layer_index": 0,
+      "is_output_yes": true,
+      "bbox": [
+        610.0,
+        55.0,
+        610.0,
+        2845.0
+      ],
+      "centroid": [
+        610.0,
+        1450.0
+      ],
+      "vertices": [
+        [
+          610.0,
+          54.99853515625
+        ],
+        [
+          610.0,
+          2844.99853515625
+        ]
+      ],
+      "is_closed_loop": false,
+      "complexity": {
+        "avg_segment_length_mm": 2790.0,
+        "curvature_index": 0.0,
+        "sharp_corners_count": 0,
+        "total_direction_changes": 0
+      },
+      "cut_order": 11,
+      "bbox_norm": [
+        0.5,
+        0.0004,
+        0.5,
+        0.9996
+      ],
+      "centroid_norm": [
+        0.5,
+        0.5
+      ],
+      "element_id": "Element_12",
+      "children_ids": [],
+      "parent_id": "Element_1"
+    },
+    {
+      "offset": "0x28190",
+      "geom_type": "Polygon",
+      "geom_type_id": 4,
+      "type_id": 1,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 7980.0,
+      "layer_index": 1,
+      "is_output_yes": true,
+      "bbox": [
+        10.0,
+        55.0,
+        1210.0,
+        2845.0
+      ],
+      "centroid": [
+        610.0,
+        1450.0
+      ],
+      "vertices": [
+        [
+          10.0,
+          2845.0
+        ],
+        [
+          1210.0,
+          2845.0
+        ],
+        [
+          1210.0,
+          55.0
+        ],
+        [
+          10.0,
+          55.0
+        ],
+        [
+          10.0,
+          2845.0
+        ]
+      ],
+      "is_closed_loop": true,
+      "complexity": {
+        "avg_segment_length_mm": 1995.0,
+        "curvature_index": 0.0006,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 0
+      },
+      "cut_order": 12,
+      "bbox_norm": [
+        0.0008,
+        0.0004,
+        0.9992,
+        0.9996
+      ],
+      "centroid_norm": [
+        0.5,
+        0.5
+      ],
+      "element_id": "Element_13",
+      "children_ids": [
+        "Element_1",
+        "Element_2",
+        "Element_3",
+        "Element_4",
+        "Element_5",
+        "Element_6",
+        "Element_7",
+        "Element_8",
+        "Element_9",
+        "Element_10",
+        "Element_11"
+      ],
+      "parent_id": "Element_14"
+    },
+    {
+      "offset": "0x283a9",
+      "geom_type": "Polygon",
+      "geom_type_id": 4,
+      "type_id": 1,
+      "subtype": 0,
+      "segment_arc_data": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "point_count": 4,
+      "length_mm": 7988.0,
+      "layer_index": 2,
+      "is_output_yes": true,
+      "bbox": [
+        9.0,
+        54.0,
+        1211.0,
+        2846.0
+      ],
+      "centroid": [
+        610.0,
+        1450.0
+      ],
+      "vertices": [
+        [
+          9.0,
+          2846.0
+        ],
+        [
+          1211.0,
+          2846.0
+        ],
+        [
+          1211.0,
+          54.0
+        ],
+        [
+          9.0,
+          54.0
+        ],
+        [
+          9.0,
+          2846.0
+        ]
+      ],
+      "is_closed_loop": true,
+      "complexity": {
+        "avg_segment_length_mm": 1997.0,
+        "curvature_index": 0.0006,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 0
+      },
+      "cut_order": 13,
+      "bbox_norm": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "centroid_norm": [
+        0.5,
+        0.5
+      ],
+      "element_id": "Element_14",
+      "children_ids": [
+        "Element_13"
+      ],
+      "parent_id": null
+    }
+  ],
+  "layers": [
+    {
+      "speed_mms": 300,
+      "cutter_type": "V-slot",
+      "cutter_type_id": 4,
+      "number_of_feeding": 1,
+      "start_height_h1_mm": 0.0,
+      "travel_safety_height_mm": 0.0,
+      "end_height_h2_mm": 9.0,
+      "total_cut_length_mm": 23751.8,
+      "color_hex": "0x0000ff00",
+      "color_val": 65280,
+      "color_rgb": [
+        0,
+        255,
+        0
+      ],
+      "direction": "Cut both side",
+      "direction_id": 3,
+      "v_slot_width_comp_mm": 0.0,
+      "starting_extension_mm": 20.0,
+      "ending_extension_mm": 20.0,
+      "is_output_yes": true,
+      "operation_type": "Dekorativní V-drážka (hloubka řezu: 3.0 mm)",
+      "complexity": {
+        "avg_segment_length_mm": 609.02,
+        "curvature_index": 0.0019,
+        "sharp_corners_count": 25,
+        "total_direction_changes": 18
+      }
+    },
+    {
+      "speed_mms": 80,
+      "cutter_type": "Vibrate cutter",
+      "cutter_type_id": 1,
+      "number_of_feeding": 1,
+      "start_height_h1_mm": 24.0,
+      "travel_safety_height_mm": 24.0,
+      "end_height_h2_mm": -0.5,
+      "total_cut_length_mm": 7980.0,
+      "color_hex": "0x00000000",
+      "color_val": 0,
+      "color_rgb": [
+        0,
+        0,
+        0
+      ],
+      "direction": "N/A",
+      "direction_id": 0,
+      "v_slot_width_comp_mm": 0.0,
+      "starting_extension_mm": 0.0,
+      "ending_extension_mm": 0.0,
+      "is_output_yes": true,
+      "operation_type": "Průřez celou tloušťkou materiálu (through-cut)",
+      "complexity": {
+        "avg_segment_length_mm": 1995.0,
+        "curvature_index": 0.0006,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 0
+      }
+    },
+    {
+      "speed_mms": 300,
+      "cutter_type": "V-slot",
+      "cutter_type_id": 4,
+      "number_of_feeding": 1,
+      "start_height_h1_mm": 0.0,
+      "travel_safety_height_mm": 0.0,
+      "end_height_h2_mm": 9.0,
+      "total_cut_length_mm": 7988.0,
+      "color_hex": "0x0000cccc",
+      "color_val": 52428,
+      "color_rgb": [
+        0,
+        204,
+        204
+      ],
+      "direction": "Left",
+      "direction_id": 1,
+      "v_slot_width_comp_mm": 0.0,
+      "starting_extension_mm": 0.0,
+      "ending_extension_mm": 0.0,
+      "is_output_yes": true,
+      "operation_type": "Dekorativní V-drážka (hloubka řezu: 3.0 mm)",
+      "complexity": {
+        "avg_segment_length_mm": 1997.0,
+        "curvature_index": 0.0006,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 0
+      }
+    }
+  ],
+  "fail_safe_flag": false,
+  "canvas_width_mm": 1202.0,
+  "canvas_height_mm": 2792.0,
+  "canvas_bbox": [
+    9.0,
+    54.0,
+    1211.0,
+    2846.0
+  ],
+  "shape_groups": [
+    {
+      "id": "Group_1",
+      "geom_type": "Polyline",
+      "point_count": 4,
+      "length_mm": 6434.5,
+      "count": 1,
+      "instances": [
+        {
+          "centroid": [
+            610.0,
+            828.56
+          ],
+          "bbox": [
+            310.0,
+            55.0,
+            910.0,
+            2845.0
+          ]
+        }
+      ],
+      "total_instances_count": 1,
+      "bbox_size": [
+        600.0,
+        2790.0
+      ]
+    },
+    {
+      "id": "Group_2",
+      "geom_type": "Line",
+      "point_count": 1,
+      "length_mm": 427.3,
+      "count": 2,
+      "instances": [
+        {
+          "centroid": [
+            1060.0,
+            207.12
+          ],
+          "bbox": [
+            910.0,
+            55.0,
+            1210.0,
+            359.24
+          ]
+        },
+        {
+          "centroid": [
+            160.0,
+            207.12
+          ],
+          "bbox": [
+            10.0,
+            55.0,
+            310.0,
+            359.24
+          ]
+        }
+      ],
+      "total_instances_count": 2,
+      "bbox_size": [
+        300.0,
+        304.2
+      ]
+    },
+    {
+      "id": "Group_3",
+      "geom_type": "Polyline",
+      "point_count": 4,
+      "length_mm": 1709.1,
+      "count": 8,
+      "instances": [
+        {
+          "centroid": [
+            610.0,
+            517.84
+          ],
+          "bbox": [
+            10.0,
+            365.72,
+            1210.0,
+            669.96
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            828.56
+          ],
+          "bbox": [
+            10.0,
+            676.44,
+            1210.0,
+            980.68
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            1139.28
+          ],
+          "bbox": [
+            10.0,
+            987.16,
+            1210.0,
+            1291.4
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            1450.0
+          ],
+          "bbox": [
+            10.0,
+            1297.88,
+            1210.0,
+            1602.12
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            1760.72
+          ],
+          "bbox": [
+            10.0,
+            1608.6,
+            1210.0,
+            1912.84
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            2071.44
+          ],
+          "bbox": [
+            10.0,
+            1919.32,
+            1210.0,
+            2223.56
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            2382.16
+          ],
+          "bbox": [
+            10.0,
+            2230.04,
+            1210.0,
+            2534.28
+          ]
+        },
+        {
+          "centroid": [
+            610.0,
+            2692.88
+          ],
+          "bbox": [
+            10.0,
+            2540.76,
+            1210.0,
+            2845.0
+          ]
+        }
+      ],
+      "total_instances_count": 8,
+      "bbox_size": [
+        1200.0,
+        304.2
+      ]
+    },
+    {
+      "id": "Group_4",
+      "geom_type": "Line",
+      "point_count": 1,
+      "length_mm": 2790.0,
+      "count": 1,
+      "instances": [
+        {
+          "centroid": [
+            610.0,
+            1450.0
+          ],
+          "bbox": [
+            610.0,
+            55.0,
+            610.0,
+            2845.0
+          ]
+        }
+      ],
+      "total_instances_count": 1,
+      "bbox_size": [
+        0.0,
+        2790.0
+      ]
+    },
+    {
+      "id": "Group_5",
+      "geom_type": "Polygon",
+      "point_count": 4,
+      "length_mm": 7980.0,
+      "count": 1,
+      "instances": [
+        {
+          "centroid": [
+            610.0,
+            1450.0
+          ],
+          "bbox": [
+            10.0,
+            55.0,
+            1210.0,
+            2845.0
+          ]
+        }
+      ],
+      "total_instances_count": 1,
+      "bbox_size": [
+        1200.0,
+        2790.0
+      ]
+    },
+    {
+      "id": "Group_6",
+      "geom_type": "Polygon",
+      "point_count": 4,
+      "length_mm": 7988.0,
+      "count": 1,
+      "instances": [
+        {
+          "centroid": [
+            610.0,
+            1450.0
+          ],
+          "bbox": [
+            9.0,
+            54.0,
+            1211.0,
+            2846.0
+          ]
+        }
+      ],
+      "total_instances_count": 1,
+      "bbox_size": [
+        1202.0,
+        2792.0
+      ]
+    }
+  ],
+  "detected_panel_format_name": "1200x2790 mm (Standardni Echoblock)",
+  "detected_panel_width_mm": 1200.0,
+  "detected_panel_height_mm": 2790.0,
+  "symmetry": {
+    "has_vertical": false,
+    "vertical_score_percent": 15,
+    "has_horizontal": false,
+    "horizontal_score_percent": 58,
+    "summary": "Symetrie nebyla detekována"
+  },
+  "density_grid": {
+    "grid_data": [
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    "summary": "Nejvyšší koncentrace prvků je ve vertikální zóně 5/8 a horizontálním sloupci 5/8.",
+    "cell_size_mm": [
+      349.0,
+      150.2
+    ]
+  },
+  "layout_type": "grid",
+  "material_thickness_mm": 12.0,
+  "operation_sequence": {
+    "layer_order": [
+      0,
+      1,
+      2
+    ],
+    "first_cut_type": "V-slot",
+    "last_cut_type": "V-slot",
+    "sequence_is_correct": false,
+    "element_sequence": [
+      {
+        "cut_order": 0,
+        "element_id": "Element_1",
+        "layer_index": 0,
+        "offset": "0x26afe",
+        "geom_type": "Polyline",
+        "length_mm": 6434.54
+      },
+      {
+        "cut_order": 1,
+        "element_id": "Element_2",
+        "layer_index": 0,
+        "offset": "0x26d17",
+        "geom_type": "Line",
+        "length_mm": 427.27
+      },
+      {
+        "cut_order": 2,
+        "element_id": "Element_3",
+        "layer_index": 0,
+        "offset": "0x26e52",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 3,
+        "element_id": "Element_4",
+        "layer_index": 0,
+        "offset": "0x2706b",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 4,
+        "element_id": "Element_5",
+        "layer_index": 0,
+        "offset": "0x27284",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 5,
+        "element_id": "Element_6",
+        "layer_index": 0,
+        "offset": "0x2749d",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 6,
+        "element_id": "Element_7",
+        "layer_index": 0,
+        "offset": "0x276b6",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 7,
+        "element_id": "Element_8",
+        "layer_index": 0,
+        "offset": "0x278cf",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 8,
+        "element_id": "Element_9",
+        "layer_index": 0,
+        "offset": "0x27ae8",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 9,
+        "element_id": "Element_10",
+        "layer_index": 0,
+        "offset": "0x27d01",
+        "geom_type": "Polyline",
+        "length_mm": 1709.09
+      },
+      {
+        "cut_order": 10,
+        "element_id": "Element_11",
+        "layer_index": 0,
+        "offset": "0x27f1a",
+        "geom_type": "Line",
+        "length_mm": 427.27
+      },
+      {
+        "cut_order": 11,
+        "element_id": "Element_12",
+        "layer_index": 0,
+        "offset": "0x28055",
+        "geom_type": "Line",
+        "length_mm": 2790.0
+      },
+      {
+        "cut_order": 12,
+        "element_id": "Element_13",
+        "layer_index": 1,
+        "offset": "0x28190",
+        "geom_type": "Polygon",
+        "length_mm": 7980.0
+      },
+      {
+        "cut_order": 13,
+        "element_id": "Element_14",
+        "layer_index": 2,
+        "offset": "0x283a9",
+        "geom_type": "Polygon",
+        "length_mm": 7988.0
+      }
+    ],
+    "element_sequence_violations": []
+  },
+  "technological_classification": "Standardní celoplošný panel",
+  "normalized_coords_included": true,
+  "is_aggregated_job": false,
+  "spatial_arrangement_description": "",
+  "sub_jobs": [],
+  "topology_tree": [
+    {
+      "element_id": "Element_14",
+      "geom_type": "Polygon",
+      "length_mm": 7988.0,
+      "centroid": [
+        610.0,
+        1450.0
+      ],
+      "bbox": [
+        9.0,
+        54.0,
+        1211.0,
+        2846.0
+      ],
+      "is_closed_loop": true,
+      "children": [
+        {
+          "element_id": "Element_13",
+          "geom_type": "Polygon",
+          "length_mm": 7980.0,
+          "centroid": [
+            610.0,
+            1450.0
+          ],
+          "bbox": [
+            10.0,
+            55.0,
+            1210.0,
+            2845.0
+          ],
+          "is_closed_loop": true,
+          "children": [
+            {
+              "element_id": "Element_1",
+              "geom_type": "Polyline",
+              "length_mm": 6434.54,
+              "centroid": [
+                610.0,
+                828.56
+              ],
+              "bbox": [
+                310.0,
+                55.0,
+                910.0,
+                2845.0
+              ],
+              "is_closed_loop": false,
+              "children": [
+                {
+                  "element_id": "Element_12",
+                  "geom_type": "Line",
+                  "length_mm": 2790.0,
+                  "centroid": [
+                    610.0,
+                    1450.0
+                  ],
+                  "bbox": [
+                    610.0,
+                    55.0,
+                    610.0,
+                    2845.0
+                  ],
+                  "is_closed_loop": false,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "element_id": "Element_2",
+              "geom_type": "Line",
+              "length_mm": 427.27,
+              "centroid": [
+                1060.0,
+                207.12
+              ],
+              "bbox": [
+                910.0,
+                55.0,
+                1210.0,
+                359.24
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_3",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                517.84
+              ],
+              "bbox": [
+                10.0,
+                365.72,
+                1210.0,
+                669.96
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_4",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                828.56
+              ],
+              "bbox": [
+                10.0,
+                676.44,
+                1210.0,
+                980.68
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_5",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                1139.28
+              ],
+              "bbox": [
+                10.0,
+                987.16,
+                1210.0,
+                1291.4
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_6",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                1450.0
+              ],
+              "bbox": [
+                10.0,
+                1297.88,
+                1210.0,
+                1602.12
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_7",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                1760.72
+              ],
+              "bbox": [
+                10.0,
+                1608.6,
+                1210.0,
+                1912.84
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_8",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                2071.44
+              ],
+              "bbox": [
+                10.0,
+                1919.32,
+                1210.0,
+                2223.56
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_9",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                2382.16
+              ],
+              "bbox": [
+                10.0,
+                2230.04,
+                1210.0,
+                2534.28
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_10",
+              "geom_type": "Polyline",
+              "length_mm": 1709.09,
+              "centroid": [
+                610.0,
+                2692.88
+              ],
+              "bbox": [
+                10.0,
+                2540.76,
+                1210.0,
+                2845.0
+              ],
+              "is_closed_loop": false,
+              "children": []
+            },
+            {
+              "element_id": "Element_11",
+              "geom_type": "Line",
+              "length_mm": 427.27,
+              "centroid": [
+                160.0,
+                207.12
+              ],
+              "bbox": [
+                10.0,
+                55.0,
+                310.0,
+                359.24
+              ],
+              "is_closed_loop": false,
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "proximity_matrix": {
+    "Group_1": {
+      "Group_2": 0.0,
+      "Group_3": 0.0,
+      "Group_4": 0.0,
+      "Group_5": 0.0,
+      "Group_6": 0.0
+    },
+    "Group_2": {
+      "Group_1": 0.0,
+      "Group_3": 6.48,
+      "Group_4": 300.0,
+      "Group_5": 0.0,
+      "Group_6": 0.0
+    },
+    "Group_3": {
+      "Group_1": 0.0,
+      "Group_2": 6.48,
+      "Group_4": 0.0,
+      "Group_5": 0.0,
+      "Group_6": 0.0
+    },
+    "Group_4": {
+      "Group_1": 0.0,
+      "Group_2": 300.0,
+      "Group_3": 0.0,
+      "Group_5": 0.0,
+      "Group_6": 0.0
+    },
+    "Group_5": {
+      "Group_1": 0.0,
+      "Group_2": 0.0,
+      "Group_3": 0.0,
+      "Group_4": 0.0,
+      "Group_6": 0.0
+    },
+    "Group_6": {
+      "Group_1": 0.0,
+      "Group_2": 0.0,
+      "Group_3": 0.0,
+      "Group_4": 0.0,
+      "Group_5": 0.0
+    }
+  },
+  "ml_features": {
+    "total_length_mm": 39719.8,
+    "num_layers": 3,
+    "num_elements": 14,
+    "num_shape_groups": 6,
+    "max_group_repetitions": 8,
+    "vertical_symmetry_score": 15,
+    "horizontal_symmetry_score": 58,
+    "density_grid_mean": 0.2188,
+    "density_grid_std": 0.7174,
+    "has_warning": 1,
+    "material_thickness_mm": 12.0,
+    "panel_width_mm": 1200.0,
+    "panel_height_mm": 2790.0,
+    "is_aggregated_job": 0,
+    "num_sub_jobs": 1,
+    "layer0_speed_mms": 300.0,
+    "layer0_length_mm": 23751.8,
+    "layer0_cutter_type_id": 4,
+    "layer0_end_height_h2_mm": 9.0,
+    "layer0_has_extension": 1,
+    "layer0_complexity_avg_seg": 609.02,
+    "layer0_complexity_curvature": 0.0019,
+    "layer0_complexity_corners": 25,
+    "layer0_complexity_dir_changes": 18,
+    "layer1_speed_mms": 80.0,
+    "layer1_length_mm": 7980.0,
+    "layer1_cutter_type_id": 1,
+    "layer1_end_height_h2_mm": -0.5,
+    "layer1_has_extension": 0,
+    "layer1_complexity_avg_seg": 1995.0,
+    "layer1_complexity_curvature": 0.0006,
+    "layer1_complexity_corners": 3,
+    "layer1_complexity_dir_changes": 0,
+    "layer2_speed_mms": 300.0,
+    "layer2_length_mm": 7988.0,
+    "layer2_cutter_type_id": 4,
+    "layer2_end_height_h2_mm": 9.0,
+    "layer2_has_extension": 0,
+    "layer2_complexity_avg_seg": 1997.0,
+    "layer2_complexity_curvature": 0.0006,
+    "layer2_complexity_corners": 3,
+    "layer2_complexity_dir_changes": 0,
+    "layer3_speed_mms": 0.0,
+    "layer3_length_mm": 0.0,
+    "layer3_cutter_type_id": 0,
+    "layer3_end_height_h2_mm": 0.0,
+    "layer3_has_extension": 0,
+    "layer3_complexity_avg_seg": 0.0,
+    "layer3_complexity_curvature": 0.0,
+    "layer3_complexity_corners": 0,
+    "layer3_complexity_dir_changes": 0,
+    "layer4_speed_mms": 0.0,
+    "layer4_length_mm": 0.0,
+    "layer4_cutter_type_id": 0,
+    "layer4_end_height_h2_mm": 0.0,
+    "layer4_has_extension": 0,
+    "layer4_complexity_avg_seg": 0.0,
+    "layer4_complexity_curvature": 0.0,
+    "layer4_complexity_corners": 0,
+    "layer4_complexity_dir_changes": 0
+  },
+  "complexity_index": "Střední průmyslová složitost (Standardní)",
+  "erp_time_prediction": {
+    "total_path_length_mm": 39719.8,
+    "predicted_time_seconds": 405,
+    "predicted_time_formatted": "6 min 45 s"
+  }
+}

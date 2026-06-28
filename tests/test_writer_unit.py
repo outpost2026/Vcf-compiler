@@ -46,8 +46,8 @@ def test_layer_block_color_bgr():
     layer = VcfLayer(color=[255, 0, 0])
     block = VcfWriter.encode_layer_block(layer, 610)
     color_val = struct.unpack('<I', block[76:80])[0]
-    expected_bgr = (255 << 16) | (0 << 8) | 0
-    assert color_val == expected_bgr
+    # Native VCFs always store black (0x000000) at offset 76, not the ACI color
+    assert color_val == 0
 
 
 def test_layer_block_cutter_id():
@@ -186,9 +186,10 @@ def test_header_layer_order():
     layer2 = VcfLayer(color=[0, 255, 0], speed=200.0)
     writer = VcfWriter(layers=[layer1, layer2])
     h = writer.header()
-    HEADER_PREAMBLE_SIZE = 54
-    last_block = HEADER_PREAMBLE_SIZE + 256 * 610
-    prev_block = HEADER_PREAMBLE_SIZE + 255 * 610
+    from vcf_parser._writer import MACHINE_PROFILE, EMPTY_BLOCK_COUNT
+    HEADER_PREAMBLE_SIZE = 54 + len(MACHINE_PROFILE)
+    last_block = HEADER_PREAMBLE_SIZE + (EMPTY_BLOCK_COUNT + 1) * 610
+    prev_block = HEADER_PREAMBLE_SIZE + EMPTY_BLOCK_COUNT * 610
     speed_layer2 = struct.unpack('<d', h[last_block + 4:last_block + 12])[0]
     speed_layer1 = struct.unpack('<d', h[prev_block + 4:prev_block + 12])[0]
     assert speed_layer1 == 100.0

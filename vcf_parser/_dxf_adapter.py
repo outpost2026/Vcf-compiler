@@ -32,7 +32,7 @@ ACI_TO_RGB = {
     8: (128, 128, 128),
     9: (192, 192, 192),
     30: (255, 165, 0),
-    52: (191, 255, 0),
+    52: (0, 204, 204),
     92: (8, 145, 178),
 }
 
@@ -274,7 +274,7 @@ def compile_dxf(dxf_path, output_path, config_path=None, h1_default=2.0, feed_de
         raise ValueError("No elements generated — check entity geometry")
 
     from vcf_parser._writer import write
-    write(spec, str(output_path))
+    write(spec, str(output_path), dxf_source_path=str(dxf_path))
 
     logger.info(
         "Compiled DXF → VCF: %s (%d layers, %d elements, %.1f m path)",

@@ -3,6 +3,14 @@
   "_description": "Mapování ACI barev z DXF na VCF parametry pro RDD6584G oscilační nůž. Seed values čerpány z dxf_tool_config.json (dxf_integrace repo) a reverzního inženýrství produkčních VCF souborů.",
 
   "aci_color_mapping": {
+    "0": {
+      "cutter_type": "Vibrate cutter", "speed_mms": 80, "direction": "N/A",
+      "h1_mm": 24.0, "h2_mm": -0.5, "vs_comp_mm": 0.0,
+      "start_extension_mm": 0.0, "end_extension_mm": 0.0,
+      "is_output": true, "number_of_feeding": 1,
+      "validation_status": "calibrated",
+      "_note": "Black — ACI 0 = default in fishbone DXF. Reuses ACI 7 Vibrate params."
+    },
     "1": {
       "cutter_type": "Vibrate cutter", "speed_mms": 150, "direction": "N/A",
       "h1_mm": 2.0, "h2_mm": -0.3, "vs_comp_mm": 0.0,
@@ -20,12 +28,12 @@
       "_note": "Yellow — chamfers. One-sided V-slot, confirmed on production VCF."
     },
     "3": {
-      "cutter_type": "V-slot", "speed_mms": 200, "direction": "Cut both side",
-      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "cutter_type": "V-slot", "speed_mms": 300, "direction": "Cut both side",
+      "h1_mm": 0.0, "h2_mm": 9.0, "vs_comp_mm": 0.0,
       "start_extension_mm": 2.0, "end_extension_mm": 2.0,
       "is_output": true, "number_of_feeding": 1,
-      "validation_status": "empirical",
-      "_note": "Green — standard V-slot pattern. 7 correct matches."
+      "validation_status": "calibrated",
+      "_note": "Green — main V-slot. Calibrated from fishbone/manchester native: speed=300, h1=0, h2=9."
     },
     "4": {
       "cutter_type": "ambiguous", "speed_mms": 200, "direction": "Cut both side",
@@ -73,20 +81,20 @@
       "_note": "Orange — special V-slot. Slow speed for complex patterns."
     },
     "52": {
-      "cutter_type": "V-slot", "speed_mms": 200, "direction": "Cut both side",
-      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "cutter_type": "V-slot", "speed_mms": 300, "direction": "Cut both side",
+      "h1_mm": 0.0, "h2_mm": 9.0, "vs_comp_mm": 0.0,
       "start_extension_mm": 3.0, "end_extension_mm": 3.0,
       "is_output": true, "number_of_feeding": 1,
-      "validation_status": "hypothesis",
-      "_note": "Lime — few samples, speculative mapping."
+      "validation_status": "calibrated",
+      "_note": "Green — V-slot. Calibrated from fishbone/manchester native: speed=300, h1=0, h2=9."
     },
     "92": {
       "cutter_type": "V-slot", "speed_mms": 300, "direction": "Cut both side",
-      "h1_mm": 2.0, "h2_mm": 6.0, "vs_comp_mm": 0.0,
+      "h1_mm": 0.0, "h2_mm": 9.0, "vs_comp_mm": 0.0,
       "start_extension_mm": 10.0, "end_extension_mm": 10.0,
       "is_output": true, "number_of_feeding": 1,
-      "validation_status": "hypothesis",
-      "_note": "Azure — long extensions, few samples."
+      "validation_status": "calibrated",
+      "_note": "Teal — V-slot. Calibrated from fishbone/manchester native: speed=300, h1=0, h2=9."
     }
   },
 

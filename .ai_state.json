@@ -1,7 +1,7 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "last_updated": "2026-06-27",
   "git_commits": [
     "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
@@ -15,19 +15,21 @@
     "ed867c1 — fix: ACI 7→black, H1=24, speed=80, h2=-0.5",
     "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives"
   ],
+  "current_session": "2026-06-27 (session 2 — DXF path trailer, block index, ACI 52 color)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
-    "vcf_parser/_writer.py": "VcfWriter — header/body/trailer serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE",
+    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native)",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
     "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
-    "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (10+ colors with validation statuses)"
+    "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (12 colors with validation statuses)"
   },
   "implementation_status": {
     "writer": {
-      "status": "functional",
-      "version": "1.1",
+      "status": "functional — self-contained",
+      "version": "1.2",
       "features": [
-        "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims",
+        "Full 472B header: 54B preamble + 418B machine profile (from native VCF template)",
+        "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims (1220×2900)",
         "257 layer blocks × 610 B (empty-first, active-last)",
         "8B trailers (output_flag + color) on empty blocks for backward scan",
         "Layer block: output_flag@0, speed@4, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, ext@114/122",
@@ -37,8 +39,7 @@
         "VcfLayer with _path_types for circle detection"
       ],
       "not_implemented": [
-        "Scrambling (raises UnsupportedFeatureError)",
-        "Full 472B machine profile header (uses native template as workaround)"
+        "Scrambling (raises UnsupportedFeatureError)"
       ]
     },
     "reader": {
@@ -56,7 +57,7 @@
       "status": "functional",
       "features": [
         "compile_dxf(dxf_path, output_path, config_path)",
-        "ACI_TO_RGB mapping (VCutWorks-calibrated: ACI 7=black)",
+        "ACI_TO_RGB mapping (VCutWorks-calibrated: ACI 7=black, ACI 0=black)",
         "Config loader with fallback defaults",
         "Density-based ACI 4 ambiguity resolution",
         "Coordinate transform (+67.5, -287.5 mm)"
@@ -76,60 +77,77 @@
         "square_1_aci.VCF",
         "circle_radius_125.VCF",
         "circle_diameter_600_native.VCF",
-        "empty_canavas_native.VCF"
+        "empty_canavas_native.VCF",
+        "fishbone_2790x1200_native.VCF",
+        "manchester_3_subjobs_native.VCF"
       ],
       "synthetic_vcf": [
         "square_from_dxf.VCF",
         "circle_diameter_600_from_dxf.VCF",
-        "circle_diameter_600_hybrid.VCF",
-        "hybrid_square_from_dxf.VCF"
+        "fishbone_2790x1200_from_dxf.VCF",
+        "manchester_3_subjobs_from_dxf.VCF"
       ],
-      "production_vcf": [
-        "1ks.VCF",
-        "fluenz_l.VCF",
-        "vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF"
+      "hybrid_vcf": [
+        "hybrid_square_from_dxf.VCF",
+        "circle_diameter_600_hybrid.VCF"
       ]
     }
   },
   "session_state": {
-    "current_session": "2026-06-27 (afternoon — debugging + geometry fixes)",
-    "files_modified_in_session": [
-      "vcf_parser/_writer.py (3 critical fixes)",
-      "vcf_parser/_dxf_adapter.py (ACI 7→black, H1 default, speed)",
-      "vcf_compiler_map_config.json (ACI 7 calibrated)",
-      "tests/test_writer_unit.py (updated circle test)"
-    ],
-    "files_created_in_session": [
-      "demo_data/circle_diameter_600_from_dxf.VCF",
-      "demo_data/circle_diameter_600_hybrid.VCF",
-      "demo_data/hybrid_square_from_dxf.VCF",
-      "docs/ACI_MAPOVANI_RESEARCH_V2.md",
-      "docs/handoff_session_2026-06-27.json"
-    ],
+    "current_session": "2026-06-27 (session 2 — DXF path trailer, block index, ACI 52 color)",
+    "changes_in_session": {
+      "writer": [
+        "MACHINE_PROFILE (418B) included in header — matches native",
+        "EMPTY_BLOCK_COUNT=256, dynamic total_blocks=256+n_layers",
+        "Block color at offset 76 always black (0x000000) — matches native",
+        "Block index counter at [10] (uint16, 0-255 across empty blocks)",
+        "TRAILER_PREFIX constant (199 bytes from native VCF) — 285-305B trailer with DXF path",
+        "trailer() generates: 199B prefix + 0x00 + length_byte + ASCII DXF path",
+        "write() appends trailer after body (was dead code before)",
+        "VcfWriter accepts dxf_source_path → embedded in trailer",
+        "write() accepts dxf_source_path parameter",
+        "Old trailer() returning b'\\xd7' removed"
+      ],
+      "dxf_adapter": [
+        "compile_dxf() passes dxf_source_path to write()",
+        "ACI_TO_RGB[52] fixed: (191,255,0) → (0,204,204) matching native teal"
+      ]
+    },
     "key_findings": [
-      "b2b reader != VCutWorks rendering engine (first working VCF had 0 layers in b2b)",
-      "Native header is always 472 B (machine profile) — identical across all native VCFs",
-      "Hybrid VCF (native header + our payload) shows layer cards but NO geometry",
-      "Bytes 12-44 in geometry element are const template from native — zeros cause invisible geometry",
-      "is_closed fails on FP drift (2.27e-13) — fixed with epsilon comparison",
-      "encode_circle_element was dead code with wrong pt_count — now produces 4 arc segments"
+      "Native VCFs store DXF source path as length-prefixed ASCII at end (199B constant prefix + null + length byte + path)",
+      "Empty blocks contain a sequential index counter at [10] (uint16 0-255)",
+      "Native blocks have additional default values at various offsets (24.0, 100.0, 5.0, 0.5, etc.) — likely VCutWorks initialization, not validation-critical",
+      "Native fishbone ACI 52 maps to teal RGB(0,204,204) in geometry, not lime RGB(191,255,0)",
+      "Geometry byte-for-byte identical between native and synthetic square (same 341B element)",
+      "All native VCFs (square, circle, fishbone, manchester) share identical trailer structure",
+      "Trailer size varies slightly: 285B (1 elem) → 305B (72 elems) due to different DXF path lengths"
     ],
+    "verification": {
+      "square_1_aci": "157868B, 258 blocks, 1 elem, 285B trailer — matches native size exactly",
+      "fishbone": "164088B, 259 blocks, 41 elems, 303B trailer — element count mismatch (41 vs 14)",
+      "manchester": "168667B, 259 blocks, 72 elems, 305B trailer — matches native element count",
+      "tests": "28 pass, 2 skip — all unit+roundtrip tests green"
+    },
     "pending_tasks": [
-      "GUI validation of hybrid VCFs (after a1b339c fix)",
-      "Implement 472B machine profile header template in writer",
-      "Write geometry header byte analysis (understand bytes 12-44 meaning)",
-      "Add more DXF→VCF integration tests"
+      "GUI validation in VCutWorks — test all regenerated VCFs (especially fishbone/manchester)",
+      "Fishbone element consolidation — DXF indexer decomposes polylines (41→14 elements)",
+      "Empty block default values — replicate 24.0, 100.0, 5.0, 0.5 etc. in empty blocks if VCutWorks requires",
+      "Test bigcoffee_12_8 and 1ks DXF sources for broader validation",
+      "Add circle DXF (circle_500_single_aci.dxf exists in dxf_integrace)"
     ],
     "decisions_made": [
-      "ACI 7 → RGB(0,0,0) not white (VCutWorks palette != AutoCAD)",
-      "GEOMETRY_HEADER_TEMPLATE = hardcoded from native (unknown meaning, but functional)",
-      "is_closed epsilon = 0.001 mm",
-      "encode_circle_element pt_count=4 with arc segments (matching native sub=3 format)"
+      "TRAILER_PREFIX = bytes 0-198 from native square trailer (same across all natives)",
+      "Trailer format: 199B prefix + 0x00 + len(path)(1B) + path(ASCII) — matches native structure",
+      "Block index at [10] = uint16, sequential 0-255 — matches native",
+      "ACI_TO_RGB[52] = (0,204,204) = teal — matches native fishbone layer 3 color",
+      "Geometry element comparison: vertex data is byte-identical for identical paths"
     ],
     "open_questions": [
-      "What do bytes 12-44 in geometry header actually represent?",
-      "Why does empty_canavas have different structure (no 257×610 blocks)?",
-      "Will VCutWorks accept fully synthetic VCF with template bytes but without machine profile header?"
+      "Will VCutWorks accept the regenerated VCFs now? (square should be closest to native)",
+      "Does VCutWorks require empty block default values (24.0, 100.0, 5.0 at various offsets)?",
+      "Why does the DXF indexer produce 41 elements for fishbone instead of 14? (polyline vs LINE decomposition)",
+      "Is there a header checksum or CRC that we're missing?",
+      "Does the empty_canavas native have a fundamentally different structure?"
     ]
   },
   "dependencies": {
