@@ -1,11 +1,28 @@
-"""Diagnose why VCutWorks shows 1 element for multi-element line files."""
+"""Diagnose multi-element VCF files — analyze element structure, ec@92, offset606.
+
+Scans VCF files from training DB or custom path. Reports:
+- Format version (1.0.012 / 1.0.013 / other)
+- Element count via GEOMETRY_SIG scanning + offset606 cross-check (1.0.013 only)
+- Layer block metadata for 1.0.013 format
+- Footer presence anomalies
+
+Note: 1.0.012 files have different structure (no machine profile, fewer blocks).
+Full layer block analysis (ec@92, offset606) only applies to 1.0.013.
+
+Usage:
+    python dev_scripts/diagnose_multi_element.py
+    python dev_scripts/diagnose_multi_element.py --path "C:/path/to/vcf/files"
+    python dev_scripts/diagnose_multi_element.py --file "path/to/single.VCF" --verbose
+"""
 import struct
 import sys
+import argparse
 from pathlib import Path
 
-GEOMETRY_SIG = b'\x53\x48\x58\x43\x55\x54\x00\x00'
-BASE = Path(__file__).resolve().parent.parent
-DEMO = BASE / 'demo_data'
+GEOMETRY_SIG = bytes([0x01, 0x00, 0x01, 0x00, 0x00, 0xff, 0xff, 0xff])
+LAYER_BLOCK_SIZE = 610
+EMPTY_BLOCK_COUNT = 256
+HEADER_SIZE_013 = 472  # 1B prefix + 20B magic + 3B post + 16B stock + 14B post_stock + 418B profile
 
 def find_all_geom_sigs(data: bytes) -> list[int]:
     offsets = []
@@ -18,142 +35,214 @@ def find_all_geom_sigs(data: bytes) -> list[int]:
         start = pos + 1
     return offsets
 
+def detect_format(data: bytes) -> dict:
+    magic_013 = b'RDVCUTFILEVER1.0.013'
+    magic_012 = b'RDVCUTFILEVER1.0.012'
+    info = {'version': 'unknown', 'has_blocks': False}
+    
+    if len(data) > 25:
+        m = data[1:1+len(magic_013)]
+        if m == magic_013:
+            info['version'] = '1.0.013'
+        elif m == magic_012:
+            info['version'] = '1.0.012'
+    
+    return info
+
+def get_013_block_fields(data: bytes, blk_start: int) -> dict | None:
+    """Read 610B layer block fields for 1.0.013 format."""
+    blk = data[blk_start:blk_start+LAYER_BLOCK_SIZE]
+    if len(blk) < LAYER_BLOCK_SIZE:
+        return None
+    speed = struct.unpack_from('<d', blk, 4)[0]
+    is_active = 0 < speed < 2000
+    return {
+        'start': blk_start,
+        'block_num': struct.unpack_from('<H', blk, 10)[0] & 0xFF,
+        'ec92': blk[92],
+        'offset606': struct.unpack_from('<I', blk, 606)[0],
+        'offset602': struct.unpack_from('<I', blk, 602)[0],
+        'color': struct.unpack_from('<I', blk, 12)[0],
+        'speed': speed,
+        'is_active': is_active,
+    }
+
+def find_last_active_block_013(data: bytes) -> dict | None:
+    """For 1.0.013: find last active 610B block before first GEOMETRY_SIG.
+    
+    Tries different header sizes (simulating production file variants),
+    checks if block area aligns to 610B boundaries, then scans backward
+    from the last block for one with valid speed.
+    """
+    first_sig = data.find(GEOMETRY_SIG)
+    if first_sig < 0:
+        return None
+    
+    # Try plausible header sizes (472 is our writer, others are production variants)
+    for hs in [472, 469, 466, 463, 460, 448, 418, 414, 412, 410, 408, 400,
+               256, 128, 64, 48, 40]:
+        block_bytes = first_sig - hs
+        if block_bytes < LAYER_BLOCK_SIZE:
+            continue
+        if block_bytes % LAYER_BLOCK_SIZE != 0:
+            continue
+        total_blocks = block_bytes // LAYER_BLOCK_SIZE
+        # Scan last 20 blocks for active one
+        start_idx = max(0, total_blocks - 20)
+        for idx in range(total_blocks - 1, start_idx - 1, -1):
+            blk_start = hs + idx * LAYER_BLOCK_SIZE
+            if blk_start + LAYER_BLOCK_SIZE > len(data):
+                continue
+            speed = struct.unpack_from('<d', data, blk_start + 4)[0]
+            if 0 < speed < 2000:
+                return get_013_block_fields(data, blk_start)
+    return None
+
 def parse_elements(data: bytes, sig_offsets: list[int]) -> list[dict]:
     elements = []
     for i, pos in enumerate(sig_offsets):
-        # find next sig to determine element boundary
         next_pos = sig_offsets[i + 1] if i + 1 < len(sig_offsets) else len(data)
         raw = data[pos:next_pos]
-        
-        geom_color = struct.unpack_from('<I', raw, 8)[0]
-        
-        p = 45  # type_offset
+        p = 45
         type_id = struct.unpack_from('<I', raw, p)[0]
         pt_count = struct.unpack_from('<I', raw, p + 4)[0]
         subtype = struct.unpack_from('<I', raw, p + 8)[0]
+        geom_color = struct.unpack_from('<I', raw, 8)[0]
         
-        vertices = []
-        for seg_i in range(pt_count):
-            seg_start = p + seg_i * 74
-            x1 = struct.unpack('<d', raw[seg_start+14:seg_start+22])[0]
-            y1 = struct.unpack('<d', raw[seg_start+22:seg_start+30])[0]
-            x2 = struct.unpack('<d', raw[seg_start+30:seg_start+38])[0]
-            y2 = struct.unpack('<d', raw[seg_start+38:seg_start+46])[0]
-            if seg_i == 0:
-                vertices.append((x1, y1))
-            vertices.append((x2, y2))
-        
-        # Determine element size: look for TRAILER (5 zeros) or end of file
-        # The footer is 196 bytes, so element = 45 + pt_count*74 + 196
-        expected_elem_size = 45 + pt_count * 74 + 196
-        actual_elem_size = len(raw)
-        
-        # Check footer content
+        expected_196 = 45 + pt_count * 74 + 196
+        actual_size = len(raw)
         footer_start = 45 + pt_count * 74
         footer = raw[footer_start:footer_start+196]
         
         elements.append({
-            'idx': i,
-            'pos': pos,
-            'geom_color': hex(geom_color),
-            'type_id': type_id,
-            'pt_count': pt_count,
-            'subtype': subtype,
-            'vertices': vertices,
-            'expected_elem_size': expected_elem_size,
-            'actual_elem_size': actual_elem_size,
-            'footer_first_4': footer[:4].hex(),
-            'footer_last_4': footer[-4:].hex() if len(footer) >= 4 else 'N/A',
+            'idx': i, 'pos': pos, 'color': hex(geom_color),
+            'type_id': type_id, 'pt_count': pt_count, 'subtype': subtype,
+            'expected_196': expected_196, 'actual_size': actual_size,
+            'has_footer': actual_size >= expected_196 - 10,
             'footer_len': len(footer),
         })
     return elements
 
-def analyze_vcf(path: Path, label: str):
+def analyze_vcf(path: Path) -> dict:
     data = path.read_bytes()
     sigs = find_all_geom_sigs(data)
-    print(f"\n{'='*80}")
-    print(f"{label}: {path.name}")
-    print(f"File size: {len(data)} bytes")
-    print(f"GEOMETRY_SIG count: {len(sigs)}")
-    print(f"Last 10 bytes: {data[-10:].hex()}")
-    print(f"Total elements detected: {len(sigs)}")
-    
     elements = parse_elements(data, sigs)
-    for el in elements:
-        print(f"\n  Element {el['idx']} @ offset {el['pos']}:")
-        print(f"    color={el['geom_color']}, type={el['type_id']}, segments={el['pt_count']}, subtype={el['subtype']}")
-        print(f"    vertices (first,last): {el['vertices'][0]} -> {el['vertices'][-1]}")
-        print(f"    expected_size={el['expected_elem_size']}, actual_raw_size={el['actual_elem_size']}")
-        print(f"    footer: {el['footer_first_4']} ... {el['footer_last_4']} (len={el['footer_len']})")
+    fmt = detect_format(data)
     
-    return data, sigs, elements
+    last_block = None
+    if fmt['version'] == '1.0.013':
+        last_block = find_last_active_block_013(data)
+    
+    trailer_5zeros = len(data) >= 5 and data[-5:] == b'\x00' * 5
+    return {
+        'path': path, 'size': len(data), 'format': fmt['version'],
+        'sig_count': len(sigs), 'elements': elements,
+        'last_block': last_block, 'trailer_5zeros': trailer_5zeros,
+    }
 
-# Compare native vs synthetic 2-element line
-native_2 = DEMO / 'native_vcf' / 'single_line_2000_elements_2.VCF'
-synth_2 = DEMO / 'synthethic_vcf' / 'single_line_2000_elements_2_inversion.VCF'
+def scan_directory(directory: Path) -> list[Path]:
+    return sorted(directory.glob('*.VCF'))
 
-n_data, n_sigs, n_elems = analyze_vcf(native_2, 'NATIVE')
-s_data, s_sigs, s_elems = analyze_vcf(synth_2, 'SYNTH')
-
-print(f"\n{'='*80}")
-print("COMPARISON SUMMARY:")
-print(f"  Element counts: native={len(n_sigs)}, synth={len(s_sigs)}")
-if len(n_sigs) == len(s_sigs):
-    for i in range(len(n_sigs)):
-        ne = n_elems[i]
-        se = s_elems[i]
-        print(f"\n  Element {i}:")
-        print(f"    color: native={ne['geom_color']}, synth={se['geom_color']}, match={ne['geom_color']==se['geom_color']}")
-        print(f"    segments: native={ne['pt_count']}, synth={se['pt_count']}, match={ne['pt_count']==se['pt_count']}")
-        print(f"    expected_size: native={ne['expected_elem_size']}, synth={se['expected_elem_size']}")
+def print_summary_table(results: list[dict]):
+    print(f"\n{'='*95}")
+    print(f"{'SUMMARY TABLE':^95}")
+    print(f"{'='*95}")
+    hdr = f"{'File':<45} {'Size':>8} {'Fmt':>8} {'Elem':>6} {'ec@92':>6} {'off606':>8} {'Match':>7} {'Trl':>5}"
+    print(hdr)
+    print(f"{'-'*45} {'-'*8} {'-'*8} {'-'*6} {'-'*6} {'-'*8} {'-'*7} {'-'*5}")
+    
+    ok = mismatch = no_blk = not_applicable = 0
+    for r in results:
+        name = r['path'].name[:44]
+        fmt = r['format']
+        n_sigs = r['sig_count']
+        lb = r['last_block']
         
-        # Check for any difference in binary within geometry section only (skip footer)
-        n_geom_end = ne['pos'] + 45 + ne['pt_count'] * 74
-        s_geom_end = se['pos'] + 45 + se['pt_count'] * 74
-        n_geom = n_data[ne['pos']:n_geom_end]
-        s_geom = s_data[se['pos']:s_geom_end]
-        
-        # But exclude color byte (offset 8-12)
-        print(f"    Geometry section binary match (excluding color@8-12): ", end='')
-        n_geom_masked = bytearray(n_geom)
-        s_geom_masked = bytearray(s_geom)
-        # Zero out color bytes for comparison
-        n_geom_masked[8:12] = b'\x00\x00\x00\x00'
-        s_geom_masked[8:12] = b'\x00\x00\x00\x00'
-        if n_geom_masked == s_geom_masked:
-            print("YES")
+        if fmt == '1.0.013' and lb:
+            ec = lb['ec92']
+            off = lb['offset606']
+            is_match = (off == n_sigs)
+            if is_match:
+                ok += 1
+            else:
+                mismatch += 1
+            ms = 'OK' if is_match else 'MIS'
+            ec_s = str(ec)
+            off_s = str(off)
+        elif fmt == '1.0.013':
+            ec_s = '?'
+            off_s = '?'
+            ms = 'N/A'
+            no_blk += 1
         else:
-            print("DIFFERS!")
-            diff_positions = []
-            for j in range(min(len(n_geom_masked), len(s_geom_masked))):
-                if n_geom_masked[j] != s_geom_masked[j]:
-                    diff_positions.append((j, n_geom[j], s_geom[j]))
-            for pos, nb, sb in diff_positions[:20]:
-                print(f"      offset +{pos}: native={nb:02x}, synth={sb:02x}")
+            ec_s = '-'
+            off_s = '-'
+            ms = 'N/A'
+            not_applicable += 1
+        
+        trl = 'OK' if r['trailer_5zeros'] else 'BAD'
+        print(f"{name:<45} {r['size']:>8} {fmt:>8} {n_sigs:>6} {ec_s:>6} {off_s:>8} {ms:>7} {trl:>5}")
+    
+    print(f"{'-'*95}")
+    print(f"Total: {len(results)} | offset606==sigs: {ok} | mismatch: {mismatch} | no_block: {no_blk} | N/A(012): {not_applicable}")
 
-# Also check single-element files for comparison
-native_1 = DEMO / 'native_vcf' / 'single_line_2000.VCF'
-synth_1 = DEMO / 'synthethic_vcf' / 'single_line_2000_inversion.VCF'
+def print_verbose(result: dict):
+    p = result['path']
+    print(f"\n{'='*80}")
+    print(f"  {p.name}  [{result['format']}]  ({result['size']}B)")
+    print(f"  Elements: {result['sig_count']}  |  Trailer 5x00: {result['trailer_5zeros']}")
+    
+    lb = result['last_block']
+    if lb:
+        print(f"  Last active block @{lb['start']}: blk_num={lb['block_num']}, "
+              f"speed={lb['speed']}, color=#{lb['color']:06x}")
+        print(f"    ec@92={lb['ec92']}, offset602={lb['offset602']}, offset606={lb['offset606']}")
+        m = "MATCH" if lb['offset606'] == result['sig_count'] else "MISMATCH"
+        print(f"    offset606={lb['offset606']} vs GEOMETRY_SIGs={result['sig_count']} -> {m}")
+    elif result['format'] == '1.0.013':
+        print(f"  (no active layer block found)")
+    else:
+        print(f"  (1.0.012 format — different structure, no block analysis)")
+    
+    for el in result['elements'][:3]:
+        print(f"  Elem {el['idx']} @{el['pos']}: color={el['color']}, "
+              f"segments={el['pt_count']}, subtype={el['subtype']}, "
+              f"footer_196={el['has_footer']} ({el['actual_size']}B)")
+    if len(result['elements']) > 3:
+        print(f"  ... and {len(result['elements']) - 3} more")
 
-print(f"\n{'='*80}")
-print("SINGLE ELEMENT FILES (for comparison):")
-n1_data, n1_sigs, n1_elems = analyze_vcf(native_1, 'NATIVE (1-elem)')
-s1_data, s1_sigs, s1_elems = analyze_vcf(synth_1, 'SYNTH (1-elem)')
+def main():
+    ap = argparse.ArgumentParser(description='Diagnose multi-element VCF files')
+    ap.add_argument('--path', default=r'C:\Users\PC\Documents\Repozitar_Dev\_github\VCF_files_moodpasta')
+    ap.add_argument('--file', help='Single VCF file')
+    ap.add_argument('--verbose', '-v', action='store_true')
+    args = ap.parse_args()
+    
+    if args.file:
+        files = [Path(args.file)]
+    else:
+        scan_path = Path(args.path)
+        if not scan_path.exists():
+            print(f"ERROR: Path not found: {scan_path}")
+            sys.exit(1)
+        files = scan_directory(scan_path)
+    
+    if not files:
+        print("No .VCF files found.")
+        return
+    
+    print(f"Scanning {len(files)} VCF files...")
+    results = []
+    for f in files:
+        try:
+            r = analyze_vcf(f)
+            results.append(r)
+            if args.verbose or args.file:
+                print_verbose(r)
+        except Exception as e:
+            print(f"ERROR: {f.name}: {e}")
+    
+    print_summary_table(results)
 
-# Check footer differences between 1-elem and 2-elem
-print(f"\n{'='*80}")
-print("FOOTER COMPARISON (native 1-elem vs 2-elem):")
-f1 = n1_data[n1_sigs[0] + 45 + n1_elems[0]['pt_count'] * 74 : n1_sigs[0] + 45 + n1_elems[0]['pt_count'] * 74 + 196]
-f2a = n_data[n_sigs[0] + 45 + n_elems[0]['pt_count'] * 74 : n_sigs[0] + 45 + n_elems[0]['pt_count'] * 74 + 196]
-f2b = n_data[n_sigs[1] + 45 + n_elems[1]['pt_count'] * 74 : n_sigs[1] + 45 + n_elems[1]['pt_count'] * 74 + 196]
-print(f"1-elem footer == 2-elem element#0 footer: {f1 == f2a}")
-print(f"1-elem footer == 2-elem element#1 footer: {f1 == f2b}")
-print(f"2-elem element#0 footer == element#1 footer: {f2a == f2b}")
-
-# Check TRAILER after native 2-elem
-after_last_elem = n_data[n_sigs[1] + 45 + n_elems[1]['pt_count'] * 74 + 196:]
-print(f"\nTrailer after last element in native 2-elem: {after_last_elem[:20].hex()} (len={len(after_last_elem)})")
-
-# Check TRAILER after synth 2-elem
-after_last_elem_s = s_data[s_sigs[1] + 45 + s_elems[1]['pt_count'] * 74 + 196:]
-print(f"Trailer after last element in synth 2-elem: {after_last_elem_s[:20].hex()} (len={len(after_last_elem_s)})")
+if __name__ == '__main__':
+    main()

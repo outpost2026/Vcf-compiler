@@ -1,9 +1,9 @@
 # DEV REPORT: VCF kompilátor — RE Analysis & Debug Evolution (v2)
 
-**Verze dokumentu:** 2.0  
-**Datum:** 2026-06-29  
+**Verze dokumentu:** 3.0  
+**Datum:** 2026-06-30  
 **Autor:** SYSTEQ výzkumný tým + LLM asistovaná analýza  
-**Účel:** Kompletní dokumentace reverzního inženýrství VCF formátu, debugovací metodiky (binary search variant), slepých uliček, a finálního working PoC. V2 rozšiřuje v1 o výsledky GUI testování a novou RE metodologii.
+**Účel:** Kompletní dokumentace reverzního inženýrství VCF formátu, debugovací metodiky (binary search variant), slepých uliček, a finálního working PoC. V2 rozšiřuje v1 o výsledky GUI testování a novou RE metodologii. V3 přidává session 8 findings — multi-element element count breakthrough.
 
 ---
 
@@ -913,4 +913,156 @@ Tento výzkum demonstruje sílu **LLM-asisted binary search variant methodology*
 
 ---
 
-*Konec dokumentu — verze 2.0*
+## 13. SESSION 8 FINDINGS — MULTI-ELEMENT ELEMENT COUNT BREAKTHROUGH
+
+**Datum:** 2026-06-30  
+**Status:** ✅ GUI nyní detekuje multi-element správně (line_10_elements: 10 elem, square_5_elements: 5 elem)
+
+### 13.1 Problém
+
+Po fixech v session 7 (196B footer, circle Bezier encoding) zůstával multi-element VCF v GUI nefunkční — zobrazoval pouze 1 element místo N. Testy (28/28) procházely, protože reader používá odlišný mechanismus detekce elementů než VCutWorks GUI.
+
+### 13.2 Debugovací iterace (8 pokusů)
+
+| Iterace | Akce | Výsledek |
+|---------|------|----------|
+| 1 | Oprava trailer prefixu 200B→20B | Circle OK, multi-element stále ne |
+| 2 | Oprava ELEMENT_TAIL 196B→180B pro poslední element | Pořád ne |
+| 3 | Změna ec@92 na 0 (chybný závěr z posunutých offsetů) | Pořád ne |
+| 4 | Objev off-by-2: POST_STOCK_HEADER=14B, ne 12B | Zneplatněn závěr o ec@92=0 |
+| 5 | Ruční hex diff všech native VCF (1-elem i 2-elem) | ec@92=1 VŽDY, nezávisle na počtu elementů |
+| 6 | Analýza vcf_parser_b2b (produkční parser z B2B repo) | **BREAKTHROUGH** — parser používá GEOMETRY_SIG scan, ne ec@92/offset606 |
+| 7 | Objev offset606 = poslední 4B posledního layer bloku | = skutečný počet elementů (1→1, 2→2) |
+| 8 | FIX: ec@92=1, offset606=total_elements | **GUI načte druhý element** |
+
+### 13.3 Root Causes Fixed
+
+#### RC5: ec@92=0 (mělo být 1) — "has geometry" flag
+
+- **Původní chybný závěr:** ec@92 = element count, mělo by být = počtu elementů
+- **Skutečnost:** ec@92 = 1 ve VŠECH nativních souborech (1-elem i 2-elem). Je to boolean flag indikující "vrstva obsahuje geometrii", ne počet elementů.
+- **Proč byl chybný závěr:** Off-by-2 chyba v měření POST_STOCK_HEADER (14B vs 12B) posunula všechny offsetové analýzy layer bloků o 2B → byte na pozici 92 nebyl tam, kde jsme mysleli.
+
+#### RC6: offset606=1 (mělo být = element_count)
+
+- **Původní stav:** Writer psal hardcoded 1 na poslední 4B posledního layer bloku
+- **Skutečnost:** Posledních 4B posledního bloku = celkový počet elementů napříč všemi vrstvami
+- **Ověření:** Native 1-elem → offset606=1, native 2-elem → offset606=2, native fishbone (14 elem) → offset606=14
+- **Mechanismus:** VCutWorks GUI čTE offset606 pro určení počtu elementů. Když je 1, zobrazí jen 1 element bez ohledu na skutečný počet v geometrii.
+
+### 13.4 Kritické objevy
+
+#### D8 — Off-by-2 bug v preamble výpočtu
+
+```python
+POST_STOCK_HEADER = struct.pack('<I',0)      # 4B
+                  + struct.pack('<d',100.0)   # 8B
+                  + struct.pack('<H',1)        # 2B
+                  = 14 bytes  # !! bylo počítáno jako 12
+```
+
+Celá preamble: 1 (prefix) + 20 (magic) + 3 (post_magic) + 8 (stock_w) + 8 (stock_h) + 14 (POST_STOCK_HEADER) + 418 (MACHINE_PROFILE) = **472 bytes**
+
+Dříve používaných 12B posunulo všechny layer block field analýzy o 2B → neplatné závěry o ec@92 a dalších polích.
+
+#### D9 — ec@92 ≠ element_count (je to "has geometry" flag)
+
+| Soubor | Elementů | ec@92 | Interpretace |
+|--------|----------|-------|-------------|
+| square_1_aci native | 1 | 1 | Má geometrii |
+| circle_500 native | 1 | 1 | Má geometrii |
+| fishbone native | 14 | 1 | Má geometrii |
+| manchester native | 72 | 1 | Má geometrii |
+| botanic native | 16 | 1 | Má geometrii |
+
+#### D10 — offset606 = element count v posledním layer bloku
+
+| Soubor | Elementů | offset606 |
+|--------|----------|-----------|
+| square_1_aci native | 1 | 1 |
+| double_line native (2 elem) | 2 | 2 |
+| fishbone native | 14 | 14 |
+| manchester native | 72 | 72 |
+| botanic native | 16 | 16 |
+
+#### D11 — B2B parser (vcf_parser_b2b) nepoužívá ec@92 ani offset606
+
+**Architektura produkčního parseru:**
+- Forward scan: hledá GEOMETRY_SIG (bytes `\x01\x00\x01\x00\x00\xff\xff\xff` na offsetu 444-449)
+- Backward scan: od GEOMETRY_SIG zpět počítá layer bloky (krok 610B, max 32 bloků)
+- Element count: počítá GEOMETRY_SIG výskyty v binárce
+
+**Důsledek:** Parser vždy našel správný počet elementů (i v neopravených synth VCF), protože skenuje binární strukturu, nečte metadata z layer bloků. To vysvětluje, proč testy (28/28) vždy procházely, ale GUI selhávalo.
+
+#### D12 — Parser != GUI (dva nezávislé element-count mechanismy)
+
+| Komponenta | Mechanismus detekce elementů |
+|------------|------------------------------|
+| vcf_parser_b2b | GEOMETRY_SIG forward scan |
+| VCutWorks GUI | offset606 z posledního layer bloku |
+| náš vcf_parser/_reader.py | Backward scan + GEOMETRY_SIG |
+
+Toto je klíčové ponaučení: **každý parser může používat jinou strategii**. Validace přes reader neznamená validaci přes GUI.
+
+### 13.5 Implementované fixy
+
+**Soubor:** `vcf_parser/_writer.py`
+
+**Fix 1 — encode_layer_block() line 275:**
+```python
+# Before:
+block[92] = 0
+# After:
+block[92] = 1  # 'has geometry' flag (NOT element count)
+```
+
+**Fix 2 — header() line 183:**
+```python
+# Before:
+struct.pack('<I', 1)  # hardcoded 1
+# After:
+total_elements = sum(len(layer._paths) for layer in self._layers)
+struct.pack('<I', total_elements)  # actual element count
+```
+
+### 13.6 Verifikace
+
+#### Hex analýza po fixu
+
+| Soubor | ec@92 | offset606 | SIGs | Status |
+|--------|-------|-----------|------|--------|
+| synth line_10_elements | 1 | 10 | 10 | ✅ MATCHES expected |
+| synth square_5_elements | 1 | 5 | 5 | ✅ MATCHES expected |
+| native 1-elem (all) | 1 | 1 | 1 | ✅ Baseline |
+| native 2-elem (double_line) | 1 | 2 | 2 | ✅ Baseline |
+
+#### GUI výsledky
+
+| Soubor | Očekávané elementy | GUI výsledek |
+|--------|-------------------|--------------|
+| line_10_elements.VCF | 10 | ✅ **10 elementů** |
+| square_5_elements.VCF | 5 | ✅ **5 elementů** |
+| single_line_2000_elements_2.VCF | 2 | ✅ **2 elementy** |
+
+### 13.7 Zbývající problémy
+
+| Problém | Severita | Majitel |
+|---------|----------|---------|
+| Square — duplicitní vertexy (7 segmentů místo 4) | HIGH | DXF adapter deduplication |
+| Circle/Curve — SPLINE oversampling (100+ segmentů) | HIGH | Bezier encoding |
+| Color diff: 0x0A0A0A00 vs native 0x00000000 | MEDIUM | ACI 0 mapping workaround |
+| ELEMENT_FOOTER content diff (offsety 32-47, 112-143) | LOW | Neověřeno |
+| GEOMETRY_HEADER_TEMPLATE jen 4× float64 1.0 | LOW | Neověřeno pro multi-element |
+| Fishbone konsolidace 41→14 elementů | MEDIUM | Neznámá pravidla |
+
+### 13.8 Metodologické ponaučení
+
+1. **Parser != GUI** — Validace přes reader/parser nestačí. Každý software může používat jiný mechanismus pro stejnou informaci.
+2. **Off-by-one/off-by-two chyby jsou záludné** — Špatné měření délky struktury (14B vs 12B) zneplatnilo všechny odvozené offsetové analýzy.
+3. **Cross-referencuj s produkčním kódem** — Analýza vcf_parser_b2b (produkční parser) odhalila, že element count se čte z offset606, ne z ec@92. Bez této referenční implementace bychom pravděpodobně stále hledali.
+4. **Testy nejsou ground truth** — 28/28 testů procházelo i s chybným offset606. Testy testují reader logiku, ne GUI logiku.
+5. **Multi-iterační debugging je normální** — Trvalo 8 iterací najít 2 jednoduché single-line changes. Každá slepá ulička poskytla data potřebná pro další krok.
+
+---
+
+*Konec dokumentu — verze 3.0*

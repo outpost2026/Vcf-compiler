@@ -26,6 +26,7 @@ logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 DEMO = REPO / "demo_data"
+TRAINING_DB = Path(r"C:\Users\PC\Documents\Repozitar_Dev\_github\VCF_files_moodpasta")
 OUT = REPO / "research_docs"
 
 # Add vcf_parser_b2b src to path
@@ -339,9 +340,12 @@ def analyze_vcf(filepath: Path) -> dict:
     return result
 
 
-def build_catalog(vcf_dir: Path) -> dict:
-    """Build catalog from all native VCF files in a directory."""
-    native_vcfs = sorted(vcf_dir.glob("*.VCF"))
+def build_catalog(vcf_dirs: list[Path]) -> dict:
+    """Build catalog from all native VCF files in given directories."""
+    native_vcfs = []
+    for d in vcf_dirs:
+        if d.exists():
+            native_vcfs.extend(sorted(d.glob("*.VCF")))
 
     # Filter: exclude synth output and binary search variants
     exclude_patterns = ["synthethic_vcf", "binary_search_variants", "fresh_"]
@@ -355,7 +359,7 @@ def build_catalog(vcf_dir: Path) -> dict:
         "meta": {
             "generated_by": "build_element_types_catalog.py",
             "parser_source": str(B2B_SRC),
-            "vcf_source_dir": str(vcf_dir),
+            "vcf_source_dirs": [str(d) for d in vcf_dirs],
         },
         "element_types": {},
         "files": [],
@@ -679,11 +683,16 @@ def main():
     print("=" * 60)
     print("  Element Types Catalog Builder")
     print("=" * 60)
-    print(f"\n  Scanning {DEMO} for native VCF files ...")
+
+    dirs = [DEMO]
+    if TRAINING_DB.exists():
+        dirs.append(TRAINING_DB)
+    for d in dirs:
+        print(f"  Scanning {d} ...")
 
     OUT.mkdir(parents=True, exist_ok=True)
 
-    catalog = build_catalog(DEMO)
+    catalog = build_catalog(dirs)
 
     # Write JSON
     json_path = OUT / "element_types_catalog.json"

@@ -1,8 +1,8 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.9.0",
-  "last_updated": "2026-06-30",
+  "version": "1.10.0",
+  "last_updated": "2026-06-30 (session 8.5)",
   "git_commits": [
     "1861c66 — fix: circle cx/cy/r DXF pass-through, ACI 0 vs 7 color collision, ByLayer resolution, 20B trailer prefix, 180B last-element tail",
     "fa5e3d6 — fix: remove spurious 200-byte TRAILER_PREFIX from trailer structure",
@@ -12,7 +12,7 @@
     "15b8572 — fix: restore color@12 in encode_layer_block()",
     "f21429d — chore: git history analysis, add .ai_state.json"
   ],
-  "current_session": "2026-06-30 (session 8 — FIX: ec@92=1 (has-geometry flag), offset606=total_elements, off-by-2 preamble bug; B2B parser RE breakthrough)",
+  "current_session": "2026-06-30 (session 8 — FIX: ec@92=1, offset606=total_elements; session 8.5 — tool proposal doc & inventory analysis)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
     "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: ec@92 from 0→1. FIXED: offset606 from 1→len(layer._paths).",
@@ -78,7 +78,7 @@
     }
   },
   "session_state": {
-    "current_session": "2026-06-30 (session 8 — FIX: ec@92=1, offset606=element_count, off-by-2 preamble bug; B2B parser RE breakthrough)",
+    "current_session": "2026-06-30 (session 8 — FIX: ec@92=1, offset606=total_elements; session 8.5 — tool proposal doc & inventory analysis)",
     "debugging_journey_narrative": {
       "problem": "Multi-element VCFs — GUI nerozpoznal druhý element",
       "attempts": [
@@ -127,6 +127,28 @@
           "native_2_elem": "ec92=1, offset606=2, sigs=2",
           "GUI_result": "Načte druhý element — vizuálně potvrzeno"
         }
+      },
+      "session_8_5_tool_proposal_2026_06_30": {
+        "description": "Inventář existujících nástrojů a návrh 10 nových disekčních/statistických nástrojů pro RE analýzu",
+        "output": "research_docs/DEV_NEW_ANALYSIS_TOOLS_PROPOSAL.md",
+        "proposed_tools": {
+          "P0_critical_gaps": [
+            "dissect_footers.py — Footer Field Dissector: rozklad 196/245/253B footerů na jednotlivá pole",
+            "dissect_layer_blocks.py — Layer Block Forensics: kompletní field mapa 610B bloku",
+            "decode_subtype_bits.py — Subtype Upper-Bit Correlator: statistická korelace horních 16 bitů subtype"
+          ],
+          "P1_statistical": [
+            "analyze_writer_gaps.py — Writer Coverage Gap Analyzer: měření kvality writeru byte-po-byte",
+            "segment_geometry_stats.py — Segment Geometry Statistics: distribuce délek, úhlů, křivostí",
+            "batch_correlate_dxf_vcf.py — Dávkový DXF↔VCF korelátor s agregací"
+          ],
+          "P2_exploratory": [
+            "decode_color_fields.py — Dekodér barevných polí",
+            "analysis_header_variability.py — Katalog variabilit hlaviček",
+            "panel_statistics.py — Statistika plátna a layoutu",
+            "sequence_patterns.py — Analyzátor sekvencí řezu"
+          ]
+        }
       }
     },
     "key_findings": {
@@ -141,7 +163,12 @@
         "GUI test for inversion files: single_line_2_elem should now show 2 elements ✓ (confirmed)",
         "Square primitive fails due to duplicate consecutive vertices in DXF adapter — not a writer bug",
         "Circle/Curve fail due to SPLINE oversampling (100+ segments) — DXF adapter needs Bezier encoding",
-        "Color difference (0x0A0A0A00 vs 0x00000000) is cosmetic — ACI 0 mapping workaround"
+        "Color difference (0x0A0A0A00 vs 0x00000000) is cosmetic — ACI 0 mapping workaround",
+        "Footer contains DXF group code data (LTYPE records) in some elements — backward-compat mechanism",
+        "Subtype upper bits encode per-file/cutter/profile ID (0x7299→nesting, 0x72B9→PCB, 0x736F→stripe sixty)",
+        "Footer size is per-element not per-file (196B and 245B coexist in fluenz_l) — marks layer/subjob boundaries",
+        "Constant footer prefix bytes decode as IEEE 754 doubles 5.0 and 54.5 — default rendering params",
+        "Low16=0x0003 is NOT circle type but 'has arc/curve segment' flag (Lines with pt_count=1 can have it too)"
       ]
     },
     "pending_tasks": [
@@ -150,13 +177,23 @@
       "GUI TEST: single_circle_1500_inversion.VCF — may still fail (SPLINE oversampling)",
       "GUI TEST: single_curve_inversion.VCF — may still fail (SPLINE oversampling)",
       "P1 fix: Square duplicate vertex deduplication in DXF adapter (_build_vcf_spec or indexer)",
-      "P1 fix: Circle/Curve SPLINE → Bezier segment encoding in writer or adapter"
+      "P1 fix: Circle/Curve SPLINE → Bezier segment encoding in writer or adapter",
+      "P0 RE: implement decode_subtype_bits.py — statistická korelace upper 16 bitů subtype",
+      "P0 RE: implement dissect_footers.py — rozklad footerů na pole, DXF extrakce",
+      "P0 RE: implement dissect_layer_blocks.py — kompletní field mapa 610B bloků",
+      "P1: implement segment_geometry_stats.py — distribuce délek/úhlů/křivostí",
+      "P1: implement analyze_writer_gaps.py — měření kvality writeru byte-po-byte"
     ],
     "open_questions": [
       "Do regenerated inversion files load with correct element count in VCutWorks GUI? → YES for line_2_elem",
       "Can production parser (vcf_parser_b2b) be used as GUI validation oracle? → PARTIALLY — parser uses different mechanisms",
       "Should MACHINE_PROFILE be extracted from native VCF instead of hardcoded? → still open",
-      "Does the B2B parser correctly validate our output structure beyond element count? → needs investigation"
+      "Does the B2B parser correctly validate our output structure beyond element count? → needs investigation",
+      "What do upper 16 bits of subtype encode? (file hash? cutter profile? material ID?) → decode_subtype_bits.py",
+      "What triggers 196B vs 245B footer size? (layer boundary? subjob? element type?) → dissect_footers.py",
+      "What other fields in 610B block remain undiscovered? → dissect_layer_blocks.py",
+      "Is the 196B footer a rendering instructions block or a DXF backward-compat layer or both?",
+      "Do all 35 production files have consistent empty-block init data or does it vary by version?"
     ]
   },
   "dependencies": {
