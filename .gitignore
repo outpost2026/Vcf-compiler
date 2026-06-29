@@ -7,3 +7,4 @@ build/
 *.vcf
 !demo_data/*.VCF
 !demo_data/synthethic_vcf/*.VCF
+!demo_data/binary_search_variants/*.VCF

@@ -1,7 +1,7 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "last_updated": "2026-06-29",
   "git_commits": [
     "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
@@ -17,7 +17,7 @@
     "ea8aa2b — fix: geometry engine + MACHINE_PROFILE + trailer + fresh synthetic VCFs",
     "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT"
   ],
-  "current_session": "2026-06-29 (session 4 — BUILD: color@12 fix, GEOMETRY_HEADER_TEMPLATE cleanup, synthetic VCF regeneration)",
+  "current_session": "2026-06-29 (session 5 — BINARY SEARCH: variant generator, native-patched variant reduces diffs to 11 regions, empty block init = PRIMARY hypothesis)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
     "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native). FIXED: color@12 restored in encode_layer_block(). Cleaned: GEOMETRY_HEADER_TEMPLATE = b'\\x00' + struct.pack('<d', 1.0)*4.",
@@ -108,13 +108,41 @@
     ],
     "dev_scripts": [
       "dev_scripts/hex_diff_v2.py",
+      "dev_scripts/vcf_binary_search.py",
       "dev_scripts/vcf_dxf_re_correlator_v1.1.py",
       "dev_scripts/VcfWrappingAnalyzer.py"
     ]
   },
   "session_state": {
-    "current_session": "2026-06-29 (session 4 — BUILD implementation)",
+    "current_session": "2026-06-29 (session 5 — BINARY SEARCH: variant generation, native-patched analysis)",
     "changes_in_session": {
+      "session_5_2026_06_29": {
+        "dev_scripts": [
+          "Created dev_scripts/vcf_binary_search.py — generates 10 VCF variants (A-F fresh, G-J patched from synthetic)",
+          "Variants: A=minimal, B=+empty, C=+linked-list, D=+MP, E=+trailer, F=full current (=HEAD writer)",
+          "Patched: G=+native empty init, H=no trailer, I=no MP, J=active-first (no empty blocks)"
+        ],
+        "findings": [
+          "BREAKTHROUGH: Variant G (native empty block init data patched in) reduces diffs from 2394 regions/3788 bytes → 11 regions/51 bytes",
+          "The 11 remaining diffs: 8 in active block (known ~12 bytes), 3 in trailer (DXF path content/length)",
+          "This proves the writer is STRUCTURALLY CORRECT — only empty block init data + ~12 active block bytes differ from native",
+          "Empty block init data is now the PRIMARY hypothesis for 'neočekávaný formát souboru' — VCutWorks likely validates ALL 257 blocks, rejecting those with all-zero init",
+          "Previous working VCF (4ba9446) had NO empty blocks (active-first), so it bypassed this validation"
+        ],
+        "variant_sizes_vs_native": {
+          "native": "157868 B",
+          "A_minimal": "1005 B (-156863)",
+          "B_empty_blocks": "157165 B (-703)",
+          "C_linked_list": "157165 B (-703)",
+          "D_MP": "157583 B (-285)",
+          "E_trailer": "157782 B (-86)",
+          "F_full_current": "157782 B (-86)",
+          "G_native_empty_init": "157867 B (-1)",
+          "H_no_trailer": "157583 B (-285)",
+          "I_no_MP": "157449 B (-419)",
+          "J_active_first": "1707 B (-156161)"
+        }
+      },
       "session_2_2026_06_27": {
         "writer": [
           "MACHINE_PROFILE (418B) included in header",
@@ -165,19 +193,20 @@
         ]
       }
     },
-    "key_findings": {
+      "key_findings": {
       "resolved": [
-        "H1 (color@12): FIXED — writer now writes BGR color at layer block offset 12. Remaining 12 diffs in active block are in unknown areas (offsets 40-47, 92, 104, 176-185, 197, 204-205, 606).",
+        "H1 (color@12): FIXED — writer now writes BGR color at layer block offset 12. Remaining 12 diffs in active block are in unknown areas.",
         "H2 (GEOMETRY_HEADER_TEMPLATE): DISPROVED — native DOES have 4× float64 1.0 at bytes 12-44. Template is correct.",
         "H3 (MACHINE_PROFILE): DISPROVED — 0 byte diffs vs native. Constant is correct.",
         "H4 (geometry preamble): 0 diffs in geometry area — structure is correct.",
         "H5 (geom_color format): 0 diffs in geometry color — (BGR<<8) format is correct.",
-        "1055 diff regions reduced to ~3800 small diffs (mostly empty block initialization, 12 in active block)."
+        "Header, geometry, active block structure all STRUCTURALLY CORRECT — verified by Variant G (only 11 diff regions remain when empty blocks are patched from native)."
       ],
       "remaining_hypotheses": [
-        "color@12 was PRIMARY cause (⭐⭐⭐⭐⭐). Still need GUI verification.",
-        "12 remaining active block diffs are in unknown zones: probably NOT validation-critical (working VCF didn't have them either).",
-        "Empty block initialization differences (~3752 diff bytes) are likely VCutWorks default values, not validation-critical."
+        "H6 — Empty block initialization data (⭐ NEW PRIMARY): VCutWorks likely validates ALL 257 blocks; empty blocks with all zeros cause rejection. Variant G patches native init data → only 11 regions/51 bytes diff remain.",
+        "H7 — ~12 active block bytes (⭐ secondary): 8 byte diffs in active block unknown zones. Unlikely to cause hard rejection (working VCF 4ba9446 had zeros here too).",
+        "H8 — Trailer DXF path format (⭐ low): 3 byte diffs from path length/content. Unlikely to cause hard rejection.",
+        "color@12 fix alone was INSUFFICIENT — all synthetics still fail with same error. Empty block init is now the top suspect."
       ]
     },
     "verification": {
@@ -191,32 +220,35 @@
       "tests": "28 PASS, 2 SKIP — all green"
     },
     "pending_tasks": [
-      "URGENT: GUI test in VCutWorks — load fresh_square_1_aci.VCF, verify layers + geometry display",
-      "URGENT: If GUI passes — iterate: regenerate circle, multi-layer VCFs and test each",
-      "If GUI fails — revert to binary search: disable features one-by-one (trailer, MP, linked-list, empty block init) to find remaining breakage",
-      "Build GUI oracle (pywinauto) — enables automated regression testing",
+      "URGENT: GUI test binary search variants — load each from demo_data/binary_search_variants/ into VCutWorks",
+      "  Critical test order: (1) Var G (native empty init + current writer), (2) Var F (current writer, all zeros)",
+      "  If G loads but F fails: empty block init is the cause",
+      "  If G fails: cause is in ~12 active block bytes OR trailer format",
+      "  Then test Var H (no trailer), Var I (no MP), Var J (active-first) to isolate",
+      "RE empty block init pattern: understand what the per-block @+32 cookie/timestamp is",
+      "Implement empty block init data generation in writer (copy native defaults pattern)",
       "Add direction@104 for all cutter types (not just V-slot) — native always has direction",
       "Add last-layer terminator color=1 (native behavior)",
       "Populate remaining active block fields (offsets 40-47, 92, 176-185, 197, 204-205) after RE",
+      "Build GUI oracle (pywinauto) — enables automated regression testing",
       "Kaitai Struct .ksy schema for VCF format",
       "Fix reader: add color@12 parsing for native/working VCF compatibility",
       "Fishbone element consolidation investigation"
     ],
     "decisions_made": [
-      "color@12 fix applied — highest priority hypothesis implemented",
-      "GEOMETRY_HEADER_TEMPLATE confirmed correct — no change needed",
-      "MACHINE_PROFILE confirmed correct — no change needed",
-      "POST_STOCK_HEADER alignment correct — no change needed",
-      "Last-layer terminator (color=1 vs color=0) deferred — unlikely critical",
-      "Empty block initialization deferred — unlikely critical",
-      "Old synthetic VCFs purged, replaced with fresh regenerated versions",
-      "Next step must be GUI testing — cannot make more progress without VCutWorks feedback"
+      "color@12 fix was INSUFFICIENT — all synthetics still fail with 'neočekávaný formát souboru'",
+      "Empty block initialization is now PRIMARY hypothesis — VCutWorks likely validates ALL 257 blocks",
+      "Created binary search variants A-J for systematic GUI testing",
+      "Variant G (native empty init) proves writer is structurally correct — only 11 diff regions remain",
+      "Variant G + J are the critical test pair: if G works, fix = copy native empty init data",
+      "If G also fails, cause is in ~12 active block bytes or trailer DXF path format",
+      "Previous 'deferred' on empty block init was wrong — this is now the top priority"
     ],
     "open_questions": [
-      "Will VCutWorks load the synthetic VCF with color@12 restored? (CRITICAL — must test in GUI)",
-      "Are the 12 remaining active block diffs validation-critical or just informational defaults?",
-      "Does direction@104 need to be written for non-V-slot layers?",
-      "Does empty block initialization data affect VCutWorks loading?",
+      "Will Variant G (native empty init) load in VCutWorks? (CRITICAL — determines if empty block init is the cause)",
+      "Will Variant F (current writer, all zeros empty blocks) still fail? (CONFIRMATION)",
+      "Will Variant J (active-first, no empty blocks) load? (Confirms empty blocks are the issue)",
+      "What is the per-block @+32 cookie/timestamp in empty block init data?",
       "Can we build a pywinauto GUI oracle for automated testing?",
       "Why does fishbone have 41 elements instead of 14?"
     ]
