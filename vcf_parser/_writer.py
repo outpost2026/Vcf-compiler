@@ -84,13 +84,7 @@ TRAILER_PREFIX = bytes([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 ])
 
-GEOMETRY_HEADER_TEMPLATE = bytes([
-    0, 0, 0, 0,
-    0, 0, 0, 240, 63, 0, 0, 0,
-    0, 0, 0, 240, 63, 0, 0, 0,
-    0, 0, 0, 240, 63, 0, 0, 0,
-    0, 0, 0, 240, 63,
-])
+GEOMETRY_HEADER_TEMPLATE = b'\x00' + struct.pack('<d', 1.0) * 4
 
 
 class VcfLayer:
@@ -247,6 +241,9 @@ class VcfWriter:
         struct.pack_into('<I', block, 0, 1 if layer._is_output else 0)
 
         struct.pack_into('<d', block, 4, float(layer._speed))
+
+        color_bgr = (layer._color[0] << 16) | (layer._color[1] << 8) | layer._color[2]
+        struct.pack_into('<I', block, 12, color_bgr)
 
         cutter_idx = CUTTER_NAME_TO_INDEX.get(layer._cutter_type, 0)
         struct.pack_into('<i', block, 32, cutter_idx)

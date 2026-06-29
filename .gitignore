@@ -6,3 +6,4 @@ dist/
 build/
 *.vcf
 !demo_data/*.VCF
+!demo_data/synthethic_vcf/*.VCF

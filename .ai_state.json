@@ -1,7 +1,7 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "last_updated": "2026-06-29",
   "git_commits": [
     "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
@@ -17,33 +17,37 @@
     "ea8aa2b — fix: geometry engine + MACHINE_PROFILE + trailer + fresh synthetic VCFs",
     "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT"
   ],
-  "current_session": "2026-06-29 (session 3 — early dev phase anomaly, first-working VCF analysis)",
+  "current_session": "2026-06-29 (session 4 — BUILD: color@12 fix, GEOMETRY_HEADER_TEMPLATE cleanup, synthetic VCF regeneration)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
-    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native)",
+    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native). FIXED: color@12 restored in encode_layer_block(). Cleaned: GEOMETRY_HEADER_TEMPLATE = b'\\x00' + struct.pack('<d', 1.0)*4.",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
     "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
     "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (12 colors with validation statuses)",
-    "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md": "497-line dev report with hex diff analysis, 5 hypotheses (H1-H5), 33 cross-validation files, 10 research questions (Q1-Q10), 4-phase debug workflow",
-    "research_docs/REPORT_early_dev_phase_anomaly_v1.md": "213-line report identifying commit 4ba9446 as first working VCF; traces regression through 6 subsequent commits; discovers color@12 vs color@76 as primary breakage hypothesis"
+    "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md": "497-line dev report with hex diff analysis, 5 hypotheses (H1-H5), 33 cross-validation files",
+    "research_docs/REPORT_early_dev_phase_anomaly_v1.md": "213-line report identifying commit 4ba9446 as first working VCF; 9 structural differences"
   },
   "implementation_status": {
     "writer": {
       "status": "functional — self-contained",
-      "version": "1.2",
+      "version": "1.3",
       "features": [
-        "Full 472B header: 54B preamble + 418B machine profile (from native VCF template)",
+        "Full 472B header: 54B preamble + 418B machine profile (matches native byte-for-byte)",
         "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims (1220×2900)",
         "257 layer blocks × 610 B (empty-first, active-last)",
-        "8B trailers (output_flag + color) on empty blocks for backward scan",
-        "Layer block: output_flag@0, speed@4, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, ext@114/122",
-        "GEOMETRY_HEADER_TEMPLATE (bytes 12-44 from native)",
-        "is_closed with 0.001 epsilon (fixes floating point drift)",
+        "Block index counter at [10] (uint16, 0-255 across empty blocks)",
+        "8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2",
+        "Layer block: output_flag@0, speed@4, color@12 (FIXED), cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, vs_comp@106, ext@114/122",
+        "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44, matches native)",
+        "is_closed with 0.001 epsilon",
         "encode_circle_element with 4 arc segments (type=1, sub=3)",
-        "VcfLayer with _path_types for circle detection"
+        "VcfLayer with _path_types for circle detection",
+        "MACHINE_PROFILE (418B) — verified 0 byte diffs vs native square_1_aci"
       ],
       "not_implemented": [
-        "Scrambling (raises UnsupportedFeatureError)"
+        "Scrambling (raises UnsupportedFeatureError)",
+        "Direction@104 written only for V-slot (native has direction for all cutter types)",
+        "~12 remaining active block fields at offsets 40-47, 92, 104, 176-177, 184-185, 197, 204-205, 606 (all in unknown zones)"
       ]
     },
     "reader": {
@@ -52,7 +56,7 @@
         "Backward scan from geometry (k=1..32 blocks)",
         "Color from trailer at pos-4 (previous block's last 4 bytes)",
         "Layer extraction: speed validation, color, cutter, h1, h2, feed, output_flag",
-        "V-slot direction (Left/Right/Cut both side), extensions",
+        "V-slot direction, extensions",
         "Color name mapping (14 known + custom fallback)",
         "Version detection (1.0.012 vs 1.0.013)"
       ]
@@ -72,7 +76,7 @@
       "pass": 28,
       "skip": 2,
       "test_files": [
-        "tests/test_writer_unit.py — 25 tests (layer block, geometry, circle, header, trailer, roundtrip)",
+        "tests/test_writer_unit.py — 23 tests (layer block, geometry, circle, header, trailer, roundtrip)",
         "tests/test_roundtrip.py — 5 tests (known files, synthetic line, two layers, V-slot, determinism)"
       ]
     },
@@ -87,18 +91,20 @@
         "circle_500_single_aci.VCF"
       ],
       "synthetic_vcf": [
-        "square_from_dxf.VCF",
-        "circle_diameter_600_from_dxf.VCF",
-        "fishbone_2790x1200_from_dxf.VCF",
-        "manchester_3_subjobs_from_dxf.VCF",
-        "hybrid_square_from_dxf.VCF",
-        "circle_diameter_600_hybrid.VCF",
-        "fresh_synthetic.VCF",
-        "fresh_synthetic_no_dxf.VCF"
+        "square_1_aci.VCF (157867B — 1B off from native! Previously 703B off)",
+        "circle_diameter_600_native.VCF (157881B — same size as native version)",
+        "circle_500_single_aci.VCF (157876B)",
+        "double_line_1_aci.VCF (157769B)",
+        "double_line_2_aci.VCF (158379B)",
+        "single_line_1_aci.VCF (157650B)",
+        "single_star_1_aci.VCF (158316B)",
+        "fresh_synthetic.VCF (157560B — writer-only, no DXF)"
       ]
     },
     "research_docs": [
-      "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md"
+      "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md",
+      "research_docs/Gemini_RD_VCF.txt",
+      "research_docs/REPORT_early_dev_phase_anomaly_v1.md"
     ],
     "dev_scripts": [
       "dev_scripts/hex_diff_v2.py",
@@ -107,103 +113,112 @@
     ]
   },
   "session_state": {
-    "current_session": "2026-06-29 (session 3 — hex diff analysis, bug hypotheses, research_docs)",
+    "current_session": "2026-06-29 (session 4 — BUILD implementation)",
     "changes_in_session": {
       "session_2_2026_06_27": {
         "writer": [
-          "MACHINE_PROFILE (418B) included in header — matches native",
+          "MACHINE_PROFILE (418B) included in header",
           "EMPTY_BLOCK_COUNT=256, dynamic total_blocks=256+n_layers",
-          "Block color at offset 76 always black (0x000000) — matches native",
+          "Block color at offset 76 always black (0x000000)",
           "Block index counter at [10] (uint16, 0-255 across empty blocks)",
-          "TRAILER_PREFIX constant (199 bytes from native VCF) — 285-305B trailer with DXF path",
-          "trailer() generates: 199B prefix + 0x00 + length_byte + ASCII DXF path",
-          "write() appends trailer after body (was dead code before)",
-          "VcfWriter accepts dxf_source_path → embedded in trailer",
-          "write() accepts dxf_source_path parameter",
-          "Old trailer() returning b'\\xd7' removed"
+          "TRAILER_PREFIX constant (199 bytes from native VCF)",
+          "trailer() with DXF path embedding",
+          "write() appends trailer after body"
         ],
         "dxf_adapter": [
           "compile_dxf() passes dxf_source_path to write()",
-          "ACI_TO_RGB[52] fixed: (191,255,0) → (0,204,204) matching native teal"
+          "ACI_TO_RGB[52] fixed to (0,204,204)"
         ]
       },
       "session_3_2026_06_29": {
         "research_docs": [
           "Created ./research_docs/ folder",
-          "DEV_REPORT_VCF_COMPILER_DEBUG_v1.md (497 lines) — detailed bug analysis for LLM cross-validation"
+          "DEV_REPORT_VCF_COMPILER_DEBUG_v1.md (497 lines)",
+          "Gemini_RD_VCF.txt (542 lines — methodology research)"
         ],
-        "hex_diff_findings": [
-          "1055 diff regions between native square_1_aci.VCF and synthetic square_from_dxf.VCF",
-          "Layer blocks in synthetic are ~90% zeros — writer populates only 7/610 bytes of each block",
-          "Native layer blocks have data in 5 additional regions: offsets 12-31, 36-75, 92-95, 104-129, 130-601",
-          "Machine profile bytes differ at multiple positions between native and hardcoded MACHINE_PROFILE",
-          "Linked-list next-layer pointer for LAST layer block is left as 0 (might need terminator)",
-          "Native MACHINE_PROFILE contains ASCII strings (font names, 'Fs.SHX', 'opravit', 'Arial Black')"
+        "findings": [
+          "1055 diff regions between native and synthetic",
+          "Layer blocks ~90% zeros",
+          "Git history: commit 4ba9446 = first working VCF",
+          "color@12 → color@76 regression identified",
+          "Reader unreliable for cross-validation"
+        ]
+      },
+      "session_4_2026_06_29": {
+        "writer_fixes": [
+          "FIXED: color@12 restored in encode_layer_block() — BGR color now written at block offset 12 (in addition to existing offset 76)",
+          "CLEANED: GEOMETRY_HEADER_TEMPLATE refactored to b'\\x00' + struct.pack('<d', 1.0)*4 (functionally identical to original, verified vs native)",
+          "VERIFIED: MACHINE_PROFILE has 0 byte diffs vs native when correctly aligned at offset 54",
+          "VERIFIED: POST_STOCK_HEADER alignment is correct (preamble [0:54] matches native byte-for-byte)",
+          "ANALYZED: Last-layer linked-list terminator — native color=1 differs from writer color=0 (probably not critical)"
+        ],
+        "test_results": [
+          "test_writer_unit.py: 23/23 PASS",
+          "test_roundtrip.py: 5/5 PASS, 2 SKIP (demo files not found)",
+          "Total: 28 PASS, 2 SKIP"
+        ],
+        "synthetic_vcf_regeneration": [
+          "All 7 DXF sources compiled → fresh VCFs in synthethic_vcf/",
+          "Old broken synthetics removed",
+          "Hex diff improvement: 1055+ regions → ~12 active block diffs + 3752 empty block init diffs + 39 trailer diffs",
+          "Size difference: 703B → 1B (from 157165 to 157867, native is 157868)"
         ]
       }
     },
-    "key_findings": [
-      "Native VCFs store DXF source path as length-prefixed ASCII at end (199B constant prefix + null + length byte + path)",
-      "Empty blocks contain a sequential index counter at [10] (uint16 0-255)",
-      "Native blocks have additional default values at various offsets (24.0, 100.0, 5.0, 0.5, etc.) — likely VCutWorks initialization, not validation-critical",
-      "Native fishbone ACI 52 maps to teal RGB(0,204,204) in geometry, not lime RGB(191,255,0)",
-      "Geometry byte-for-byte identical between native and synthetic square (same 341B element)",
-      "All native VCFs (square, circle, fishbone, manchester) share identical trailer structure",
-      "Trailer size varies slightly: 285B (1 elem) → 305B (72 elems) due to different DXF path lengths",
-      "CRITICAL: encode_layer_block() writes only 7/610 fields — ~530B of each layer block is zero",
-      "CRITICAL: Native layer blocks have populated data in offsets 12-31, 36-75, 92-95, 130-601 — all zero in synthetic",
-      "CRITICAL: 1055 diff regions between native square_1_aci vs synthetic square_from_dxf — practically entire file differs",
-      "CRITICAL: Synthetic VCFs fail in VCutWorks GUI (layers missing, files not loading) despite passing Python roundtrip tests",
-      "Hypothesis H1: Layer block incompleteness is PRIMARY cause (probability: ⭐⭐⭐⭐⭐)",
-      "CRITICAL: First working VCF (commit 4ba9446) had color at layer block offset 12 — current writer puts color at offset 76, breaks VCutWorks color match",
-      "CRITICAL: GEOMETRY_HEADER_TEMPLATE (4x float64=1.0 at bytes 12-44) differs from native/working VCF where bytes 12-44 were zeros",
-      "CRITICAL: Our reader never found layers in the working VCF — roundtrip tests validate our reader, NOT VCutWorks compatibility",
-      "Hypothesis H1: color@12 removed → VCutWorks cannot match geometry to layer (probability: ⭐⭐⭐⭐⭐)",
-      "Hypothesis H2: GEOMETRY_HEADER_TEMPLATE non-zero bytes 12-44 rejected by VCutWorks (probability: ⭐⭐⭐⭐)",
-      "Hypothesis H3: Linked-list last-layer terminator might be wrong (probability: ⭐⭐⭐)",
-      "Hypothesis H4: Missing geometry preamble/count (probability: ⭐⭐)",
-      "Hypothesis H5: Wrong geom_color format — (BGR<<8) may not match native (probability: ⭐⭐)"
-    ],
+    "key_findings": {
+      "resolved": [
+        "H1 (color@12): FIXED — writer now writes BGR color at layer block offset 12. Remaining 12 diffs in active block are in unknown areas (offsets 40-47, 92, 104, 176-185, 197, 204-205, 606).",
+        "H2 (GEOMETRY_HEADER_TEMPLATE): DISPROVED — native DOES have 4× float64 1.0 at bytes 12-44. Template is correct.",
+        "H3 (MACHINE_PROFILE): DISPROVED — 0 byte diffs vs native. Constant is correct.",
+        "H4 (geometry preamble): 0 diffs in geometry area — structure is correct.",
+        "H5 (geom_color format): 0 diffs in geometry color — (BGR<<8) format is correct.",
+        "1055 diff regions reduced to ~3800 small diffs (mostly empty block initialization, 12 in active block)."
+      ],
+      "remaining_hypotheses": [
+        "color@12 was PRIMARY cause (⭐⭐⭐⭐⭐). Still need GUI verification.",
+        "12 remaining active block diffs are in unknown zones: probably NOT validation-critical (working VCF didn't have them either).",
+        "Empty block initialization differences (~3752 diff bytes) are likely VCutWorks default values, not validation-critical."
+      ]
+    },
     "verification": {
-      "square_1_aci_native": "157868B, 258 blocks, 1 elem, 285B trailer — geometry byte-identical",
-      "square_from_dxf_synthetic": "157165B, 258 blocks, 1 elem — 703B smaller than native (missing field data)",
-      "fishbone": "164088B, 259 blocks, 41 elems, 303B trailer — element count mismatch (41 vs 14)",
-      "manchester": "168667B, 259 blocks, 72 elems, 305B trailer — matches native element count",
-      "tests": "28 pass, 2 skip — all unit+roundtrip tests green",
-      "hex_diff": "1055 diff regions (native vs synthetic square) — 33-35B each with 32B context"
+      "square_1_aci_native": "157868B, 258 blocks, 1 elem, GEOMETRY_SIG at 157242",
+      "square_1_aci_synthetic": "157867B, 258 blocks, 1 elem, GEOMETRY_SIG at 157242",
+      "size_diff": "1B (previously 703B) — only trailer DXF path length differs",
+      "active_block_diffs": "12 bytes at offsets: 46-47 (float64), 92 (uint8), 104 (uint16), 176-177 (float64), 184-185 (float64), 197 (uint8), 204-205 (float64), 606 (uint32)",
+      "empty_block_diffs": "~3752 bytes across 256 empty blocks — initialization defaults",
+      "geometry_area": "0 diffs in geometry elements — byte-identical",
+      "trailer_diffs": "~39 bytes — DXF source path length differs (expected)",
+      "tests": "28 PASS, 2 SKIP — all green"
     },
     "pending_tasks": [
-      "PHASE 1 — RE: decode native layer block fields at offsets 12-31, 36-75, 92-95, 130-601",
-      "PHASE 1 — RE: check last-layer linked-list terminator in native VCF",
-      "PHASE 1 — RE: compare MACHINE_PROFILE bytes byte-by-byte",
-      "PHASE 2 — FIX: expand encode_layer_block() with all identified fields",
-      "PHASE 2 — FIX: correct linked-list terminator and machine profile",
-      "PHASE 3 — VERIFY: regenerate synthetic VCFs and hex-diff against native",
-      "PHASE 3 — VERIFY: GUI validation in VCutWorks (all regenerated VCFs)",
-      "Fishbone element consolidation — DXF indexer decomposes polylines (41→14 elements)",
-      "Test bigcoffee_12_8 and 1ks DXF sources for broader validation",
-      "Add circle DXF (circle_500_single_aci.dxf exists in dxf_integrace)"
+      "URGENT: GUI test in VCutWorks — load fresh_square_1_aci.VCF, verify layers + geometry display",
+      "URGENT: If GUI passes — iterate: regenerate circle, multi-layer VCFs and test each",
+      "If GUI fails — revert to binary search: disable features one-by-one (trailer, MP, linked-list, empty block init) to find remaining breakage",
+      "Build GUI oracle (pywinauto) — enables automated regression testing",
+      "Add direction@104 for all cutter types (not just V-slot) — native always has direction",
+      "Add last-layer terminator color=1 (native behavior)",
+      "Populate remaining active block fields (offsets 40-47, 92, 176-185, 197, 204-205) after RE",
+      "Kaitai Struct .ksy schema for VCF format",
+      "Fix reader: add color@12 parsing for native/working VCF compatibility",
+      "Fishbone element consolidation investigation"
     ],
     "decisions_made": [
-      "TRAILER_PREFIX = bytes 0-198 from native square trailer (same across all natives)",
-      "Trailer format: 199B prefix + 0x00 + len(path)(1B) + path(ASCII) — matches native structure",
-      "Block index at [10] = uint16, sequential 0-255 — matches native",
-      "ACI_TO_RGB[52] = (0,204,204) = teal — matches native fishbone layer 3 color",
-      "Geometry element comparison: vertex data is byte-identical for identical paths",
-      "DEV_REPORT_VCF_COMPILER_DEBUG_v1.md created as LLM cross-validation inject (research_docs/)",
-      "5 hypotheses (H1-H5) formulated with priority ratings for systematic debugging"
+      "color@12 fix applied — highest priority hypothesis implemented",
+      "GEOMETRY_HEADER_TEMPLATE confirmed correct — no change needed",
+      "MACHINE_PROFILE confirmed correct — no change needed",
+      "POST_STOCK_HEADER alignment correct — no change needed",
+      "Last-layer terminator (color=1 vs color=0) deferred — unlikely critical",
+      "Empty block initialization deferred — unlikely critical",
+      "Old synthetic VCFs purged, replaced with fresh regenerated versions",
+      "Next step must be GUI testing — cannot make more progress without VCutWorks feedback"
     ],
     "open_questions": [
-      "PHASE 1 Q1: What fields in layer block offsets 12-31, 36-75, 92-95, 130-601 does VCutWorks require?",
-      "PHASE 1 Q2: What is the correct last-layer terminator in linked-list pointers?",
-      "PHASE 1 Q3: Are hardcoded MACHINE_PROFILE bytes compatible with RDD6584G?",
-      "PHASE 1 Q4: Is geom_color format (BGR<<8) correct? Check native first GEOMETRY_SIG.",
-      "PHASE 1 Q5: Is there a geometry preamble/count missing between body and trailer?",
-      "PHASE 2 Q6: After populating missing fields, will VCutWorks load the files?",
-      "Will VCutWorks accept the regenerated VCFs now? (square should be closest to native)",
-      "Why does the DXF indexer produce 41 elements for fishbone instead of 14? (polyline vs LINE decomposition)",
-      "Is there a header checksum or CRC that we're missing?",
-      "Does the empty_canavas native have a fundamentally different structure?"
+      "Will VCutWorks load the synthetic VCF with color@12 restored? (CRITICAL — must test in GUI)",
+      "Are the 12 remaining active block diffs validation-critical or just informational defaults?",
+      "Does direction@104 need to be written for non-V-slot layers?",
+      "Does empty block initialization data affect VCutWorks loading?",
+      "Can we build a pywinauto GUI oracle for automated testing?",
+      "Why does fishbone have 41 elements instead of 14?"
     ]
   },
   "dependencies": {
