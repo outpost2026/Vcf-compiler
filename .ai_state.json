@@ -13,16 +13,19 @@
     "a19084b — fix: coord transform, geom_type=1, ACI 7 calibration",
     "4ead359 — REVERT: ACI 7 config restore",
     "ed867c1 — fix: ACI 7→black, H1=24, speed=80, h2=-0.5",
-    "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives"
+    "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives",
+    "ea8aa2b — fix: geometry engine + MACHINE_PROFILE + trailer + fresh synthetic VCFs",
+    "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT"
   ],
-  "current_session": "2026-06-27 (session 2 — DXF path trailer, block index, ACI 52 color)",
+  "current_session": "2026-06-29 (session 3 — early dev phase anomaly, first-working VCF analysis)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
     "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native)",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
     "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
     "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (12 colors with validation statuses)",
-    "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md": "497-line dev report with hex diff analysis, 5 hypotheses (H1-H5), 33 cross-validation files, 10 research questions (Q1-Q10), 4-phase debug workflow"
+    "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md": "497-line dev report with hex diff analysis, 5 hypotheses (H1-H5), 33 cross-validation files, 10 research questions (Q1-Q10), 4-phase debug workflow",
+    "research_docs/REPORT_early_dev_phase_anomaly_v1.md": "213-line report identifying commit 4ba9446 as first working VCF; traces regression through 6 subsequent commits; discovers color@12 vs color@76 as primary breakage hypothesis"
   },
   "implementation_status": {
     "writer": {
@@ -152,8 +155,12 @@
       "CRITICAL: 1055 diff regions between native square_1_aci vs synthetic square_from_dxf — practically entire file differs",
       "CRITICAL: Synthetic VCFs fail in VCutWorks GUI (layers missing, files not loading) despite passing Python roundtrip tests",
       "Hypothesis H1: Layer block incompleteness is PRIMARY cause (probability: ⭐⭐⭐⭐⭐)",
-      "Hypothesis H2: Linked-list last-layer terminator might be wrong (probability: ⭐⭐⭐⭐)",
-      "Hypothesis H3: Machine profile mismatch (probability: ⭐⭐⭐)",
+      "CRITICAL: First working VCF (commit 4ba9446) had color at layer block offset 12 — current writer puts color at offset 76, breaks VCutWorks color match",
+      "CRITICAL: GEOMETRY_HEADER_TEMPLATE (4x float64=1.0 at bytes 12-44) differs from native/working VCF where bytes 12-44 were zeros",
+      "CRITICAL: Our reader never found layers in the working VCF — roundtrip tests validate our reader, NOT VCutWorks compatibility",
+      "Hypothesis H1: color@12 removed → VCutWorks cannot match geometry to layer (probability: ⭐⭐⭐⭐⭐)",
+      "Hypothesis H2: GEOMETRY_HEADER_TEMPLATE non-zero bytes 12-44 rejected by VCutWorks (probability: ⭐⭐⭐⭐)",
+      "Hypothesis H3: Linked-list last-layer terminator might be wrong (probability: ⭐⭐⭐)",
       "Hypothesis H4: Missing geometry preamble/count (probability: ⭐⭐)",
       "Hypothesis H5: Wrong geom_color format — (BGR<<8) may not match native (probability: ⭐⭐)"
     ],
