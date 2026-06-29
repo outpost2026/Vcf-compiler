@@ -19,7 +19,9 @@
     "risk_score": 0,
     "material_thickness_confidence": "LOW"
   },
-  "kb_overrides_applied": [],
+  "kb_overrides_applied": [
+    "MICRO_SEGMENT: disabled by override"
+  ],
   "warnings": [
     "⚠️ Pozor: Výkres má malou plochu (odřezek). Nutná mechanická fixace páskou (min. 80-90 % obvodu) kvůli nízkému vakuovému přítlaku!"
   ],

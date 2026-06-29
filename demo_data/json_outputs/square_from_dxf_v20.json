@@ -1,6 +1,6 @@
 {
   "filename": "square_from_dxf.VCF",
-  "file_hash": "6acb0b1f58e92ef828ee7e4adbb0bbfa",
+  "file_hash": "57f45a39a3dcfa552e75c994c4a564f8",
   "manufacturing_intelligence": {
     "enabled": true,
     "semantic_warnings": [
@@ -35,9 +35,9 @@
   "elements": [
     {
       "offset": "0x26498",
-      "geom_type": "Polyline",
-      "geom_type_id": 3,
-      "type_id": 0,
+      "geom_type": "Polygon",
+      "geom_type_id": 4,
+      "type_id": 1,
       "subtype": 0,
       "segment_arc_data": [
         [
@@ -63,38 +63,38 @@
       ],
       "point_count": 4,
       "length_mm": 4000.0,
-      "layer_index": -1,
+      "layer_index": 0,
       "is_output_yes": true,
       "bbox": [
-        42.5,
-        1237.5,
-        1042.5,
-        2237.5
+        110.0,
+        950.0,
+        1110.0,
+        1950.0
       ],
       "centroid": [
-        542.5,
-        1737.5
+        610.0,
+        1450.0
       ],
       "vertices": [
         [
-          42.5,
-          2237.5
+          110.0,
+          1950.0
         ],
         [
-          1042.5,
-          2237.5
+          1110.0,
+          1950.0
         ],
         [
-          1042.5,
-          1237.5
+          1110.0,
+          950.0
         ],
         [
-          42.5,
-          1237.5
+          110.0,
+          950.0
         ],
         [
-          42.5,
-          2237.5
+          110.0,
+          1950.0
         ]
       ],
       "is_closed_loop": true,
@@ -120,34 +120,65 @@
       "parent_id": null
     }
   ],
-  "layers": [],
+  "layers": [
+    {
+      "speed_mms": 200,
+      "cutter_type": "Vibrate cutter",
+      "cutter_type_id": 1,
+      "number_of_feeding": 1,
+      "start_height_h1_mm": 2.0,
+      "travel_safety_height_mm": 2.0,
+      "end_height_h2_mm": -0.3,
+      "total_cut_length_mm": 4000.0,
+      "color_hex": "0x00ffffff",
+      "color_val": 16777215,
+      "color_rgb": [
+        255,
+        255,
+        255
+      ],
+      "direction": "N/A",
+      "direction_id": 0,
+      "v_slot_width_comp_mm": 0.0,
+      "starting_extension_mm": 0.0,
+      "ending_extension_mm": 0.0,
+      "is_output_yes": true,
+      "operation_type": "Průřez celou tloušťkou materiálu (through-cut)",
+      "complexity": {
+        "avg_segment_length_mm": 1000.0,
+        "curvature_index": 0.0012,
+        "sharp_corners_count": 3,
+        "total_direction_changes": 0
+      }
+    }
+  ],
   "fail_safe_flag": false,
   "canvas_width_mm": 1000.0,
   "canvas_height_mm": 1000.0,
   "canvas_bbox": [
-    42.5,
-    1237.5,
-    1042.5,
-    2237.5
+    110.0,
+    950.0,
+    1110.0,
+    1950.0
   ],
   "shape_groups": [
     {
       "id": "Group_1",
-      "geom_type": "Polyline",
+      "geom_type": "Polygon",
       "point_count": 4,
       "length_mm": 4000.0,
       "count": 1,
       "instances": [
         {
           "centroid": [
-            542.5,
-            1737.5
+            610.0,
+            1450.0
           ],
           "bbox": [
-            42.5,
-            1237.5,
-            1042.5,
-            2237.5
+            110.0,
+            950.0,
+            1110.0,
+            1950.0
           ]
         }
       ],
@@ -260,17 +291,19 @@
   "layout_type": "single_piece",
   "material_thickness_mm": 12.0,
   "operation_sequence": {
-    "layer_order": [],
-    "first_cut_type": "N/A",
-    "last_cut_type": "N/A",
+    "layer_order": [
+      0
+    ],
+    "first_cut_type": "Vibrate cutter",
+    "last_cut_type": "Vibrate cutter",
     "sequence_is_correct": true,
     "element_sequence": [
       {
         "cut_order": 0,
         "element_id": "Element_1",
-        "layer_index": -1,
+        "layer_index": 0,
         "offset": "0x26498",
-        "geom_type": "Polyline",
+        "geom_type": "Polygon",
         "length_mm": 4000.0
       }
     ],
@@ -284,17 +317,17 @@
   "topology_tree": [
     {
       "element_id": "Element_1",
-      "geom_type": "Polyline",
+      "geom_type": "Polygon",
       "length_mm": 4000.0,
       "centroid": [
-        542.5,
-        1737.5
+        610.0,
+        1450.0
       ],
       "bbox": [
-        42.5,
-        1237.5,
-        1042.5,
-        2237.5
+        110.0,
+        950.0,
+        1110.0,
+        1950.0
       ],
       "is_closed_loop": true,
       "children": []
@@ -304,8 +337,8 @@
     "Group_1": {}
   },
   "ml_features": {
-    "total_length_mm": 0,
-    "num_layers": 0,
+    "total_length_mm": 4000.0,
+    "num_layers": 1,
     "num_elements": 1,
     "num_shape_groups": 1,
     "max_group_repetitions": 1,
@@ -319,14 +352,14 @@
     "panel_height_mm": 1000.0,
     "is_aggregated_job": 0,
     "num_sub_jobs": 1,
-    "layer0_speed_mms": 0.0,
-    "layer0_length_mm": 0.0,
-    "layer0_cutter_type_id": 0,
-    "layer0_end_height_h2_mm": 0.0,
+    "layer0_speed_mms": 200.0,
+    "layer0_length_mm": 4000.0,
+    "layer0_cutter_type_id": 1,
+    "layer0_end_height_h2_mm": -0.3,
     "layer0_has_extension": 0,
-    "layer0_complexity_avg_seg": 0.0,
-    "layer0_complexity_curvature": 0.0,
-    "layer0_complexity_corners": 0,
+    "layer0_complexity_avg_seg": 1000.0,
+    "layer0_complexity_curvature": 0.0012,
+    "layer0_complexity_corners": 3,
     "layer0_complexity_dir_changes": 0,
     "layer1_speed_mms": 0.0,
     "layer1_length_mm": 0.0,
@@ -367,8 +400,8 @@
   },
   "complexity_index": "Nízká sémantická složitost (Lineární)",
   "erp_time_prediction": {
-    "total_path_length_mm": 0,
-    "predicted_time_seconds": 65,
-    "predicted_time_formatted": "1 min 5 s"
+    "total_path_length_mm": 4000.0,
+    "predicted_time_seconds": 89,
+    "predicted_time_formatted": "1 min 29 s"
   }
 }
