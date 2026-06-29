@@ -176,6 +176,8 @@ class VcfWriter:
                 next_color_bgr = (next_layer._color[0] << 16) | (next_layer._color[1] << 8) | next_layer._color[2]
                 struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 8, 1)
                 struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, next_color_bgr)
+            else:
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, 1)
             data += bytes(block)
 
         return bytes(data)
@@ -199,11 +201,13 @@ class VcfWriter:
 
     def trailer(self) -> bytes:
         data = bytearray(TRAILER_PREFIX)
+        data.append(0x00)
         if self._dxf_source_path:
             raw_path = str(self._dxf_source_path).encode('ascii', errors='replace')
-            data.append(0x00)
-            data.append(len(raw_path))
-            data.extend(raw_path)
+        else:
+            raw_path = b''
+        data.append(len(raw_path))
+        data.extend(raw_path)
         return bytes(data)
 
     # ── Write ──
@@ -256,12 +260,18 @@ class VcfWriter:
 
         struct.pack_into('<d', block, 96, layer._h2)
 
+        dir_idx = DIR_NAME_TO_INDEX.get(layer._direction, 2)
+        struct.pack_into('<H', block, 104, dir_idx)
+
         if layer._cutter_type == "V-slot":
-            dir_idx = DIR_NAME_TO_INDEX.get(layer._direction, 0)
-            struct.pack_into('<H', block, 104, dir_idx)
             struct.pack_into('<d', block, 106, 0.0)
             struct.pack_into('<d', block, 114, layer._start_ext)
             struct.pack_into('<d', block, 122, layer._end_ext)
+
+        struct.pack_into('<B', block, 92, len(layer._paths))
+        struct.pack_into('<d', block, 40, 5.0)
+        struct.pack_into('<B', block, 197, 64)
+        struct.pack_into('<d', block, 198, 0.5)
 
         return bytes(block)
 
