@@ -86,6 +86,17 @@ TRAILER_PREFIX = bytes([
 
 GEOMETRY_HEADER_TEMPLATE = b'\x00' + struct.pack('<d', 1.0) * 4
 
+ELEMENT_FOOTER = (
+    b'\x00' * 16 +
+    struct.pack('<d', 5.0) +
+    struct.pack('<d', 90.0) +
+    b'\x00' * 80 +
+    struct.pack('<d', 5.0) +
+    struct.pack('<d', 90.0) +
+    b'\x00' * 64 +
+    struct.pack('<I', 0)
+)
+
 
 class VcfLayer:
     def __init__(self, paths=None, speed=None, cutter_type="Vibrate cutter",
@@ -195,6 +206,7 @@ class VcfWriter:
                     data += self.encode_circle_element(cx, cy, radius, layer, layer_idx)
                 else:
                     data += self.encode_geometry_element(path, layer, layer_idx)
+                data += ELEMENT_FOOTER
         return bytes(data)
 
     # ── Trailer ──
@@ -341,19 +353,29 @@ class VcfWriter:
         struct.pack_into('<I', data, type_offset + 4, pt_count)
         struct.pack_into('<I', data, type_offset + 8, 3)
 
+        k = 4.0 / 3.0 * math.tan(math.pi / 8.0)
+        kr = k * radius
+
         arcs = [
-            (cx - radius, cy, cx, cy + radius),
-            (cx, cy + radius, cx + radius, cy),
-            (cx + radius, cy, cx, cy - radius),
-            (cx, cy - radius, cx - radius, cy),
+            (cx - radius, cy, cx, cy + radius,
+             cx - radius, cy + kr, cx - kr),
+            (cx, cy + radius, cx + radius, cy,
+             cx + kr, cy + radius, cx + radius),
+            (cx + radius, cy, cx, cy - radius,
+             cx + radius, cy - kr, cx + kr),
+            (cx, cy - radius, cx - radius, cy,
+             cx - kr, cy - radius, cx - radius),
         ]
 
-        for i, (x1, y1, x2, y2) in enumerate(arcs):
+        for i, (x1, y1, x2, y2, d0, d1, d2) in enumerate(arcs):
             seg_start = type_offset + i * 74
             struct.pack_into('<d', data, seg_start + 14, x1)
             struct.pack_into('<d', data, seg_start + 22, y1)
             struct.pack_into('<d', data, seg_start + 30, x2)
             struct.pack_into('<d', data, seg_start + 38, y2)
+            struct.pack_into('<d', data, seg_start + 46, d0)
+            struct.pack_into('<d', data, seg_start + 54, d1)
+            struct.pack_into('<d', data, seg_start + 62, d2)
 
         return bytes(data)
 

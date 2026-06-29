@@ -17,6 +17,18 @@ Pipeline pro automatickou kompilaci DXF → VCF vytváří binární VCF soubory
 2. **Nenačtené soubory** — některé syntetické VCF nejsou VCutWorks načteny vůbec
 3. **Koruptovaná kompilace** — binární struktura se liší od nativních VCF exportovaných přímo z VCutWorks
 
+### 1.2 Aktuální stav (v3)
+
+Problém má **dvě fáze**:
+
+**Fáze 1 (session 1–6, vyřešeno):** 3 root causes (trailer, element_count@92, direction@104) způsobovaly hard rejection a missing geometry. Fixed writerem. Single-element, single-layer polyline VCF (square_1_aci) funguje v VCutWorks.
+
+**Fáze 2 (session 7, identifikováno):** 2 nové root causes:
+- Circle segment encoding chybný (8 float64 → 4)
+- Chybí 196B footer mezi geometry elementy
+
+Multi-element, multi-layer, a circle VCF stále selhávají. Tento dokument je aktualizován na v3 s těmito nálezy.
+
 ### 1.2 Dopad na byznys proces
 
 Cílem je automatizace tvorby VCF souborů bez nutnosti kompilace přes GUI VCutWorks:
@@ -203,7 +215,7 @@ Offset  | Velikost | Pole                    | Writer | Native | Status
 - `@606 terminator`: FIXED — poslední blok má next_color=1 (místo 0)
 - `@176, @184`: NOT FIXED — denormalized near-zero v native, 0.0 v writeru (semanticky identické)
 
-### 3.3 Geometry element
+### 3.3 Geometry element — header
 
 ```
 Offset  | Velikost | Pole
@@ -212,22 +224,81 @@ Offset  | Velikost | Pole
 8       | 4        | geom_color (uint32) = (BGR << 8) & 0xFFFFFFFF
 12      | 33       | GEOMETRY_HEADER_TEMPLATE (4x float64 1.0 + padding)
 45      | 4        | geom_type (uint32: 0=open, 1=closed)
-49      | 4        | pt_count (uint32 = path_len - 1)
+49      | 4        | pt_count (uint32 = number of segments)
 53      | 4        | subtype (uint32: 0=polyline, 3=circle)
-57+     | pt*74    | segment data (x1,y1,x2,y2 as float64 pairs)
 ```
 
-Každý segment:
+### 3.4 Geometry element — segment structure (v2 — corrected)
+
+Segment struktura závisí na `subtype`. Každý segment je 74 B.
+
+**Polyline (subtype=0)** — 4 float64 na segment (2 body = start+end):
 ```
 Offset  | Velikost | Pole
 --------|----------|------
-0-12    | 12       | pad/zeros
-12      | 8        | x1 (float64)
-20      | 8        | y1 (float64)
-28      | 8        | x2 (float64)
-36      | 8        | y2 (float64)
-44      | 30       | pad/zeros
+0       | 2        | pad/zeros
+2       | 8        | x1 (float64) — start point X
+10      | 8        | y1 (float64) — start point Y
+18      | 8        | x2 (float64) — end point X
+26      | 8        | y2 (float64) — end point Y
+34      | 40       | pad/zeros (nevyplněno)
 ```
+
+Native fishbone/manchester potvrzují: polyline segment obsahuje 4 float64, zbylých 40 B jsou nuly.
+
+**Circle (subtype=3)** — 8 float64 na segment (4 body = start + end + 2 control):
+```
+Offset  | Velikost | Pole
+--------|----------|------
+0       | 2        | pad/zeros
+2       | 8        | x1 (float64) — arc start X
+10      | 8        | y1 (float64) — arc start Y
+18      | 8        | x2 (float64) — arc end X
+26      | 8        | y2 (float64) — arc end Y
+34      | 8        | cx (float64) — control point 1 X / center X
+42      | 8        | cy (float64) — control point 1 Y / center Y
+50      | 8        | cz (float64) — control point 2 X
+58      | 8        | cw (float64) — control point 2 Y
+66      | 8        | pad/zeros
+```
+
+**Důkaz:** Native circle_500_single_aci.VCF má v každém ze 4 segmentů 8 vyplněných float64. Writer (encode_circle_element) zapisuje jen 4 → VCutWorks čte kontrolní body z paddingové oblasti (nulové hodnoty) → zkreslený tvar.
+
+Příklad native segment [0]:
+```
++2: 360.000    +10: 1450.000   ← start point
++18: 610.000   +26: 1700.000   ← end point
++34: 360.000   +42: 1588.071   ← control point 1
++50: 471.929   +58: 1700.000   ← control point 2
+```
+
+### 3.5 Geometry element — 196B footer (v2 — new discovery)
+
+Každý geometry element v nativním VCF je ukončen **196B footerem**. Tento footer je mezi elementy — nikoliv za posledním elementem.
+
+```
+Element header (45 B)
+    + pt_count × segment (74 B each)
+    + FOOTER (196 B)
+    = NEXT element header
+```
+
+| VCF | Elementů | Delta (gap − expected) | Potvrzení |
+|-----|----------|------------------------|-----------|
+| square_1_aci native | 1 | +0 (poslední, za ním trailer) | — |
+| fishbone native | 14 | +196 B každý | ✅ konzistentní |
+| manchester native | 72 | +196 B každý | ✅ konzistentní |
+| circle_500 native | 1 | +0 (poslední) | — |
+| botanic_simple synth | 16 | **+0 B** (chybí footer) | ❌ |
+| double_line_2 synth | 2 | **+0 B** (chybí footer) | ❌ |
+
+**Struktura footeru** (předběžná):
+- Většinou nulové bytes
+- Obsahuje float64 5.0 (shodné s `field_40` v layer bloku)
+- Obsahuje float64 89.0 (stack rozměr?)
+- Zakončen 4B paddingem + začátkem dalšího GEOMETRY_SIG
+
+**Dopad:** Writer negeneruje footer → VCutWorks při iteraci elementů očekává každý další element o 196 B dále, než skutečně je. Pro single-element VCF to nevadí. Pro multi-element VCF (botanic_simple = 16 elementů, fishbone = 14) jsou elementy 2..N na špatných pozicích → nejsou detekovány/rendrovány.
 
 ---
 
@@ -371,6 +442,55 @@ Zbývajících ~596 B v 610B bloku může být nulových (včetně 3740 B empty 
 
 **Důkaz:** Writer `HEADER_MAGIC = b"RDVCUTFILEVER1.0.013"` je korektní. VCutWorks akceptuje 1.0.013 formát — varianty P-R fungují s tímto magic stringem.
 
+### H11 — Circle segment encoding obsahuje 8 float64 (ne 4) ⭐⭐⭐⭐⭐ (NOVÁ, v3)
+
+**Důkaz:** Native circle_500_single_aci.VCF má v každém segmentu (subtype=3) 8 vyplněných float64 na pozicích +2, +10, +18, +26, +34, +42, +50, +58. Writer zapisuje pouze 4 (+2 až +26) → VCutWorks čte zbývající 4 z nulové padding oblasti → zkreslený tvar.
+
+**Dopad:** Všechny circle elementy jsou v GUI zobrazeny jako deformovaný čtyřúhelník.
+
+**Hypotéza:** 8 float64 kóduje kubickou Bézier křivku (2 control pointy) nebo arc s definicí středu. Nutno RE na nativních cirklech.
+
+### H12 — Chybí 196B footer za každým geometry elementem ⭐⭐⭐⭐⭐ (NOVÁ, v3)
+
+**Důkaz:** Všechny multi-element nativní VCF (fishbone 14 elem, manchester 72 elem) mají `delta=196 B` mezi elementy — každý element je o 196 B větší než `45 + pt_count × 74`. Syntetické VCF mají `delta=0`.
+
+**Dopad:** Pro single-element VCF (square_1_aci) nevadí. Pro multi-element VCF jsou elementy 2..N na pozicích posunutých o 196×(N-1) B → VCutWorks nenajde validní GEOMETRY_SIG na očekávané pozici → nerenruje geometrii.
+
+**Otevřená otázka:** Co přesně footer obsahuje? Předběžná analýza ukazuje převážně nuly s výskytem float64 5.0 a 89.0. Může obsahovat per-element metadata (délka, bounding box, toolpath cache).
+
+### H13 — Multi-layer selhání je důsledek H12 ⭐⭐⭐⭐ (NOVÁ, v3)
+
+**Hypotéza:** Problém s multi-layer VCF (double_line_2_aci, 0 render) je přímý důsledek chybějícího 196B footeru. Druhý element (druhá ACI vrstva) je na špatné pozici → VCutWorks nenajde jeho GEOMETRY_SIG → nezobrazí geometrii.
+
+**Alternativa:** Může být samostatný problém s mapováním layer block → geometry element přes barvu. Nutno ověřit po fixu H12.
+
+### 5.4 Rozšířený katalog element typů
+
+Reader identifikuje následující geometrické typy z GEOMETRY_SIG:
+
+| Pole | Offset | Velikost | Význam | Hodnoty |
+|------|--------|----------|--------|---------|
+| `geom_type` | +45 | uint32 | Uzavřenost cesty | 0=open, 1=closed |
+| `pt_count` | +49 | uint32 | Počet segmentů | 1..N (počet 74B segmentů) |
+| `subtype` | +53 | uint32 | Geometrický primitiv | 0=polyline, 3=circle |
+
+Segmentová struktura (74 B):
+
+| Offset | Velikost | Polyline (sub=0) | Circle (sub=3) |
+|--------|----------|-------------------|-----------------|
+| 0 | 2 | padding | padding |
+| 2 | 8 | x1 (start) | x1 (arc start) |
+| 10 | 8 | y1 (start) | y1 (arc start) |
+| 18 | 8 | x2 (end) | x2 (arc end) |
+| 26 | 8 | y2 (end) | y2 (arc end) |
+| 34 | 8 | padding/0 | control point 1 X |
+| 42 | 8 | padding/0 | control point 1 Y |
+| 50 | 8 | padding/0 | control point 2 X |
+| 58 | 8 | padding/0 | control point 2 Y |
+| 66 | 8 | padding/0 | padding |
+
+Element size = 45 + pt_count × 74 + (196 if not last element)
+
 ### 5.3 Co jsme se naučili o metodologii RE
 
 1. **Hex diff není diagnostický nástroj — je to indikátor.** Ukazuje kvantitu rozdílů, ne jejich kritičnost.
@@ -378,6 +498,7 @@ Zbývajících ~596 B v 610B bloku může být nulových (včetně 3740 B empty 
 3. **GUI testování je jediný ground truth.** Reader roundtrip testy a hex diff mohou být zavádějící.
 4. **Patched varianty** (vkládání nativních dat do syntetického těla) umožňují izolovat přesně ty oblasti, které jsou kritické.
 5. **Počet chyb neodpovídá závažnosti.** 3 nezávislé bugy způsobovaly selhání, přestože hex diff ukazoval ~1055 diff regionů. Zbylých ~1052 byly falešné pozitivy.
+6. **Multi-element/multi-layer testování odhalilo skryté chyby.** Single-element VCF (square_1_aci) funguje, ale multi-element ne. To znamená, že předchozí testování bylo neúplné — "working PoC" platí jen pro specifický subset vstupů.
 
 ---
 
@@ -680,13 +801,15 @@ test_roundtrip.py → 3 PASS + 2 SKIP (chybí demo soubory)
 | Multi-layer validace | Netestováno | **Otevřené** — GUI test proběhl pouze na single-layer VCF. Multi-layer (fishbone, manchester) čeká na test. |
 | Circle element rendering | Netestováno | **Otevřené** — writer používá 4-segment encoding. Native používá 1-segment. Může se lišit v renderování. |
 
-### 10.2 Zbývající omezení
+### 10.2 Zbývající omezení (v3 — po GUI testech multi-element)
 
-1. **Single-layer pouze GUI testováno** — multi-layer VCF nebyly v GUI testovány (měly by fungovat, ale není potvrzeno)
-2. **Circle element encoding** — writer kóduje kruh jako 4 arc segmenty, native používá 1 segment. Funkční rozdíl neznámý.
-3. **Empty block init data** — nejsou kritická, ale pro úplnost by mohla být populována machine default hodnotami
-4. **Fishbone element discrepancy** — DXF produkuje 41 elementů, native má 14 (konsolidace?)
-5. **Reader nepodporuje nová pole** — reader neparsuje @40, @92, @104, @197, @198, @606 (roundtrip testy stále prochází díky tolerantní validaci)
+1. **Circle encoding chybný** — segment pro subtype=3 vyžaduje 8 float64 (4 body), writer píše jen 4 → deformovaný tvar. **NENÍ FIXOVÁNO.**
+2. **Chybí 196B footer za elementy** — writer negeneruje footer mezi geometry elementy. Multi-element VCF selhávají. **NENÍ FIXOVÁNO.**
+3. **Multi-layer závisí na #2** — double_line_2_aci selhává kvůli footeru, ne samostatnému layer problému. Nutno ověřit po fixu.
+4. **"Working PoC" je částečný** — platí pouze pro single-element, single-layer VCF (square_1_aci). Multi-element a circle nefungují.
+5. **Empty block init data** — nejsou kritická, ale pro úplnost by mohla být populována machine default hodnotami
+6. **Fishbone element discrepancy** — DXF produkuje 41 elementů, native má 14 (konsolidace?)
+7. **Reader nepodporuje nová pole** — reader neparsuje @40, @92, @104, @197, @198, @606
 
 ---
 
@@ -739,9 +862,9 @@ Reader check:
 
 Po 6 výzkumných session, 19 binary search variantách (A–S), a 3 nezávislých bug fixech je **VCF writer plně funkční a produkuje soubory kompatibilní s VCutWorks**.
 
-### 12.2 Nálezy
+### 12.2 Nálezy — fáze 1 (session 1–6, vyřešeno)
 
-**3 nezávislé root causes VCF selhání:**
+**3 nezávislé root causes VCF selhání (všechny fixed):**
 
 1. **Trailer truncated (HARD REJECTION):** `trailer()` zapisoval TRAILER_PREFIX, ale DXF path data pouze když `dxf_source_path != None`. VCutWorks při detekci traileru očekává path data — jinak zahodí celý soubor.
 
@@ -752,21 +875,32 @@ Po 6 výzkumných session, 19 binary search variantách (A–S), a 3 nezávislý
 **Dodatečná populovaná pole** (potvrzeno jako korektní defaulty):
 - `@40`: float64 5.0, `@197`: uint8 64, `@198`: float64 0.5, `@606`: uint32 1
 
-### 12.3 Co funguje
+### 12.3 Nálezy — fáze 2 (session 7, identifikováno, nefixed)
 
-- ✅ Single-layer VCF (square_1_aci varianta) — LOAD OK, geometrie renderovaná, ACI barvy OK, parametry OK
-- ✅ Fixed writer — 28/28 PASS, 2 SKIP
-- ✅ Variant M důkaz: native active block + native trailer = complete fix
-- ✅ Variant S důkaz: fixed writer + correct input = byte-identical to native v HEADER/GEOMETRY/TRAILER
+**3 nové root causes (multi-element/multi-layer selhání):**
 
-### 12.4 Co zbývá
+4. **Circle segment encoding (H11):** Segment pro subtype=3 vyžaduje 8 float64 (start + end + 2 control body). Writer zapisuje jen 4. → Deformovaný tvar kruhu.
 
-- ⏳ Regenerovat všechny syntetické VCF přes DXF pipeline (compile_dxf)
-- ⏳ GUI test multi-layer VCF (manchester_3_subjobs, fishbone)
-- ⏳ GUI test circle element rendering
-- ⏳ Build pywinauto GUI oracle pro automatizované regresní testování
-- ⏳ Kaitai Struct .ksy schema pro VCF formát
-- ⏳ Fix reader pro color@12 kompatibilitu
+5. **Chybějící 196B footer (H12):** Každý geometry element v nativním VCF je ukončen 196B footerem. Writer ho negeneruje. → Multi-element VCF selhávají (elementy 2..N na špatných pozicích).
+
+6. **Multi-layer selhání (H13):** Pravděpodobně důsledek H12, nikoliv samostatný problém. Nutno ověřit po fixu H11+H12.
+
+### 12.4 Co funguje / nefunguje (v3)
+
+| Scénář | Status | Poznámka |
+|--------|--------|----------|
+| Single-element, single-layer, polyline | ✅ WORKS | square_1_aci — plně funkční |
+| Single-element circle | ❌ BROKEN | H11 — chybí kontrolní body v segmentech |
+| Multi-element, single-layer (botanic) | ❌ BROKEN | H12 — chybí 196B footer |
+| Multi-layer (double_line_2) | ❌ BROKEN | H13 — pravděpodobně důsledek H12 |
+| Fixed writer tests | ✅ 28/28 PASS | Writer unit/roundtrip testy |
+| VCutWorks single-element load | ✅ LOAD OK | Potvrzeno GUI testy |
+
+### 12.5 Prioritizace fixů
+
+1. **HIGH — 196B footer (H12):** Rozšířit `encode_geometry_element()` o generování 196B footeru za každým elementem (kromě posledního?). Toto odblokuje multi-element VCF.
+2. **HIGH — Circle segment (H11):** Rozšířit segment na 8 float64 pro subtype=3. Potřebujeme RE control point formátu (kubická Bézier? arc definice?).
+3. **MEDIUM — Multi-layer (H13):** Ověřit po fixech H11+H12, zda multi-layer funguje. Pokud ne, RE vztahu layer block ↔ geometry element.
 
 ### 12.5 Metodologický přínos
 
