@@ -1,7 +1,7 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "last_updated": "2026-06-29",
   "git_commits": [
     "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
@@ -15,39 +15,40 @@
     "ed867c1 — fix: ACI 7→black, H1=24, speed=80, h2=-0.5",
     "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives",
     "ea8aa2b — fix: geometry engine + MACHINE_PROFILE + trailer + fresh synthetic VCFs",
-    "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT"
+    "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT",
+    "?? — Phase 2: trailer fix, ph3 batch, ELEMENT_FOOTER, multi-layer encode",
+    "?? — Phase 3: 20B trailer prefix, 180B ELEMENT_TAIL for last elem, ph4 batch"
   ],
-  "current_session": "2026-06-29 (session 5 — BINARY SEARCH: variant generator, native-patched variant reduces diffs to 11 regions, empty block init = PRIMARY hypothesis)",
+  "current_session": "2026-06-29 (session 7 — FIX: circle cx/cy/r pass-through, ACI ByLayer fix, multi-element trailer+tail)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
-    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE (418B from native). FIXED: color@12 restored in encode_layer_block(). Cleaned: GEOMETRY_HEADER_TEMPLATE = b'\\x00' + struct.pack('<d', 1.0)*4.",
+    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: trailer from 4B→20B zeros prefix. FIXED: ELEMENT_TAIL (180B) for last elem vs ELEMENT_FOOTER (196B) for inter-elem. FIXED: body() uses element_counter for is_last detection.",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
-    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
+    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform. FIXED: ACI_TO_RGB[0]→(10,10,10) for unique geom_color vs ACI 7. FIXED: circle_params pass-through (cx, cy, radius from DXF).",
     "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (12 colors with validation statuses)",
-    "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md": "497-line dev report with hex diff analysis, 5 hypotheses (H1-H5), 33 cross-validation files",
-    "research_docs/REPORT_early_dev_phase_anomaly_v1.md": "213-line report identifying commit 4ba9446 as first working VCF; 9 structural differences"
+    "research_docs/": "Research documentation, element_types_catalog.md, RE/KNOWLEDGE_CORPUS/SYSTEQ docs"
   },
   "implementation_status": {
     "writer": {
       "status": "functional — self-contained",
-      "version": "1.3",
+      "version": "1.4",
       "features": [
-        "Full 472B header: 54B preamble + 418B machine profile (matches native byte-for-byte)",
+        "Full 472B header: 54B preamble + 418B machine profile",
         "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims (1220×2900)",
         "257 layer blocks × 610 B (empty-first, active-last)",
         "Block index counter at [10] (uint16, 0-255 across empty blocks)",
         "8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2",
-        "Layer block: output_flag@0, speed@4, color@12 (FIXED), cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, vs_comp@106, ext@114/122",
-        "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44, matches native)",
+        "Layer block: output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, vs_comp@106, ext@114/122",
+        "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44)",
         "is_closed with 0.001 epsilon",
-        "encode_circle_element with 4 arc segments (type=1, sub=3)",
-        "VcfLayer with _path_types for circle detection",
-        "MACHINE_PROFILE (418B) — verified 0 byte diffs vs native square_1_aci"
+        "encode_circle_element with 4 Bezier arcs (type=1, sub=3) — now accepts direct cx/cy/radius",
+        "ELEMENT_FOOTER=196B (inter-element), ELEMENT_TAIL=180B (last element)",
+        "Trailer: 20 zero bytes + path length + DXF source path",
+        "VcfLayer with _path_types for circle detection"
       ],
       "not_implemented": [
         "Scrambling (raises UnsupportedFeatureError)",
-        "Direction@104 written only for V-slot (native has direction for all cutter types)",
-        "~12 remaining active block fields at offsets 40-47, 92, 104, 176-177, 184-185, 197, 204-205, 606 (all in unknown zones)"
+        "Remaining unknown block fields at offsets 40-47, 92, 104, 176-177, 184-185, 197, 204-205, 606"
       ]
     },
     "reader": {
@@ -65,10 +66,11 @@
       "status": "functional",
       "features": [
         "compile_dxf(dxf_path, output_path, config_path)",
-        "ACI_TO_RGB mapping (VCutWorks-calibrated: ACI 7=black, ACI 0=black)",
+        "ACI_TO_RGB mapping with unique colors per ACI index",
         "Config loader with fallback defaults",
         "Density-based ACI 4 ambiguity resolution",
-        "Coordinate transform (+67.5, -287.5 mm)"
+        "Coordinate transform (+67.5, -287.5 mm)",
+        "Circle center/radius pass-through from DXF indexer to VCF writer"
       ]
     },
     "tests": {
@@ -76,266 +78,93 @@
       "pass": 28,
       "skip": 2,
       "test_files": [
-        "tests/test_writer_unit.py — 23 tests (layer block, geometry, circle, header, trailer, roundtrip)",
-        "tests/test_roundtrip.py — 5 tests (known files, synthetic line, two layers, V-slot, determinism)"
+        "tests/test_writer_unit.py — 23 tests",
+        "tests/test_roundtrip.py — 5 tests"
       ]
-    },
-    "demo_data": {
-      "native_vcf": [
-        "square_1_aci.VCF",
-        "circle_radius_125.VCF",
-        "circle_diameter_600_native.VCF",
-        "empty_canavas_native.VCF",
-        "fishbone_2790x1200_native.VCF",
-        "manchester_3_subjobs_native.VCF",
-        "circle_500_single_aci.VCF"
-      ],
-      "synthetic_vcf": [
-        "square_1_aci.VCF (157867B — 1B off from native! Previously 703B off)",
-        "circle_diameter_600_native.VCF (157881B — same size as native version)",
-        "circle_500_single_aci.VCF (157876B)",
-        "double_line_1_aci.VCF (157769B)",
-        "double_line_2_aci.VCF (158379B)",
-        "single_line_1_aci.VCF (157650B)",
-        "single_star_1_aci.VCF (158316B)",
-        "fresh_synthetic.VCF (157560B — writer-only, no DXF)"
-      ]
-    },
-    "research_docs": [
-      "research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md",
-      "research_docs/Gemini_RD_VCF.txt",
-      "research_docs/REPORT_early_dev_phase_anomaly_v1.md"
-    ],
-    "dev_scripts": [
-      "dev_scripts/hex_diff_v2.py",
-      "dev_scripts/vcf_binary_search.py",
-      "dev_scripts/vcf_dxf_re_correlator_v1.1.py",
-      "dev_scripts/VcfWrappingAnalyzer.py"
-    ]
+    }
   },
   "session_state": {
-    "current_session": "2026-06-29 (session 6 — BREAKTHROUGH! M works, writer fixes confirmed, variant_S has 0 diffs in HEADER/GEOMETRY/TRAILER)",
+    "current_session": "2026-06-29 (session 7 — FIX: circle cx/cy/r pass-through, ACI ByLayer fix, multi-element trailer+tail)",
     "changes_in_session": {
-      "session_6_2026_06_29": {
-        "gui_test_round1": {
-          "findings": [
-            "A (minimal, active-first): no load & black canvas",
-            "B (A+empty blocks): load, nothing but black canvas",
-            "C (B+linked-list): load, nothing but black canvas",
-            "D (C+MP): load OK, aci ok, params semi ok, speed 800 invalid, no geometry",
-            "E (D+trailer): NO LOAD — trailer WITHOUT path data causes rejection",
-            "F (full current): NO LOAD — same trailer issue",
-            "G (native empty init patch): NO LOAD — trailer still wrong",
-            "H (F-trailer): load OK, aci ok, params ok, NO GEOMETRY = empty canvas",
-            "I (no MP): load, black canvas",
-            "J (active-first): no load"
-          ],
-          "key_insights": [
-            "TRAILER WITHOUT DXF PATH DATA = HARD REJECTION (E,F,G fail vs H loads)",
-            "ACTIVE BLOCK @92=0 (no element count) = NO GEOMETRY RENDERING (H,D have correct trailer but no geometry)",
-            "ACTIVE BLOCK @104=0 (no direction) = missing direction for all cutter types",
-            "EMPTY BLOCK INIT DATA IS NOT CRITICAL — circle_500 has zeroed empty blocks and works",
-            "H6 (empty block init) is DISPROVED — G failed because of trailer, not empty blocks",
-            "Previous theory about empty blocks was based on misleading hex diff analysis"
-          ]
-        },
-        "gui_test_round2_breakthrough": {
-          "findings": [
-            "K (synth + native trailer): NO LOAD — old active block (@92=0, @104=0) still causes rejection when trailer present",
-            "L (synth + native path): NO LOAD — same root cause",
-            "M (synth + native active block + native trailer): ✅ WORKS PERFECTLY — geometry renders, ACI OK, params correct!",
-            "N (synth + native trailer only): NO LOAD — active block still wrong",
-            "O (synth + native active block, no trailer): NO LOAD — trailer missing",
-            "P (fixed writer, demo params): ✅ LOAD OK — geometry renders, semi-OK (400x400 vs expected 1000x1000 = test data diff)",
-            "Q (P + native empties): ✅ LOAD OK — same as P (confirms empty blocks irrelevant)",
-            "R (fixed writer, matching native params): ✅ LOAD OK — param OK (speed=80 correct), geometry renders semi-OK (test data diff)",
-            "S (fixed writer, native coords+params+path): 157868 B, 0 diffs HEADER/GEOMETRY/TRAILER — should render IDENTICAL to native"
-          ],
-          "breakthrough": [
-            "M proves: active block fields + trailer = COMPLETE FIX",
-            "S proves: fixed writer with correct input data = byte-identical to native in all critical regions",
-            "P/Q/R prove: all 3 writer fixes are correct and sufficient for VCutWorks compatibility"
-          ]
-        },
-        "writer_fixes_applied": [
-          "FIXED: trailer() — always writes DXF path data (even when dxf_source_path=None, writes empty path)",
-          "FIXED: encode_layer_block() — added direction@104 for ALL cutter types (default 2='Cut both side')",
-          "FIXED: encode_layer_block() — added element count @92 = len(layer._paths)",
-          "FIXED: encode_layer_block() — added float64 5.0 @40, uint8 64 @197, float64 0.5 @198 (matching native)",
-          "FIXED: header() — last-block linked-list terminator color = 1 (not 0)"
-        ],
-        "variants_generated": [
-          "A-J — original binary search variants (created in session 5)",
-          "K — synth body + native trailer (157868 B)",
-          "L — synth with native DXF path patched (157868 B)",
-          "M — synth + native active block + native trailer (157868 B) — WORKS!",
-          "N — synth + native trailer only (157868 B)",
-          "O — synth + native active block, no trailer (157583 B)",
-          "P — fixed writer with demo layer params, demo DXF path (157808 B) — WORKS",
-          "Q — P + native empty block init data (157808 B) — WORKS",
-          "R — fixed writer matching native layer params + native DXF path (157868 B) — WORKS",
-          "S — fixed writer + native coordinates + native params + native path (157868 B, 0 diffs HEADER/GEOMETRY/TRAILER)"
-        ],
-        "test_results": [
-          "28/28 PASS, 2 SKIP — all tests pass after fixes"
-        ]
-      },
-      "session_5_2026_06_29": {
-        "dev_scripts": [
-          "Created dev_scripts/vcf_binary_search.py — generates 10 VCF variants (A-F fresh, G-J patched from synthetic)",
-          "Variants: A=minimal, B=+empty, C=+linked-list, D=+MP, E=+trailer, F=full current (=HEAD writer)",
-          "Patched: G=+native empty init, H=no trailer, I=no MP, J=active-first (no empty blocks)"
-        ],
-        "findings": [
-          "BREAKTHROUGH: Variant G (native empty block init data patched in) reduces diffs from 2394 regions/3788 bytes → 11 regions/51 bytes",
-          "The 11 remaining diffs: 8 in active block (known ~12 bytes), 3 in trailer (DXF path content/length)",
-          "This proves the writer is STRUCTURALLY CORRECT — only empty block init data + ~12 active block bytes differ from native",
-          "Empty block init data is now the PRIMARY hypothesis for 'neočekávaný formát souboru' — VCutWorks likely validates ALL 257 blocks, rejecting those with all-zero init",
-          "Previous working VCF (4ba9446) had NO empty blocks (active-first), so it bypassed this validation"
-        ],
-        "variant_sizes_vs_native": {
-          "native": "157868 B",
-          "A_minimal": "1005 B (-156863)",
-          "B_empty_blocks": "157165 B (-703)",
-          "C_linked_list": "157165 B (-703)",
-          "D_MP": "157583 B (-285)",
-          "E_trailer": "157782 B (-86)",
-          "F_full_current": "157782 B (-86)",
-          "G_native_empty_init": "157867 B (-1)",
-          "H_no_trailer": "157583 B (-285)",
-          "I_no_MP": "157449 B (-419)",
-          "J_active_first": "1707 B (-156161)"
-        }
-      },
-      "session_2_2026_06_27": {
-        "writer": [
-          "MACHINE_PROFILE (418B) included in header",
-          "EMPTY_BLOCK_COUNT=256, dynamic total_blocks=256+n_layers",
-          "Block color at offset 76 always black (0x000000)",
-          "Block index counter at [10] (uint16, 0-255 across empty blocks)",
-          "TRAILER_PREFIX constant (199 bytes from native VCF)",
-          "trailer() with DXF path embedding",
-          "write() appends trailer after body"
-        ],
-        "dxf_adapter": [
-          "compile_dxf() passes dxf_source_path to write()",
-          "ACI_TO_RGB[52] fixed to (0,204,204)"
-        ]
-      },
-      "session_3_2026_06_29": {
-        "research_docs": [
-          "Created ./research_docs/ folder",
-          "DEV_REPORT_VCF_COMPILER_DEBUG_v1.md (497 lines)",
-          "Gemini_RD_VCF.txt (542 lines — methodology research)"
-        ],
-        "findings": [
-          "1055 diff regions between native and synthetic",
-          "Layer blocks ~90% zeros",
-          "Git history: commit 4ba9446 = first working VCF",
-          "color@12 → color@76 regression identified",
-          "Reader unreliable for cross-validation"
-        ]
-      },
-      "session_4_2026_06_29": {
+      "session_7_2026_06_29": {
         "writer_fixes": [
-          "FIXED: color@12 restored in encode_layer_block() — BGR color now written at block offset 12 (in addition to existing offset 76)",
-          "CLEANED: GEOMETRY_HEADER_TEMPLATE refactored to b'\\x00' + struct.pack('<d', 1.0)*4 (functionally identical to original, verified vs native)",
-          "VERIFIED: MACHINE_PROFILE has 0 byte diffs vs native when correctly aligned at offset 54",
-          "VERIFIED: POST_STOCK_HEADER alignment is correct (preamble [0:54] matches native byte-for-byte)",
-          "ANALYZED: Last-layer linked-list terminator — native color=1 differs from writer color=0 (probably not critical)"
+          "FIXED: trailer() — 4B zeros → 20B zeros prefix (matches native)",
+          "FIXED: body() — last element gets ELEMENT_TAIL (180B) instead of ELEMENT_FOOTER (196B), matching native structure",
+          "FIXED: encode_circle_element() — now accepts optional circle_params dict with cx/cy/radius instead of always recomputing from vertices",
+          "ADDED: ELEMENT_TAIL constant = ELEMENT_FOOTER[:-16] (180B)"
         ],
-        "test_results": [
-          "test_writer_unit.py: 23/23 PASS",
-          "test_roundtrip.py: 5/5 PASS, 2 SKIP (demo files not found)",
-          "Total: 28 PASS, 2 SKIP"
+        "dxf_adapter_fixes": [
+          "FIXED: ACI_TO_RGB[0] changed from (0,0,0) to (10,10,10) for unique geom_color vs ACI 7 (both were black → collision)",
+          "FIXED: _build_vcf_spec() now passes circle_center_x, circle_center_y, circle_radius from DXF indexer entity dict to VCF writer for CIRCLE elements"
         ],
-        "synthetic_vcf_regeneration": [
-          "All 7 DXF sources compiled → fresh VCFs in synthethic_vcf/",
-          "Old broken synthetics removed",
-          "Hex diff improvement: 1055+ regions → ~12 active block diffs + 3752 empty block init diffs + 39 trailer diffs",
-          "Size difference: 703B → 1B (from 157165 to 157867, native is 157868)"
+        "dxf_indexer_fixes": [
+          "FIXED: index_dxf() line 1395 — ByLayer (color=256) now resolves to actual layer color via layer_colors dict instead of hardcoded ACI 7",
+          "ADDED: circle_cx, circle_cy, circle_radius stored in entity dict for CIRCLE entities"
+        ],
+        "fix_results": [
+          "PH4 files verified: circle_ph4=157876B (same as native), tail=180B, trailer_20zeros=OK",
+          "All 16 DXF files compiled as _ph4 suffix",
+          "test_multi_element_ph4 and test_multi_layer_ph4 generated",
+          "Circle geometry header matches native byte-for-byte, coordinates differ only due to DXF position"
+        ],
+        "root_causes_identified": [
+          "RC1 — Circle rendering: indexer discards cx/cy/radius, adapter recomputes from 36-segment polygon with floating point error → 3/4 Bezier arcs degenerate to straight lines",
+          "RC2 — ACI layers: ACI 0 and ACI 7 both mapped to (0,0,0) → geom_color collision → reader cannot distinguish layers. ByLayer (color=256) wrongly mapped to ACI 7 instead of actual layer color",
+          "RC3 — Multi-element: fixed by 180B ELEMENT_TAIL for last element + 20B trailer prefix; needs GUI test"
         ]
       }
     },
-      "key_findings": {
+    "key_findings": {
       "resolved": [
-        "H1 (color@12): FIXED — writer now writes BGR color at layer block offset 12.",
-        "H2 (GEOMETRY_HEADER_TEMPLATE): DISPROVED — native DOES have 4× float64 1.0 at bytes 12-44. Template WAS correct.",
-        "H3 (MACHINE_PROFILE): DISPROVED — 0 byte diffs vs native. Constant WAS correct.",
-        "H4 (geometry preamble): 0 diffs in geometry area — structure WAS correct from start.",
-        "H5 (geom_color format): 0 diffs in geometry color — (BGR<<8) format WAS correct.",
-        "H6 (empty block init): DISPROVED by GUI — circle_500 has zeroed empty blocks and works. G failed due to trailer.",
-        "H7 (active block bytes): FIXED — @40=5.0, @92=element_count, @104=direction=2, @197=64, @198=0.5, @606=1.",
-        "H8 (trailer DXF path): CONFIRMED CRITICAL — trailer WITHOUT path data causes hard rejection.",
-        "H9 (fixed writer geometry): CONFIRMED — all fixed variants (P/Q/R/S) load with geometry in VCutWorks.",
-        "H10 (format version): DISPROVED — writer correctly produces 1.0.013 format accepted by VCutWorks.",
-        "HEADER, ACTIVE_BLOCK (all fields), GEOMETRY, TRAILER — ALL CRITICAL REGIONS NOW MATCH NATIVE"
+        "H8 (trailer DXF path): CONFIRMED CRITICAL",
+        "H9 (fixed writer geometry): CONFIRMED — all fixed variants load with geometry",
+        "H10 (format version): DISPROVED — 1.0.013 is correct",
+        "TRAILER PREFIX: 20B zeros (not 4B) — confirmed vs native",
+        "LAST ELEMENT TAIL: 180B (not 196B footer) — confirmed vs native across all 4 multi-element files",
+        "CIRCLE ENCODING: 4 Bezier arcs from DXF center/radius, NOT from 36-segment polygon recomputation",
+        "ACI 0 vs 7 COLLISION: both mapped to (0,0,0) → unique RGB now used",
+        "ByLayer (256): now resolves to actual layer color instead of hardcoded ACI 7"
       ],
       "remaining_hypotheses": [
-        "Empty block init data variation — not critical but could be populated for completeness",
-        "@176-177, @184-185 denormalized near-zero bytes — semantically identical to 0.0, can be left as-is",
-        "Multi-layer and multi-element VCFs − should work but not yet GUI-tested",
-        "Fishbone element consolidation — 41 vs 14 elements, needs investigation"
+        "Multi-element GUI test needed (botanic, double_line ph4 files prepared)",
+        "Circle rendering GUI test needed (circle_ph4 with cx/cy/r pass-through fix)",
+        "Multi-layer GUI test needed (test_multi_layer_ph4)",
+        "GEOMETRY_HEADER_TEMPLATE may still differ from native in content (currently 4x float64 1.0)",
+        "ELEMENT_FOOTER content differs from native (writer has zeros vs native has non-zero data at offsets 32-39, 40-47, 112-143)"
       ]
     },
     "verification": {
-      "square_1_aci_native": "157868B, 258 blocks, 1 elem, GEOMETRY_SIG at 157242",
-      "var_M_working_proof": "157868B — synth body + native active block + native trailer. WORKS in VCutWorks (geometry, ACI, params all correct)",
-      "var_S_fixed_writer": {
-        "size": "157868B, same as native",
-        "HEADER": "0 diffs",
-        "EMPTY_BLOCKS": "3740 diffs (confirmed non-critical)",
-        "ACTIVE_BLOCK": "4 diffs (denormalized 8e-320 vs exact 0.0 — semantically identical)",
-        "GEOMETRY": "0 diffs (byte-identical when using same coordinates)",
-        "TRAILER": "0 diffs (byte-identical when using same DXF path)",
-        "verdict": "should render IDENTICALLY to native"
-      },
-      "var_R_fixed_writer_demo_params": {
-        "size": "157868B",
-        "HEADER": "0 diffs",
-        "GEOMETRY": "32 diffs (different coordinates — expected)",
-        "TRAILER": "0 diffs",
-        "verdict": "WORKS in VCutWorks (geometry renders, params correct)"
-      },
-      "writer_fixes": [
-        "trailer() — always writes DXF path data",
-        "encode_layer_block() — direction@104 for ALL cutter types (default=2)",
-        "encode_layer_block() — element count @92",
-        "encode_layer_block() — float64 5.0 @40, uint8 64 @197, float64 0.5 @198",
-        "header() — last-block terminator color = 1"
-      ],
-      "tests": "28 PASS, 2 SKIP — all green"
+      "square_1_aci": "Works (single element, single layer)",
+      "circle_ph4_structure": "157876B, 1 elem, type=1 sub=3, tail=180B, trailer_20zeros=OK, header matches native",
+      "botanic_ph4_structure": "455122B, 16 elems, tail=180B, trailer_20zeros=OK",
+      "double_line_ph4_structure": "157965B, 2 elems, tail=180B, trailer_20zeros=OK",
+      "multi_element_ph4_structure": "2 elems, tail=180B, geom_colors unique",
+      "multi_layer_ph4_structure": "2 elems across 2 layers, geom_colors: 0xFF000000 and 0x0000FF00"
     },
     "pending_tasks": [
-      "IMMEDIATE: Regenerate ALL synthetic VCFs via DXF pipeline with fixed writer (compile_dxf)",
-      "GUI test remaining native VCFs (circle, double_line, single_star, fishbone) recompiled",
-      "GUI test multi-layer VCFs (manchester_3_subjobs, fishbone)",
-      "Build GUI oracle (pywinauto) for automated regression testing",
-      "Kaitai Struct .ksy schema for VCF format",
-      "Fix reader: add color@12 parsing for native/working VCF compatibility",
-      "Fishbone element consolidation investigation (41 vs 14 elements)",
-      "Optionally populate empty block init data with machine defaults for completeness",
-      "Tag release v1.0 — working PoC confirmed"
+      "IMMEDIATE: GUI test circle_ph4 in VCutWorks (circle rendering fix)",
+      "GUI test botanic_ph4 (multi-element fix)",
+      "GUI test double_line_ph4 (2-element detection)",
+      "GUI test test_multi_layer_ph4 (multi-layer)",
+      "GUI test fishbone_ph4 (element consolidation 41 vs 14)",
+      "Verify ELEMENT_FOOTER content vs native (non-zero data at offsets 32+, 112+)",
+      "GEOMETRY_HEADER_TEMPLATE audit — confirm content matches native",
+      "Build GUI oracle (pywinauto) for automated regression testing"
     ],
     "decisions_made": [
-      "Binary search variant methodology (A→J incremental features) was the BREAKTHROUGH — isolatation of trailer issue",
-      "hex_diff analysis was MISLEADING — empty block diffs appeared dominant but are non-critical",
-      "GUI testing in VCutWorks was the ONLY reliable validation — our reader's roundtrip tests were insufficient",
-      "Trailer with truncated path data = hard rejection (E,F,G vs H)",
-      "Active block @92 = element count is essential for geometry display",
-      "Direction@104 for all cutter types is required (not just V-slot)",
-      "Empty block init data is NOT critical — disproven by multiple GUI-tested variants",
-      "All 3 writer fixes are now applied, tested (28/28), and GUI-confirmed working",
-      "Variant M proves: native active block + native trailer = complete solution",
-      "Variant S proves: fixed writer with correct input = byte-identical to native in all critical regions"
+      "Circle fix: pass cx/cy/radius from DXF indexer through adapter to writer — eliminates recomputation error",
+      "ACI color uniqueness: ACI 0→(10,10,10) ensures geom_color differs from ACI 7→(0,0,0) despite both being black",
+      "ByLayer fix: use layer_colors dict to resolve 256 to actual layer color",
+      "Trailer fix: 20 zero bytes prefix confirmed from native analysis (matches ALL native files)",
+      "Tail fix: 180B for last element confirmed from ALL native multi-element files (1ks, fishbone, manchester, botanic)"
     ],
     "open_questions": [
-      "Will multi-layer VCFs work with the fixed writer? (should — need GUI test)",
-      "Will circle elements render correctly? (4-segment encoding may differ from native 1-segment)",
-      "What is the purpose of empty block init data in blocks 0 and 1 (h1=24, cutter=1, h2=-0.5)?",
-      "Can pywinauto GUI oracle reliably detect geometry rendering success?",
-      "Why does fishbone DXF produce 41 elements instead of expected 14?",
-      "Should we add a VCF format version negotiation mechanism?"
+      "Does circle_ph4 render correctly in VCutWorks after cx/cy/r pass-through fix?",
+      "Does double_line_ph4 detect both elements?",
+      "Does botanic_ph4 show all 16 elements?",
+      "Does test_multi_layer_ph4 show both ACI layers with correct cutter parameters?",
+      "Why does native ELEMENT_FOOTER have non-zero data at offsets 32-39, 40-47, 112-143?",
+      "Should GEOMETRY_HEADER_TEMPLATE match native byte-for-byte (currently float64 1.0)?"
     ]
   },
   "dependencies": {

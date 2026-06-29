@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 ACI_TO_RGB = {
-    0: (0, 0, 0),
+    0: (10, 10, 10),
     1: (255, 0, 0),
     2: (255, 255, 0),
     3: (0, 255, 0),
@@ -222,12 +222,23 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
             continue
         etype = e.get("type", "")
         geom_type = "Circle" if etype == "CIRCLE" else "Polyline"
-        vcf_elements.append({
+        elem = {
             "geom_type": geom_type,
             "vertices": vertices,
             "layer_index": aci_to_layer_index.get(ci, 0),
             "is_output_yes": True,
-        })
+        }
+        if etype == "CIRCLE":
+            cx = e.get("circle_cx")
+            cy = e.get("circle_cy")
+            r = e.get("circle_radius")
+            if cx is not None and cy is not None and r is not None:
+                elem["circle_params"] = {
+                    "cx": cx + _DXF_TO_VCF_OFFSET_X,
+                    "cy": cy + _DXF_TO_VCF_OFFSET_Y,
+                    "radius": r
+                }
+        vcf_elements.append(elem)
 
     return {"layers": vcf_layers, "elements": vcf_elements}
 

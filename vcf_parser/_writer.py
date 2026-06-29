@@ -97,6 +97,8 @@ ELEMENT_FOOTER = (
     struct.pack('<I', 0)
 )
 
+ELEMENT_TAIL = ELEMENT_FOOTER[:-16]
+
 
 class VcfLayer:
     def __init__(self, paths=None, speed=None, cutter_type="Vibrate cutter",
@@ -116,6 +118,7 @@ class VcfLayer:
         self._is_output = is_output
         self._feed_count = feed_count
         self._path_types = []
+        self._path_circle_params = []
 
     def _compute_bbox(self):
         if not self._paths:
@@ -197,16 +200,34 @@ class VcfWriter:
 
     def body(self) -> bytes:
         data = bytearray()
+        # Count total elements
+        total_elements = 0
+        for layer in self._layers:
+            total_elements += len(layer._paths)
+        element_counter = 0
         for layer_idx, layer in enumerate(self._layers):
             if not layer._paths:
                 continue
             for pi, path in enumerate(layer._paths):
+                element_counter += 1
+                is_last = (element_counter == total_elements)
                 if pi < len(layer._path_types) and layer._path_types[pi] == "Circle":
-                    cx, cy, radius = self._compute_circle_params(path)
+                    circle_params = None
+                    if pi < len(layer._path_circle_params):
+                        circle_params = layer._path_circle_params[pi]
+                    if circle_params:
+                        cx = circle_params["cx"]
+                        cy = circle_params["cy"]
+                        radius = circle_params["radius"]
+                    else:
+                        cx, cy, radius = self._compute_circle_params(path)
                     data += self.encode_circle_element(cx, cy, radius, layer, layer_idx)
                 else:
                     data += self.encode_geometry_element(path, layer, layer_idx)
-                data += ELEMENT_FOOTER
+                if is_last:
+                    data += ELEMENT_TAIL
+                else:
+                    data += ELEMENT_FOOTER
         return bytes(data)
 
     # ── Trailer ──
@@ -216,7 +237,7 @@ class VcfWriter:
             raw_path = str(self._dxf_source_path).encode('ascii', errors='replace')
         else:
             raw_path = b''
-        return b'\x00\x00\x00\x00' + bytes([len(raw_path)]) + raw_path
+        return b'\x00' * 20 + bytes([len(raw_path)]) + raw_path
 
     # ── Write ──
 
@@ -403,6 +424,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013", dxf_s
         color_rgb = ld.get("color_rgb", [255, 0, 0])
         paths = []
         path_types = []
+        path_circle_params = []
         layer_element_indices = [ei for ei, el in enumerate(elements) if el.get("layer_index", 0) == lidx]
 
         for ei in layer_element_indices:
@@ -411,6 +433,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013", dxf_s
             if vertices and len(vertices) >= 2:
                 paths.append(vertices)
                 path_types.append(el.get("geom_type", "Polyline"))
+                path_circle_params.append(el.get("circle_params"))
 
         layer = VcfLayer(
             paths=paths,
@@ -426,6 +449,7 @@ def write(specification: dict, output_path: str, version: str = "1.0.013", dxf_s
             feed_count=ld.get("number_of_feeding", 1),
         )
         layer._path_types = path_types
+        layer._path_circle_params = path_circle_params
         vcf_layers.append(layer)
 
     writer = VcfWriter(layers=vcf_layers, version=version, dxf_source_path=dxf_source_path)
