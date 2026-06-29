@@ -1,0 +1,1088 @@
+{
+  "_gt_document": "GROUND_TRUTH_VCF_DXF_RE_SEMANTIC_COMPILATION",
+  "_version": "1.1",
+  "_date": "2026-06-29",
+  "_author": "SYSTEQ RE synthesis (LLM-augmented cross-source compilation)",
+  "_purpose": "Strojově čitelná kompilace všech RE poznatků o VCF a DXF formátech pro okamžitý LLM kontext injekt",
+  "_sources": [
+    "Vcf-compiler/.ai_state.json (session state v1.7.0)",
+    "Vcf-compiler/docs/handoff_session_2026-06-29.json (session 7)",
+    "Vcf-compiler/docs/handoff_session_2026-06-27.json (session 6)",
+    "Vcf-compiler/docs/VCF_Reverse_Engineering_Inference_Workflow_2026.md (metodika)",
+    "Vcf-compiler/docs/SYSTEQ_VCF_STACK_ANATOMY_V2.md (architektonická disekce)",
+    "Vcf-compiler/docs/RE_CASE_STUDY_VCUTWORKS_LIGHTBURN_v2.md (případová studie)",
+    "Vcf-compiler/docs/KNOWLEDGE_CORPUS_VCUTWORKS_LIGHTBURN.md (znalostní báze)",
+    "Vcf-compiler/docs/STATISTICAL_ANALYSIS_INTERPRETATION.md (statistická analýza ACI)",
+    "Vcf-compiler/docs/dxf_to_vcf_pipeline_design.md (pipeline design)",
+    "Vcf-compiler/docs/DXF_PREDICTIVE_PARSER_METHODOLOGY.md (DXF metodika)",
+    "Vcf-compiler/docs/ACI_MAPOVANI_RESEARCH_V2.md (ACI výzkum)",
+    "Vcf-compiler/research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md (debug report v2.0)",
+    "Vcf-compiler/research_docs/REPORT_dev_phase_evolution.md (evoluční report)",
+    "Vcf-compiler/research_docs/REPORT_early_dev_phase_anomaly_v1.md (anomálie)",
+    "Vcf-compiler/research_docs/Gemini_RD_VCF.txt (teoretický framework)",
+    "Vcf-compiler/research_docs/element_types_catalog.md (element katalog)",
+    "Vcf-compiler/research_docs/element_types_catalog.json (element data)",
+    "KB/New/01_METODIKY/01_reverse_engineering/VCF_Reverse_Engineering_Inference_Workflow_2026.md",
+    "B2B-Knowledge-Base/04_KNOWLEDGE_BASE/01_reverse_engineering/GROUND_TRUTH_VCF_PARSER_ORIGIN_V1.0.json",
+    "B2B-Knowledge-Base/04_KNOWLEDGE_BASE/01_reverse_engineering/RE_Methodology.md",
+    "B2B-Knowledge-Base/04_KNOWLEDGE_BASE/01_reverse_engineering/RE_CASE_STUDY_VCUTWORKS_LIGHTBURN_v2.md"
+  ],
+  "_sources_outdated_note": "Některé starší zdroje (KB, B2B) obsahují tvrzení překonaná současným writerem — GT vždy preferuje recentní data z Vcf-compiler research_docs a handoff_session_2026-06-29.json",
+
+  "==================================================================================": "",
+  "SECTION_1": "VCF BINARY FORMAT — KOMPLETNÍ SPECIFIKACE",
+  "==================================================================================": "",
+
+  "vcf_format": {
+    "version": "1.0.013 (default, 610B blocks), 1.0.012 (legacy, 210B blocks)",
+    "magic_strings": {
+      "1.0.013": "RDVCUTFILEVER1.0.013",
+      "1.0.012": "RDVCUTFILEVER1.0.012"
+    },
+    "scrambling": "NONE — VCF je raw serializace (na rozdíl od .rd formátu který scramble používá)",
+    "endianness": "LITTLE_ENDIAN (Intel)",
+    "coordinate_system": "float64 IEEE 754 v milimetrech (na rozdíl od .rd který používá base-128 μm)",
+    "character_encoding": "Windows-1250 pro textová metadata (DXF cesta, fonty, tagy)"
+  },
+
+  "vcf_header": {
+    "total_size": 472,
+    "structure": [
+      {"offset": 0, "size": 1, "type": "uint8", "value": "0x13", "field": "VCF_PREFIX"},
+      {"offset": 1, "size": 19, "type": "ascii", "value": "RDVCUTFILEVER1.0.013", "field": "HEADER_MAGIC"},
+      {"offset": 20, "size": 3, "type": "bytes", "value": "0x20 0x0A 0x00", "field": "VCF_POST_MAGIC"},
+      {"offset": 23, "size": 8, "type": "float64", "value": 1220.0, "field": "STOCK_WIDTH"},
+      {"offset": 31, "size": 8, "type": "float64", "value": 2900.0, "field": "STOCK_HEIGHT"},
+      {"offset": 39, "size": 10, "type": "mixed", "value": "pad + float64 100.0 + uint16 1", "field": "POST_STOCK_HEADER"},
+      {"offset": 49, "size": 423, "type": "bytes", "value": "MACHINE_PROFILE (hardcoded)", "field": "MACHINE_PROFILE"}
+    ],
+    "machine_profile_verified": "0 byte diffs proti nativnímu VCF (square_1_aci) — plně korektní",
+    "machine_profile_content_known": [
+      "Textové řetězce: font name (Arial Black), cesta (Fs.SHX), tagy (0000, 9999), opravit",
+      "float64 hodnoty: rychlost 50.0, zrychlení, atd.",
+      "Význam jednotlivých bytů není plně zRE — ale replikace je byte-přesná"
+    ]
+  },
+
+  "vcf_layer_blocks": {
+    "count": 257,
+    "empty_count": 256,
+    "active_count": "N (0-32, podle počtu ACI vrstev)",
+    "block_size": 610,
+    "order": "empty blocks first (indices 0-255), active blocks last (indices 256..256+N-1)",
+    "block_index_field": "offset 10, uint16, 0-255 přes empty blocks",
+    "linked_list": "posledních 8 B každého bloku: 4B flag + 4B next_layer_color",
+
+    "field_map_active_block": [
+      {"offset": 0, "size": 4, "type": "uint32", "field": "output_flag", "values": "0=vizuální, 1=aktivní"},
+      {"offset": 4, "size": 8, "type": "float64", "field": "speed_mms"},
+      {"offset": 12, "size": 4, "type": "uint32", "field": "layer_color (BGR)", "note": "CRITICAL — barva vrstvy v BGR formátu. Fix: místo offset 76."},
+      {"offset": 16, "size": 8, "type": "float64", "field": "UNKNOWN_16", "note": "Not critical (zeros OK)"},
+      {"offset": 24, "size": 8, "type": "float64", "field": "h1_alt", "note": "0.0 active blk, 24.0 empty blk #0. Not critical."},
+      {"offset": 32, "size": 4, "type": "int32", "field": "cutter_idx", "values": "0=Vibrate, 1=Wheel, 2=Milling, 3=V-slot, 4=Vibrate cut"},
+      {"offset": 36, "size": 4, "type": "uint32", "field": "UNKNOWN_36", "note": "=1 v native. Not critical."},
+      {"offset": 40, "size": 8, "type": "float64", "field": "field_40", "value": 5.0, "status": "FIXED", "note": "Neznámý parametr, konzistentní napříč všemi native VCF."},
+      {"offset": 48, "size": 4, "type": "uint32", "field": "UNKNOWN_48", "value": 2, "note": "Not critical (104 stačí)."},
+      {"offset": 76, "size": 4, "type": "uint32", "field": "color_black", "value": 0, "note": "Vždy 0x00000000 v native. Původní umístění color před fixem."},
+      {"offset": 80, "size": 8, "type": "float64", "field": "start_height_h1_mm"},
+      {"offset": 88, "size": 4, "type": "int32", "field": "feed_count"},
+      {"offset": 92, "size": 1, "type": "uint8", "field": "element_count", "status": "CRITICAL_FIXED", "note": "Počet elementů v této vrstvě. Původně 0 → VCutWorks nevykreslil geometrii."},
+      {"offset": 96, "size": 8, "type": "float64", "field": "end_height_h2_mm"},
+      {"offset": 104, "size": 2, "type": "uint16", "field": "direction", "status": "CRITICAL_FIXED", "note": "0=Left, 1=Right, 2=Cut both side. Musí být nastaveno pro VŠECHNY cutter typy, nejen V-slot. Default=2."},
+      {"offset": 106, "size": 8, "type": "float64", "field": "v_slot_width_comp_mm"},
+      {"offset": 114, "size": 8, "type": "float64", "field": "starting_extension_mm"},
+      {"offset": 122, "size": 8, "type": "float64", "field": "ending_extension_mm"},
+      {"offset": 197, "size": 1, "type": "uint8", "field": "field_197", "value": 64, "status": "FIXED"},
+      {"offset": 198, "size": 8, "type": "float64", "field": "field_198", "value": 0.5, "status": "FIXED"},
+      {"offset": 602, "size": 4, "type": "uint32", "field": "next_layer_flag", "value": 1, "note": "Linked-list flag. 1=has next layer."},
+      {"offset": 606, "size": 4, "type": "uint32", "field": "next_layer_color", "note": "BGR barva následující vrstvy. Poslední blok: value=1 (terminator)."}
+    ],
+    "linked_list_chain": "empty#255(flag=1,color=active[0]) → active[0](flag=1,color=active[1]) → ... → active[N-1](flag=1,color=1)",
+    "linked_list_terminator_fix": "Poslední blok (N-1): next_layer_color=1 (BGR černá 0x000001), nikoli 0. Fix: session 6.",
+    "empty_blocks_verified": "Zcela nulové empty bloky jsou v pořádku — potvrzeno na circle_500_native (všechny nuly). GUI testy varianty Q potvrdily že empty block init data nejsou kritická."
+  },
+
+  "vcf_geometry": {
+    "element_header_size": 45,
+    "segment_size": 74,
+    "footer_size": 196,
+    "tail_size": 180,
+    "element_total_formula": "45 + pt_count × 74 + (196 if NOT last element else 180)",
+
+    "magic_signature": {
+      "bytes": "0x01 0x00 0x01 0x00 0x00 0xFF 0xFF 0xFF",
+      "length": 8,
+      "field": "GEOMETRY_SIG"
+    },
+
+    "element_header_fields": [
+      {"offset": 0, "size": 8, "field": "GEOMETRY_SIG"},
+      {"offset": 8, "size": 4, "type": "uint32", "field": "geom_color", "formula": "(BGR << 8) & 0xFFFFFFFF"},
+      {"offset": 12, "size": 33, "field": "GEOMETRY_HEADER_TEMPLATE", "value": "0x00 + 4× float64 1.0", "note": "Konstanta z nativního VCF. Nezávislá na geometrii."},
+      {"offset": 45, "size": 4, "type": "uint32", "field": "geom_type", "values": "0=open (polyline/line), 1=closed (polygon/circle)"},
+      {"offset": 49, "size": 4, "type": "uint32", "field": "pt_count", "note": "Počet 74B segmentů"},
+      {"offset": 53, "size": 4, "type": "uint32", "field": "subtype", "values": "0=polyline, 3=circle"}
+    ],
+
+    "segment_types": {
+      "polyline_subtype_0": {
+        "description": "Polyline/line segment — 4 float64",
+        "structure": [
+          {"offset_in_seg": 0, "size": 2, "field": "padding"},
+          {"offset_in_seg": 2, "size": 8, "type": "float64", "field": "x1 (start X)"},
+          {"offset_in_seg": 10, "size": 8, "type": "float64", "field": "y1 (start Y)"},
+          {"offset_in_seg": 18, "size": 8, "type": "float64", "field": "x2 (end X)"},
+          {"offset_in_seg": 26, "size": 8, "type": "float64", "field": "y2 (end Y)"},
+          {"offset_in_seg": 34, "size": 40, "field": "padding/zeros"}
+        ]
+      },
+      "circle_subtype_3": {
+        "description": "Circle segment (Bézier arc) — 8 float64, 4 body",
+        "note": "H11 — Původní writer zapisoval jen 4 float64, native má 8. FIXED v ph2: writer nyní zapisuje 7 float64 (x1,y1,x2,y2 + d0,d1,d2). Native VCF má 8 float64 včetně čtvrtého control bodu na offsetu 66-73 — writer má na této pozici 2B padding + 6B nuly (7×8=56, 74-56=18, zbývá 18B místo 8).",
+        "structure": [
+          {"offset_in_seg": 0, "size": 2, "field": "padding"},
+          {"offset_in_seg": 2, "size": 8, "type": "float64", "field": "x1 (arc start X)"},
+          {"offset_in_seg": 10, "size": 8, "type": "float64", "field": "y1 (arc start Y)"},
+          {"offset_in_seg": 18, "size": 8, "type": "float64", "field": "x2 (arc end X)"},
+          {"offset_in_seg": 26, "size": 8, "type": "float64", "field": "y2 (arc end Y)"},
+          {"offset_in_seg": 34, "size": 8, "type": "float64", "field": "control_point_1_X"},
+          {"offset_in_seg": 42, "size": 8, "type": "float64", "field": "control_point_1_Y"},
+          {"offset_in_seg": 50, "size": 8, "type": "float64", "field": "control_point_2_X"},
+          {"offset_in_seg": 58, "size": 8, "type": "float64", "field": "control_point_2_Y"},
+          {"offset_in_seg": 66, "size": 8, "type": "float64", "field": "padding/zeros (native: möglicherweise vierter control bod?)"}
+        ],
+        "writer_current_state": "encode_circle_element() zapisuje 7 float64 (x1,y1,x2,y2,d0,d1,d2) = 56B + 14B header = 70B z 74B. Zbývající 4B jsou nuly z bytearray init. Native VCF má všech 8 float64 vyplněných — writer stále negeneruje poslední float64 na offsetu 66-73.",
+        "bezier_arc_formula": "k = 4/3 × tan(π/8); kr = k × radius; 4 arcs, každý s vlastními control pointy"
+      }
+    },
+
+    "element_footer": {
+      "inter_element": {
+        "size": 196,
+        "description": "Generován mezi elementy (kromě posledního)",
+        "status": "FIXED_H12 — původně chyběl, multi-element VCF selhávaly",
+        "known_content": [
+          "Většinou nulové bytes",
+          "float64 5.0 na určitém offsetu (shodné s field_40 v layer bloku)",
+          "float64 90.0 (stack rozměr?)",
+          "Zakončen 4B paddingem"
+        ],
+        "open_issue": "Offsety 32-39, 40-47, 112-143 mají v native nenulová data (writer má nuly). Není známo zda jsou kritická.",
+        "writer_constant_name": "ELEMENT_FOOTER"
+      },
+      "last_element_tail": {
+        "size": 180,
+        "description": "Generován za posledním elementem (před trailerem)",
+        "status": "FIXED_RC4 — původně writer používal 196B footer pro všechny elementy",
+        "formula": "ELEMENT_TAIL = ELEMENT_FOOTER[:-16]",
+        "verification": "Potvrzeno proti všem 4 native multi-element souborům (1ks, fishbone, manchester, botanic)"
+      }
+    }
+  },
+
+  "vcf_trailer": {
+    "structure": [
+      {"offset": 0, "size": 20, "field": "zeros prefix", "status": "FIXED_RC3", "note": "Původně 200B TRAILER_PREFIX (float64 5.0+90.0), pak 4B zeros, nakonec 20B zeros = native."},
+      {"offset": 20, "size": 1, "type": "uint8", "field": "path_length"},
+      {"offset": 21, "size": "path_length", "type": "ascii/1250", "field": "dxf_source_path"}
+    ],
+    "critical_rules": [
+      "Pokud trailer existuje (soubor není výhradně syntetický), VCutWorks STRIKTNĚ validuje DXF path data.",
+      "Prázdný path string = povoleno (path_length=0)."
+    ],
+    "verification": "20B zeros prefix potvrzen proti ALL native files (1ks, fishbone, manchester, botanic, circle, square)."
+  },
+
+  "==================================================================================": "",
+  "SECTION_2": "DXF/LIGHTBURN FORMÁT — SPECIFIKA A ANOMÁLIE",
+  "==================================================================================": "",
+
+  "dxf_lightburn": {
+    "general": "LightBurn při exportu DXF používá proprietární 32barevnou CAM paletu, KTERÁ NENÍ TOTOŽNÁ se standardním AutoCAD ACI mapováním.",
+    "key_divergences": [
+      "ACI 4 (AutoCAD=cyan 0,255,255) → LightBurn=C06 (0,224,224) — jiný odstín",
+      "ACI 202 (AutoCAD=?) → LightBurn=C15 (160,0,160)",
+      "ACI 7 (AutoCAD=bílá 255,255,255) → LightBurn/C00=Černá (0,0,0) — ZÁSADNÍ rozdíl",
+      "Všechny nástrojové vrstvy (T1, T2) sdílejí ACI=7 — nelze rozlišit podle ACI"
+    ],
+    "aci_color_resolution": {
+      "priority_chain": [
+        "1. TRUE_COLOR (přes RGB) → euklidovská interpolace do LightBurn CAM palety",
+        "2. ACI color index → aci2rgb → euklidovská interpolace",
+        "3. DXF layer name → layer true_color / layer color index",
+        "4. Fallback: ACI 7 (Černá)"
+      ],
+      "euklidovska_interpolace": "δ = min(Σ(R_i-R_j)² + (G_i-G_j)² + (B_i-B_j)²) nad LightBurn_CAM_PALETTE (32 barev)"
+    },
+    "insert_blocks": {
+      "problem": "LightBurn používá INSERT entity (reference na bloky) — až 50% geometrie je v blocích.",
+      "fix": "Block explosion: extrakce definice bloku, kopie entit, aplikace transformační matice entity.matrix_44()."
+    },
+    "entity_types": {
+      "LINE": "2 vertices, přímý přenos",
+      "LWPOLYLINE": "Direct pass vertices",
+      "POLYLINE": "Direct pass vertices",
+      "CIRCLE": "Speciální — DXF indexer diskretizuje na 36-segment polygon. Adaptér předává circle_cx/cy/radius pro přímé kódování 4 Bézier oblouků.",
+      "ARC": "Resample na N segmentů přes bulge math",
+      "SPLINE": "Resampled vertices",
+      "ELLIPSE": "Resampled vertices",
+      "INSERT": "Bloková reference — nutná exploze před zpracováním"
+    },
+    "by_layer_resolution": {
+      "problem": "color=256 (ByLayer) bylo tvrdě kódováno na ACI 7. layer_colors dict byl vytvořen ale NIKDY POUŽIT.",
+      "fix": "color_idx = layer_colors.get(entity.dxf.layer, 7) session 7 (RC2b)."
+    }
+  },
+
+  "==================================================================================": "",
+  "SECTION_3": "ACI → VCF PARAMETER MAPPING",
+  "==================================================================================": "",
+
+  "aci_mapping": {
+    "principle": "ACI barva je primární klíč pro přiřazení geometrie k technologické vrstvě v obou formátech (VCF i DXF).",
+    "vcf_color_relationship": "geom_color = (layer_color << 8) & 0xFFFFFFFF, kde layer_color = (R<<16 | G<<8 | B)",
+    "aci_to_rgb_lookup": {
+      "note": "Custom ACI_TO_RGB (NE AutoCAD, NE LightBurn) — kalibrováno z native VCF analýzy.",
+      "0": [10, 10, 10],
+      "1": [255, 0, 0],
+      "2": [255, 255, 0],
+      "3": [0, 255, 0],
+      "4": [0, 255, 255],
+      "5": [0, 0, 255],
+      "6": [255, 0, 255],
+      "7": [0, 0, 0],
+      "8": [128, 128, 128],
+      "9": [192, 192, 192],
+      "30": [255, 165, 0],
+      "52": [0, 204, 204],
+      "92": [8, 145, 178]
+    },
+    "aci_corrections": [
+      "ACI_TO_RGB[0] FIXED: (0,0,0) → (10,10,10) — aby se odlišila geom_color od ACI 7",
+      "ACI 7 CONFIRMED: (0,0,0) = Černá (ne bílá jako v AutoCADu)"
+    ],
+    "statistical_findings": {
+      "source": "35 customer VCF souborů, 98 layer records, 15 unique colors",
+      "method": "Mode-based analysis (mode > mean pro diskrétní parametry operátora)",
+      "key_insight": "Mode-based config outperforms previous manual ad-hoc config",
+      "h2_as_tool_signature": {
+        "-0.5": "Vibrate: blade goes below surface (červená, oranžová)",
+        "-0.3": "Vibrate: standard blade retraction (černá, n=30)",
+        "6.0": "V-slot: standard PET felt depth (5 barev)",
+        "8.0": "V-slot: deep cut",
+        "15.0": "V-slot: very deep / special (modrá, n=11)"
+      },
+      "tool_speed_clusters": {
+        "Vibrate cutter": "45-100 mm/s (low end)",
+        "V-slot": "200-300 mm/s (high end)"
+      },
+      "config_errors_found": {
+        "ACI 2 (Žlutá)": "Original config: V-slot Left 300mm/s → Truth: Vibrate cutter 50mm/s",
+        "ACI 1 (Červená)": "Original config: Vibrate 150mm/s → Truth: Vibrate 70mm/s",
+        "ACI 30 (Oranžová)": "Original config: V-slot 100mm/s → Truth: Vibrate 45mm/s",
+        "ACI 4 (Azurová)": "Original config: 'ambiguous' → Truth: V-slot Left 300mm/s"
+      },
+      "coverage": {
+        "calibrated_n5": ["ACI 0 (n=30)", "ACI 3 (n=16)", "ACI 5 (n=19)", "ACI 1 (n=9)", "ACI 4 (n=9)"],
+        "hypothesis_n1_4": ["ACI 2 (n=3)", "ACI 6 (n=1)", "ACI 8 (n=1)", "ACI 30 (n=2)", "ACI 52 (n=6)", "ACI 92 (n=2)"],
+        "unknown_n0": ["ACI 7", "ACI 9-29, 31-51, 53-91, 93-255"],
+        "required_for_mvp": "150-200 VCF files (currently 35)"
+      },
+      "aci_4_ambiguity_resolution": "Density heuristic: >30 pts/m → Vibrate 50mm/s, else V-slot 200mm/s. Implementováno v _dxf_adapter.py."
+    }
+  },
+
+  "==================================================================================": "",
+  "SECTION_4": "PIPELINE ARCHITEKTURA",
+  "==================================================================================": "",
+
+  "pipeline": {
+    "full_flow": "DXF (LightBurn export) → dxf_geometry_indexer_v2.index_dxf() → _dxf_adapter._build_vcf_spec() → _writer.write() → VCF soubor",
+    "coordinate_transform": {
+      "offset_x": 67.5,
+      "offset_y": -287.5,
+      "note": "Transformace z DXF souřadnic do VCF canvas souřadnic (stock 1220×2900 mm). Aplikováno v _apply_coord_transform()."
+    },
+    "element_grouping": {
+      "rule": "ACI color index, NOT DXF layer name. DXF layer name není nositelem CNC významu.",
+      "reason": "VCF writer přiřazuje elementy k vrstvám přes geom_color odvozenou z color_rgb. ACI je jediný sdílený klíč."
+    },
+    "closed_loop_fix": {
+      "problem": "VcfWriter.encode_geometry_element() dělá pt_count = len(vertices) - 1. Uzavřená smyčka 4 vertexů = 3 segmenty bez closing segmentu (v3, v0).",
+      "fix": "if is_closed and vertices[0] != vertices[-1]: vertices.append(vertices[0])"
+    },
+    "circle_param_pass_through": {
+      "problem": "D1/RC1 — DXF indexer čte circle_cx/cy/radius z DXF ale ukládá pouze 36-bodový polygon. Writer zpětně počítá cx/cy/r z bounding boxu s floating point chybou → 3/4 Bézier arcs degenerují.",
+      "fix": "3-file change: (1) indexer ukládá circle_cx/cy/radius do entity dict. (2) adapter předává circle_params v element dict (s coord transform). (3) writer kontroluje _path_circle_params, používá přímé cx/cy/radius.",
+      "status": "FIXED v session 7"
+    },
+    "dxf_indexer_dependency": {
+      "package": "dxf_integrace (externí)",
+      "main_file": "dxf_integrace/src/dxf_geometry_indexer_v2.py",
+      "api": "index_dxf(dxf_path, tool_config, keep_vertices=True) → dict with entities, layer_card, layers",
+      "lazy_import": "_dxf_adapter._get_dxf_indexer() — fallback path přes sys.path.insert"
+    },
+    "config_loader": {
+      "primary": "vcf_compiler_map_config.json (v project root)",
+      "fallback": "Built-in defaults v _CONFIG_DEFAULTS",
+      "schema": "aci_color_mapping dict + defaults dict"
+    }
+  },
+
+  "==================================================================================": "",
+  "SECTION_5": "CRITICAL DISCOVERIES — RE BĚHEM VÝVOJE",
+  "==================================================================================": "",
+
+  "critical_discoveries": [
+    {
+      "id": "D1",
+      "title": "VCutWorks parser ≠ b2b reader parser",
+      "description": "První funkční VCF (commit 4ba9446) měl 0 layers dle b2b readeru, přesto se v GUI vykreslil. VCutWorks používá vlastní parser s odlišnou validací — nevyžaduje např. geom_color shodu s layer block barvou.",
+      "implication": "b2b reader NENÍ vhodný nástroj pro validaci VCutWorks kompatibility. Jediný ground truth je VCutWorks GUI.",
+      "confidence": 0.95
+    },
+    {
+      "id": "D2",
+      "title": "Binary Search Variant Methodology > Hex Diff",
+      "description": "Hex diff produkoval 1055 diff regionů s ~90% rozdílů v empty blocích, což maskovalo 12 B kritických rozdílů v active bloku a chybějící DXF path v traileru. Binary search varianty (A-S) izolovaly každou strukturní změnu a testovaly v GUI.",
+      "implication": "Hex diff měří KVANTITU rozdílů, ne KRITIČNOST. Binary search s GUI ground truth je jediná validní metoda.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D3",
+      "title": "Native header je vždy 472 B",
+      "description": "Všechny native VCF s obsahem sdílejí identický 472B header (54B preamble + 418B machine profile) bez ohledu na geometrii.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D4",
+      "title": "20B zeros trailer prefix (not 200B, not 4B)",
+      "description": "Native files mají 20 zero bytes před path data v traileru. Writer měl 200B TRAILER_PREFIX, pak 4B zeros — obojí způsobovalo Ruida errors.",
+      "fix_history": "TRAILER_PREFIX (200B float64 5.0+90.0) → 4B zeros (ph3) → 20B zeros (ph4 = native match)",
+      "confidence": 0.99
+    },
+    {
+      "id": "D5",
+      "title": "Last element tail = 180B, not 196B",
+      "description": "Inter-element gap = 196B, last-element gap = 180B (= footer - 16B). Potvrzeno proti všem 4 native multi-element souborům.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D6",
+      "title": "ACI 0 a ACI 7 vyžadují unikátní geom_color",
+      "description": "Oba mapovány na (0,0,0) → geom_color kolize (0x00000000) → reader nerozliší vrstvy. Fix: ACI 0 → (10,10,10).",
+      "confidence": 0.99
+    },
+    {
+      "id": "D7",
+      "title": "ByLayer (256) musí resolvovat na skutečnou barvu vrstvy",
+      "description": "Hardcoded na ACI 7 ignoroval layer_colors dict. Fix: resolve via layer_colors.get().",
+      "confidence": 0.99
+    },
+    {
+      "id": "D8",
+      "title": "Active block @92 (element_count) je kritický pro geometrii",
+      "description": "Byte @92 ukládá počet elementů ve vrstvě. Writer měl 0 → VCutWorks nevykreslil geometrii.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D9",
+      "title": "Direction @104 potřebný pro VŠECHNY cutter typy",
+      "description": "Writer nastavoval direction jen pro V-slot. Native má direction=2 (Cut both side) pro všechny typy. Fix: vždy zapisovat.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D10",
+      "title": "GEOMETRY_HEADER_TEMPLATE je konstanta",
+      "description": "Bytes 12-44 v element headeru jsou identický 33B pattern napříč všemi native VCF (0x00 + 4× float64 1.0). Bez něj VCutWorks nevykreslí geometrii.",
+      "confidence": 0.85
+    },
+    {
+      "id": "D11",
+      "title": "Trailer bez path data = hard rejection",
+      "description": "VCutWorks při přítomnosti traileru striktně validuje DXF path data. Pokud trailer existuje ale path je prázdný nebo chybí = NO LOAD.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D12",
+      "title": "Circle encoding: 7 float64 ≠ 8 float64 (native)",
+      "description": "Writer encode_circle_element() zapisuje 7 float64 per segment (x1,y1,x2,y2 + d0,d1,d2 = 56B). Native VCF má 8 float64 per segment (64B). Writer negeneruje posledních 8B (offsety 66-73) = potenciální zdroj deformace kruhu.",
+      "confidence": 0.70,
+      "implication": "I po cx/cy/r pass-through fixu může být circle rendering stále chybný kvůli chybějícímu 8. float64. Potřebuje GUI test k potvrzení/vyvrácení."
+    }
+  ],
+
+  "==================================================================================": "",
+  "SECTION_6": "ROOT CAUSES — VŠECHNY IDENTIFIKOVANÉ",
+  "==================================================================================": "",
+
+  "root_causes": {
+    "fixed_session_6": [
+      {
+        "id": "RC_pre1",
+        "title": "Trailer truncated — chybějící DXF path data",
+        "status": "FIXED",
+        "fix": "trailer() vždy zapisuje path data (i prázdný string)"
+      },
+      {
+        "id": "RC_pre2",
+        "title": "Active block @92=0 — element_count chyběl",
+        "status": "FIXED",
+        "fix": "struct.pack_into('<B', block, 92, len(layer._paths))"
+      },
+      {
+        "id": "RC_pre3",
+        "title": "Active block @104=0 — direction chyběl pro non-V-slot",
+        "status": "FIXED",
+        "fix": "direction nastaven pro VŠECHNY cutter typy, default=2"
+      },
+      {
+        "id": "RC_pre4",
+        "title": "Color@12 byl na offsetu 76 — špatná pozice",
+        "status": "FIXED",
+        "fix": "Color přesunut na offset 12"
+      },
+      {
+        "id": "RC_pre5",
+        "title": "Linked-list terminátor posledního bloku = 0",
+        "status": "FIXED",
+        "fix": "next_layer_color=1 pro poslední blok"
+      }
+    ],
+    "fixed_session_7": [
+      {
+        "id": "RC1",
+        "title": "Circle rendering: 3/4 Bezier arcs degenerate",
+        "status": "FIXED (částečně — viz D12)",
+        "fix": "circle_cx/cy/radius pass-through DXF → adapter → writer (3-file change)",
+        "confidence": 0.95
+      },
+      {
+        "id": "RC2a",
+        "title": "ACI 0 vs 7 color collision",
+        "status": "FIXED",
+        "fix": "ACI_TO_RGB[0] → (10,10,10)",
+        "confidence": 0.99
+      },
+      {
+        "id": "RC2b",
+        "title": "ByLayer (256) unresolved — always ACI 7",
+        "status": "FIXED",
+        "fix": "color_idx = layer_colors.get(entity.dxf.layer, 7)",
+        "confidence": 0.99
+      },
+      {
+        "id": "RC3",
+        "title": "Trailer prefix: 200B TRAILER_PREFIX → 4B zeros → 20B zeros",
+        "status": "FIXED",
+        "fix": "trailer(): \\x00 × 20 + path_length + path",
+        "confidence": 0.99
+      },
+      {
+        "id": "RC4",
+        "title": "Last element gets 196B FOOTER not 180B TAIL",
+        "status": "FIXED",
+        "fix": "ELEMENT_TAIL = ELEMENT_FOOTER[:-16]; body() tracks total_elements for is_last",
+        "confidence": 0.99
+      }
+    ]
+  },
+
+  "==================================================================================": "",
+  "SECTION_7": "OPEN PROBLEMS A PENDING TASKS",
+  "==================================================================================": "",
+
+  "open_problems": [
+    {
+      "id": "OP1",
+      "title": "ELEMENT_FOOTER content differs from native at offsets 32-39, 40-47, 112-143",
+      "severity": "low",
+      "workaround": "Writer má nuly; native má nenulová data. Není známo zda kritické — všechny 4 native multi-element files fungují se svým footer obsahem."
+    },
+    {
+      "id": "OP2",
+      "title": "GEOMETRY_HEADER_TEMPLATE not verified against multi-element native files",
+      "severity": "low",
+      "workaround": "Aktuálně 4× float64 1.0 (verified against single-element native only). Může se lišit pro multi-element."
+    },
+    {
+      "id": "OP3",
+      "title": "Fishbone element consolidation: 41 DXF entities vs 14 native elements",
+      "severity": "medium",
+      "workaround": "Writer zapisuje 1 element per DXF entity. Native konsoliduje na 14. VCutWorks může obojí, ale konsolidace by byla kompatibilnější."
+    },
+    {
+      "id": "OP4",
+      "title": "No GUI oracle (automated VCutWorks testing)",
+      "severity": "medium",
+      "workaround": "Manuální GUI testování. Plán: pywinauto-based automation."
+    },
+    {
+      "id": "OP5",
+      "title": "Circle GUI test pending (ph4 with cx/cy/r pass-through)",
+      "severity": "high",
+      "workaround": "Nebyl dosud otestován v GUI — nejvyšší priorita."
+    },
+    {
+      "id": "OP6",
+      "title": "Multi-element GUI test pending (botanic, double_line ph4)",
+      "severity": "high",
+      "workaround": "ELEMENT_FOOTER a TAIL fix implementován, ale nebyl GUI testován."
+    },
+    {
+      "id": "OP7",
+      "title": "Machine profile not calibrated",
+      "severity": "medium",
+      "workaround": "Všechny konstanty mají validation_status='hypothesis'. ECI=0.0. Potřeba kalibrace na reálném stroji."
+    },
+    {
+      "id": "OP8",
+      "title": "Fishbone 41→14 element consolidation rules unknown",
+      "severity": "medium",
+      "note": "Native fishbone konsoliduje 41 DXF entit na 14 VCF elementů. Pravidla: connected paths? same color? spatial proximity? Neznámé."
+    },
+    {
+      "id": "OP9",
+      "title": "Writer circle encoding: 7 vs 8 float64 per segment (D12)",
+      "severity": "medium",
+      "note": "encode_circle_element() zapisuje 7 float64 (56B) z 74B segmentu. Native VCF má 8 float64 (64B). Chybí poslední float64 na offsetech 66-73. Potenciální zdroj deformace kruhu i po cx/cy/r fixu."
+    }
+  ],
+
+  "pending_gui_tests": [
+    {"item": "circle_ph4 — circle rendering after cx/cy/r pass-through", "file": "circle_500_single_aci_ph4.VCF", "priority": "HIGH"},
+    {"item": "double_line_ph4 — multi-element detection (2 elements)", "file": "double_line_1_aci_ph4.VCF", "priority": "HIGH"},
+    {"item": "botanic_ph4 — multi-element detection (16 elements)", "file": "botanic_simple_1_aci_ph4.VCF", "priority": "HIGH"},
+    {"item": "test_multi_layer_ph4 — multi-layer with different ACI colors", "file": "test_multi_layer_ph4.VCF", "priority": "HIGH"},
+    {"item": "test_multi_element_ph4 — synthetic multi-element", "file": "test_multi_element_ph4.VCF", "priority": "MEDIUM"},
+    {"item": "fishbone_ph4 — element consolidation (41 DXF → 14 native)", "file": "fishbone_2790x1200_ph4.VCF", "priority": "MEDIUM"}
+  ],
+
+  "==================================================================================": "",
+  "SECTION_8": "EPISTEMIC FRAMEWORK A METODIKA",
+  "==================================================================================": "",
+
+  "epistemic_framework": {
+    "rule_classes": {
+      "CLASS_A_PHYSICAL": "Fyzikální zákon (conf: 0.99)",
+      "CLASS_B_EMPIRICAL": "Empirické ověření (conf: 0.90-0.95)",
+      "CLASS_C_HEURISTIC": "Heuristika (conf: 0.80-0.90)",
+      "CLASS_D_HYPOTHESIS": "Hypotéza (conf: 0.70-0.85)"
+    },
+    "validation_statuses": {
+      "empirical": "Validováno na produkčních datech",
+      "calibrated": "Validováno v laboratorních podmínkách",
+      "hypothesis": "Spekulativní, čeká na validaci"
+    },
+    "eci_formula": "ECI = empirical_count / total_count. ECI > 0.8 = production ready. ECI < 0.5 = development phase.",
+    "snr_principle": "25 % kódu řídí >85 % variance. 3 typy varování na objekt (Miller's Law). Density filter pro mikrosegmenty.",
+    "golden_rules_llm": [
+      "1. Determinism — stejný vstup = stejný výstup",
+      "2. Config > Code — parametry do JSON, nikdy hardcoded",
+      "3. Test-First — před implementací test, který selže",
+      "4. Epistemic Transparency — každá hodnota má validation_status",
+      "5. Logging > Print — strukturovaný logging",
+      "6. Type Hints — plné typové anotace",
+      "7. Version Stamping — každý modul má verzi",
+      "8. No Magic Numbers — konstanty s pojmenováním a zdůvodněním",
+      "9. Blacklist — zakázané patterny (eval, random, time.sleep, pevné cesty)",
+      "10. Handoff Before Break — před pauzou vygenerovat handoff JSON"
+    ]
+  },
+
+  "==================================================================================": "",
+  "SECTION_9": "WRITER STATE A ARCHITEKTURA",
+  "==================================================================================": "",
+
+  "writer": {
+    "version": "1.4",
+    "status": "functional — self-contained",
+    "main_file": "vcf_parser/_writer.py (463 lines)",
+    "classes": {
+      "VcfLayer": "Data container pro jednu vrstvu (paths, speed, cutter, H1/H2, color, direction, extensions, is_output, feed_count, path_types, path_circle_params)",
+      "VcfWriter": "Generátor header/body/trailer. Metody: header(), body(), trailer(), write(). Encoding: encode_float64, encode_uint32, encode_uint16, encode_int32, encode_layer_block, encode_geometry_element, encode_circle_element."
+    },
+    "top_level_api": "write(specification: dict, output_path: str, version='1.0.013', dxf_source_path=None)",
+    "features": [
+      "Full 472B header: 54B preamble + 418B machine profile",
+      "257 layer blocks × 610 B (empty-first, active-last)",
+      "Block index counter at [10] (uint16, 0-255)",
+      "8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2",
+      "Layer block: all known fields populated",
+      "GEOMETRY_HEADER_TEMPLATE",
+      "is_closed with 0.001 epsilon",
+      "encode_circle_element with 4 Bezier arcs (type=1, sub=3) — 7 float64 per segment",
+      "ELEMENT_FOOTER=196B (inter-element), ELEMENT_TAIL=180B (last element)",
+      "Trailer: 20 zero bytes + path length + DXF source path"
+    ],
+    "not_implemented": [
+      "Scrambling (raises UnsupportedFeatureError) — VCF nepodporuje",
+      "Circle segment 8th float64 (offset 66-73) — writer dává 7, native 8"
+    ]
+  },
+
+  "==================================================================================": "",
+  "SECTION_10": "ARCHITEKTONICKÉ ISSUES (z STACK ANATOMY)",
+  "==================================================================================": "",
+
+  "architectural_issues": {
+    "CRIT-01": {"severity": "CRITICAL", "title": "Missing public API parse()", "status": "RESOLVED (vcf_parser/__init__.py exists)"},
+    "CRIT-02": {"severity": "CRITICAL", "title": "GCP credentials in app_config.json", "status": "OPEN — need to extract to deploy.json (gitignored)"},
+    "CRIT-03": {"severity": "CRITICAL", "title": "machine_profile.json: hypothesis without calibration", "status": "OPEN — ECI=0.0, need calibrate.py"},
+    "HIGH-01": {"severity": "HIGH", "title": "KB invocation pevně provázána s enginem", "status": "OPEN — API output se liší s/podle KB"},
+    "HIGH-02": {"severity": "HIGH", "title": "ThicknessConfidence enum leak to fail-safe", "status": "OPEN — NameError při kb_enabled=False + parse fail"},
+    "HIGH-04": {"severity": "HIGH", "title": "Monolit vcf_geometry.py (1197 lines)", "status": "OPEN — parser + detection mixed"},
+    "HIGH-05": {"severity": "HIGH", "title": "Duplicate nesting detection (engine + KB)", "status": "OPEN — two implementations, different results"},
+    "MED-05": {"severity": "MEDIUM", "title": "Streamlit app monolith (1082 lines) with embedded CSS/contacts", "status": "OPEN — hardcoded phone/email in production code"},
+    "MED-04": {"severity": "MEDIUM", "title": "Time predictor: organic detection from filename, not geometry", "status": "OPEN — is_organic = any(kw in filename.lower() for kw in [...])"}
+  },
+
+  "==================================================================================": "",
+  "SECTION_11": "FILE NAMING CONVENTION",
+  "==================================================================================": "",
+
+  "file_naming_convention": {
+    "description": "Suffix indikuje verzi/fix stage syntetických VCF souborů",
+    "suffixes": {
+      "_ph4": "LATEST — 20B trailer prefix, 180B last-element tail, circle cx/cy/r pass-through, ACI fixes (ALL FIXES APPLIED)",
+      "_ph3": "OLD — 4B trailer prefix (wrong), 196B footer for last elem (wrong), no circle pass-through",
+      "_ph2": "OLD — 200B TRAILER_PREFIX (wrong), 196B footer (wrong), no circle pass-through",
+      "(no suffix)": "ORIGINAL — 200B TRAILER_PREFIX (wrong), 196B footer (wrong), no circle pass-through",
+      "native": "EXPORTED DIRECTLY FROM VCutWorks — ground truth reference"
+    }
+  },
+
+  "==================================================================================": "",
+  "SECTION_12": "KEY FILES A PATHS",
+  "==================================================================================": "",
+
+  "key_file_paths": {
+    "writer": "vcf_parser/_writer.py",
+    "dxf_adapter": "vcf_parser/_dxf_adapter.py",
+    "reader_current": "vcf_parser/_reader.py (Vcf-compiler writer test reader)",
+    "reader_b2b": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src\\ (production reader)",
+    "dxf_indexer": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\dxf_integrace\\src\\dxf_geometry_indexer_v2.py",
+    "config": "vcf_compiler_map_config.json",
+    "native_gt": "demo_data/native_vcf/",
+    "native_square": "demo_data/square_1_aci.VCF",
+    "native_circle": "demo_data/circle_500_single_aci.VCF",
+    "native_circle_origin": "demo_data/circle_500_single_aci._origin_vcutworks.VCF",
+    "native_fishbone": "demo_data/fishbone_2790x1200_native.VCF",
+    "native_manchester": "demo_data/manchester_3_subjobs_native.VCF",
+    "native_1ks": "demo_data/1ks.VCF (multi-element, 1000+ elements)",
+    "native_vyrobni": "demo_data/vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF (production file, 755 elements)",
+    "native_fluenz": "demo_data/fluenz_l.VCF (production file, 137 elements)",
+    "paired_dxf_vcf": {
+      "circle_diameter_600_native": {"dxf": "demo_data/circle_diameter_600_native.dxf", "vcf": "demo_data/circle_diameter_600_native.VCF"},
+      "square_1_aci": {"dxf": "demo_data/square_1_aci.dxf", "vcf": "demo_data/square_1_aci.VCF"},
+      "circle_500_single_aci": {"dxf": "demo_data/circle_500_single_aci.dxf", "vcf": "demo_data/circle_500_single_aci.VCF"}
+    },
+    "synthetic_output": "demo_data/synthethic_vcf/",
+    "binary_search_variants": "demo_data/binary_search_variants/",
+    "state": ".ai_state.json",
+    "test_writer": "tests/test_writer_unit.py",
+    "test_roundtrip": "tests/test_roundtrip.py",
+    "batch_compile": "dev_scripts/batch_compile_dxf.py",
+    "hex_diff_tool": "dev_scripts/hex_diff_v2.py",
+    "element_catalog_builder": "dev_scripts/build_element_types_catalog.py"
+  },
+
+  "==================================================================================": "",
+  "SECTION_13": "TEST COVERAGE — CURRENT STATE",
+  "==================================================================================": "",
+
+  "test_coverage": {
+    "test_writer_unit_py": {
+      "total": 23,
+      "status": "all pass",
+      "gaps": [
+        "No test for multi-element body serialization order",
+        "No test for ELEMENT_FOOTER vs ELEMENT_TAIL selection logic (is_last detection)",
+        "No test for circle_params pass-through path (the `if circle_params:` branch in encode_circle_element)",
+        "No test for trailer content with DXF source path",
+        "No test for _compute_circle_params() fallback",
+        "No test for _compute_global_bbox()",
+        "No test for write() with multi-layer specs"
+      ]
+    },
+    "test_roundtrip_py": {
+      "total": 5,
+      "status": "all pass, 2 skip",
+      "gaps": [
+        "No roundtrip test for circle-containing VCFs (neither native like circle_diameter_600_native.VCF nor synthetic)",
+        "No roundtrip test for multi-element files (1ks.VCF with 1000+ elements)",
+        "No roundtrip test for fishbone_2790x1200_native.VCF or manchester_3_subjobs_native.VCF",
+        "No roundtrip test for mixed Polyline+Circle geometry",
+        "No performance/large-file stress tests (>1000 elements)"
+      ]
+    }
+  },
+
+  "==================================================================================": "",
+  "==================================================================================": "",
+  "APPENDIX_A": "STRATEGICKÁ ANALÝZA PIPELINE — ITERAČNÍ KROKY A FALLBACKY",
+  "==================================================================================": "",
+  "==================================================================================": "",
+
+  "appendix_a_inversion_re_pipeline": {
+    "purpose": "Návrh dalších iterací DXF→VCF pipeline s analýzou všech reálných cest včetně fallback template injection a RE transformace LightBurn DXF ↔ VCutWorks VCF",
+    "date": "2026-06-29",
+    "status": "DRAFT — strategický plán pro session 8+"
+  },
+
+  "==================================================================================": "",
+  "A.1": "TŘI NEZÁVISLÉ PIPELINE TRACKY",
+  "==================================================================================": "",
+
+  "pipeline_tracks": [
+    {
+      "track": "A",
+      "name": "Writer pipeline (současný přístup)",
+      "description": "DXF → indexer → adapter → VcfWriter.write() → VCF. Writer generuje celý VCF samostatně od nuly.",
+      "status": "FUNCTIONAL — single-element single-layer polyline funguje v GUI. Multi-element a circle nebyly GUI testovány.",
+      "risks": [
+        "Circle encoding: 7 float64 vs native 8 float64 → možná deformace (D12)",
+        "Footer content: writer nuly vs native nenulová data na 3 místech (OP1) — nemusí být kritické, ale nevíme",
+        "GEOMETRY_HEADER_TEMPLATE neověřen proti multi-element native (OP2)",
+        "Fishbone konsolidace: 41 vs 14 elementů — writer negeneruje optimalizovaný výstup (OP3/OP8)"
+      ],
+      "next_steps": [
+        "A1. GUI test circle_ph4 — ověří zda 7 float64 stačí pro správný rendering kruhu",
+        "A2. GUI test botanic_ph4 (16 elementů) — ověří footer/tail fix pro multi-element",
+        "A3. GUI test double_line_ph4 (2 elementy) — ověří multi-element boundary",
+        "A4. GUI test test_multi_layer_ph4 — ověří linked-list a multi-layer",
+        "A5. Pokud GUI testy selžou na circle: opravit 8. float64 v circle segmentech",
+        "A6. Pokud GUI testy selžou na multi-element: prozkoumat footer content divergence",
+        "A7. Fishbone konsolidace: RE pravidel na native VCF → implementovat v adapteru"
+      ],
+      "verification": "GUI testy v VCutWorks — jediný validní ground truth"
+    },
+    {
+      "track": "B",
+      "name": "Template injection (fallback)",
+      "description": "Native VCF jako binární template → offsetové patchnutí geometrie a layer parametrů. Vše ostatní (machine profile, empty blocks, footer encoding, circle control point formát) zůstává native.",
+      "status": "DESIGN — neimplementováno",
+      "motivation": "Pokud Track A selže v GUI (circle deformace, multi-element selhání, neznámá footer data) — template injection je okamžitá záchrana pipeline. Obchází H11 (circle encoding), H12 (footer), OP1 (footer content), OP2 (GEOMETRY_HEADER_TEMPLATE), OP9 (8. float64).",
+      "constraints": [
+        "Fixní struktura template — počet elementů a layerů je dán template souborem",
+        "Každá kombinace (N_layerů × M_elementů) potřebuje vlastní template",
+        "Nová geometrie musí být <= template alokuje místo (nelze prodloužit segment sekci)"
+      ],
+      "required_template_archetypes": [
+        {"archetype": "single_single", "elements": 1, "layers": 1, "source": "square_1_aci.VCF", "status": "AVAILABLE"},
+        {"archetype": "single_multi", "elements": 1, "layers": "N", "source": null, "status": "NEEDED"},
+        {"archetype": "multi_single", "elements": "M", "layers": 1, "source": "fishbone_2790x1200_native.VCF (14 elem)", "status": "AVAILABLE"},
+        {"archetype": "multi_multi", "elements": "M", "layers": "N", "source": "manchester_3_subjobs_native.VCF", "status": "AVAILABLE"},
+        {"archetype": "circle_single", "elements": 1, "layers": 1, "source": "circle_500_single_aci.VCF", "status": "AVAILABLE"},
+        {"archetype": "high_element_count", "elements": 1000+, "layers": 1, "source": "1ks.VCF", "status": "AVAILABLE"},
+        {"archetype": "production_complex", "elements": 755, "layers": "N", "source": "vyrobni_data_pernerka_service_for_office_dark_knight_12mm.VCF", "status": "AVAILABLE"}
+      ],
+      "missing_archetypes": [
+        "single_multi (1 element, více vrstev) — nutno vytvořit v VCutWorks",
+        "multi_layer_circle (kruh + polyline v různých vrstvách) — nutno vytvořit"
+      ],
+      "implementation_steps": [
+        "B1. Proof-of-concept: vzít square_1_aci.VCF, přepsat geometrii (souřadnice vertexů) na nová DXF data, otestovat v GUI",
+        "B2. Vytvořit offset mapu pro každý template archetyp (pozice GEOMETRY_SIG, layer bloků, traileru)",
+        "B3. Implementovat TemplateInjector třídu: inject(template_path, spec, output_path)",
+        "B4. Ověřit že template injection produkuje VCutWorks-kompatibilní VCF (GUI test)",
+        "B5. Pro chybějící archetypy: vytvořit native VCF v trial VCutWorks"
+      ],
+      "offset_map_template": {
+        "file_size": "pevná velikost template v bytech",
+        "geometry_offsets": ["array of {element_index, geom_sig_offset, vertices_start_offset, pt_count_position}"],
+        "layer_block_offsets": ["array of {layer_index, block_start_offset, speed_offset, color_offset, cutter_offset, h1_offset, h2_offset}"],
+        "trailer_offset": "offset path_length bytu",
+        "footer_regions": ["array of {element_index, footer_start_offset, footer_size (196|180)}"]
+      },
+      "advantages_over_writer": [
+        "Machine profile = identický (0 diffs)",
+        "Empty blocks = identické (není potřeba řešit)",
+        "Circle control point formát = native (8 float64, ne 7)",
+        "Footer content = native (včetně neznámých dat na offsety 32+, 112+)",
+        "GEOMETRY_HEADER_TEMPLATE = native (není třeba validovat)",
+        "Žádné riziko strukturální korupce — měníme pouze geometry a layer parametry"
+      ],
+      "disadvantages": [
+        "Fixní počet elementů — nelze přidat více než template",
+        "Fixní počet layerů — nelze přidat více ACI barev než template",
+        "Pro každou kombinaci potřeba vlastní template soubor",
+        "Padding na max velikost geometrie — plýtvá místem (ale VCF je již nafouklý 256×610B empty blocks)",
+        "DXF path v traileru musí odpovídat délkou template slotu"
+      ]
+    },
+    {
+      "track": "C",
+      "name": "RE inversion pipeline (VCutWorks jako kompilátor)",
+      "description": "Použít VCutWorks jako 'ground truth kompilátor' — nakreslit primitiva v VCutWorks, exportovat VCF + DXF, provést párovou diff analýzu k odhalení kompilačních pravidel.",
+      "status": "DESIGN — metodika navržena, neprovedeno",
+      "methodology": [
+        "C1. Vytvořit primitivum v VCutWorks (např. jeden obdélník 100×100 mm, ACI 7)",
+        "C2. Uložit jako VCF → native_square_1_aci.VCF (již existuje)",
+        "C3. Exportovat VCF→DXF z VCutWorks → získáme DXF verzi kterou VCutWorks INTERNĚ používá",
+        "C4. Spustit náš DXF indexer na tomto DXF → získat spec dict",
+        "C5. Spustit náš writer na tomto spec dict → synthetic VCF",
+        "C6. Hex diff native VCF (krok C2) vs synthetic VCF (krok C5) → odhalí všechny odchylky našeho writeru",
+        "C7. Hex diff native VCF vs native DXF (krok C3) → odhalí co VCutWorks přidává/ubírá při kompilaci"
+      ],
+      "critical_questions_inversion_answers": [
+        {
+          "question": "Jak VCutWorks konsoliduje elementy?",
+          "method": "Nakreslit 2 samostatné úsečky a 1 connected polyline v VCutWorks → export DXF → analyzovat počet entit vs počet elementů ve VCF",
+          "target": "Fishbone 41→14 consolidation rules"
+        },
+        {
+          "question": "Jaký je přesný formát circle segmentů (8. float64)?",
+          "method": "Nakreslit kruh v VCutWorks → export VCF → hex dump 4 segmentů → analyzovat 8. float64 na offsetu 66-73",
+          "target": "H11 circle encoding"
+        },
+        {
+          "question": "Co obsahuje ELEMENT_FOOTER na offsety 32+, 112+?",
+          "method": "Porovnat footery napříč elementy ve stejném VCF (fishbone 14 elementů = 13 footerů + 1 tail) → hledat konzistentní patterny",
+          "target": "OP1 — footer content"
+        },
+        {
+          "question": "Jak VCutWorks mapuje ACI barvy při importu DXF?",
+          "method": "Vytvořit DXF s ACI 1=red v LightBurn → import do VCutWorks → export VCF → analyzovat geom_color v elementu vs layer_color v bloku",
+          "target": "ACI→VCF color mapping verification"
+        },
+        {
+          "question": "Jak VCutWorks reaguje na multi-layer DXF?",
+          "method": "Vytvořit DXF s ACI 1 a ACI 3 v LightBurn → import do VCutWorks → export VCF → analyzovat linked-list a layer block order",
+          "target": "Multi-layer pipeline verification"
+        }
+      ],
+      "paired_files_for_diff": {
+        "available_pairs": [
+          {"pair": "square_1_aci", "dxf": "demo_data/square_1_aci.dxf (LightBurn export)", "vcf_native": "demo_data/square_1_aci.VCF (VCutWorks export)", "note": "Primární GT — single element, single layer, polyline"},
+          {"pair": "circle_500_single_aci", "dxf": "demo_data/circle_500_single_aci.dxf (LightBurn export)", "vcf_native": "demo_data/circle_500_single_aci.VCF (VCutWorks export)", "note": "Circle GT — 4 segmenty, subtype=3, cx/cy/r encoding"},
+          {"pair": "circle_diameter_600_native", "dxf": "demo_data/circle_diameter_600_native.dxf (LightBurn export)", "vcf_native": "demo_data/circle_diameter_600_native.VCF (VCutWorks export)", "note": "Circle GT #2 — jiný průměr, ověření konzistence circle encoding"}
+        ],
+        "missing_critical_pairs": [
+          "Multi-element DXF → VCF (pro ověření footer/tail)",
+          "Multi-layer DXF → VCF (pro ověření linked-list a layer block ordering)",
+          "Circle + line mixed DXF → VCF (pro ověření mixed element types)",
+          "DXF s INSERT bloky → VCF (pro ověření block explosion)"
+        ]
+      },
+      "inversion_workflow_tool": {
+        "name": "vcf_dxf_re_correlator_v1.1.py",
+        "path": "dev_scripts/vcf_dxf_re_correlator_v1.1.py",
+        "purpose": "Korelace DXF↔VCF pro odhalení kompilačních pravidel VCutWorks",
+        "input": "DXF soubor + odpovídající native VCF (párové soubory)",
+        "output": "Difff report: entity→element mapping, ACI color mapping, coordinate transform, element consolidation"
+      }
+    }
+  ],
+
+  "==================================================================================": "",
+  "A.2": "ROZHODOVACÍ MATICE — KTERÝ TRACK POUŽÍT",
+  "==================================================================================": "",
+
+  "decision_matrix": {
+    "scenario_1": {
+      "condition": "Track A GUI testy PASS (circle i multi-element fungují v VCutWorks)",
+      "action": "Pokračovat jen Track A. Track B a C jako dokumentace. Priority: fishbone konsolidace (A7), footer content audit (A6), doplnění testů (A8).",
+      "timeline": "3-4 session"
+    },
+    "scenario_2": {
+      "condition": "Track A GUI testy: circle FAIL, multi-element PASS",
+      "action": "Track A: opravit 8. float64 v circle segmentech (D12). Pokud nefunguje ani poté → Track B (circle template) pro kruhy + Track A pro polygony. Track C pro RE správného circle formátu.",
+      "timeline": "1-2 session fix + 1 session template"
+    },
+    "scenario_3": {
+      "condition": "Track A GUI testy: circle PASS, multi-element FAIL",
+      "action": "Track A: footer content audit (OP1). Pokud footer data jsou kritická a nejednoznačná → Track B (multi-element template) pro multi-element VCF. Track C pro RE footer struktury.",
+      "timeline": "2-3 session RE + 1 session template"
+    },
+    "scenario_4": {
+      "condition": "Track A GUI testy: circle FAIL i multi-element FAIL",
+      "action": "OKAMŽITÝ PŘECHOD na Track B (template injection) jako primární pipeline. Track A odložit na pozdější RE. Track C spustit paralelně pro RE circle formátu a footer struktury.",
+      "timeline": "1 session template injection PoC + paralelní RE"
+    },
+    "scenario_5": {
+      "condition": "Track B template injection nefunguje (VCutWorks validuje template konzistenci)",
+      "action": "Fallback na Track C inversion RE — použít VCutWorks jako black-box kompilátor. Analyzovat kompilační pravidla a implementovat je do writeru. Toto je nejpomalejší ale nejjistější cesta.",
+      "timeline": "3-5 session RE + 2-3 session implementace"
+    }
+  },
+
+  "==================================================================================": "",
+  "A.3": "VERIFIKAČNÍ PYRAMIDA",
+  "==================================================================================": "",
+
+  "verification_pyramid": {
+    "level_0_static_analysis": {
+      "description": "Hex diff, strukturní validace, element count, layer field kontrola",
+      "tools": ["hex_diff_v2.py", "build_element_types_catalog.py", "VcfWrappingAnalyzer.py"],
+      "confidence": "LOW — nezachytí sémantické chyby (D2: hex diff selhal na kritických 12B)",
+      "automation": "plně automatizováno"
+    },
+    "level_1_roundtrip_reader": {
+      "description": "write → read → compare (b2b reader nebo Vcf-compiler reader)",
+      "tools": ["test_roundtrip.py", "b2b reader"],
+      "confidence": "MEDIUM — reader != VCutWorks parser (D1: reader ukazuje 0 layers, GUI vykreslí)",
+      "automation": "automatizováno (28/28 testů)"
+    },
+    "level_2_gui_manual": {
+      "description": "Manuální testování v VCutWorks GUI — open, check layers, check geometry rendering",
+      "tools": ["VCutWorks trial", "lidský operátor"],
+      "confidence": "HIGH — jediný skutečný ground truth (D2 potvrzeno)",
+      "automation": "manuální — bottleneck celé pipeline"
+    },
+    "level_3_gui_automated": {
+      "description": "pywinauto-based GUI oracle — automatické otevírání VCF v VCutWorks, screenshot porovnání",
+      "tools": ["pywinauto", "screenshot comparison"],
+      "confidence": "HIGH — eliminuje lidský bottleneck",
+      "automation": "neimplementováno (OP4) — doporučeno jako investice"
+    },
+    "level_4_physical_machine": {
+      "description": "Skutečné řezání na CNC stroji RDD6584G — měření času, kvality řezu",
+      "tools": ["CNC plotr", "stopky", "měření"],
+      "confidence": "ULTIMATE — fyzikální validace celé pipeline",
+      "automation": "n/a — vyžaduje přístup ke stroji"
+    }
+  },
+
+  "==================================================================================": "",
+  "A.4": "INVERZNÍ RE — DETAILNÍ PROTOKOL",
+  "==================================================================================": "",
+
+  "inversion_re_protocol": {
+    "phase_1_create_primitives_in_vcutworks": {
+      "goal": "Vytvořit native VCF + DXF párové soubory s přesně známou geometrií",
+      "steps": [
+        "1a. Otevřít VCutWorks, vytvořit nový soubor (stock 1220×2900 mm)",
+        "1b. Nakreslit primitivum (např. obdélník 100×100 mm, černá ACI 7)",
+        "1c. Nastavit parametry: Vibrate cutter, speed=80 mm/s, H1=24, H2=-0.5",
+        "1d. Uložit jako VCF → získáme native_reference_single.VCF",
+        "1e. V VCutWorks: Export → DXF → získáme native_reference_single.DXF"
+      ],
+      "output": "Párové soubory: VCF (native kompilace) + DXF (VCutWorks export, NE LightBurn export)"
+    },
+    "phase_2_diff_analysis": {
+      "goal": "Porovnat VCutWorks-DXF s LightBurn-DXF a VCutWorks-VCF",
+      "steps": [
+        "2a. Hex diff: VCutWorks-DXF vs LightBurn-DXF — odhalí co VCutWorks mění při importu DXF",
+        "2b. Hex diff: VCutWorks-VCF vs náš synthetic VCF ze stejného DXF — odhalí odchylky writeru",
+        "2c. Structure diff: DXF entit count vs VCF element count — odhalí konsolidaci",
+        "2d. Coordinate diff: DXF vertex souřadnice vs VCF float64 — odhalí transformace"
+      ],
+      "expected_findings": [
+        "VCutWorks přidává/odebírá entity při importu DXF",
+        "VCutWorks převádí určité DXF entity na jiný typ ve VCF",
+        "VCutWorks aplikuje dodatečnou coordinate transform (kromě naší +67.5, -287.5)",
+        "VCutWorks konsoliduje connected paths do jednoho elementu"
+      ]
+    },
+    "phase_3_scale_complexity": {
+      "goal": "Systematicky pokrýt všechny kombinace primitiv",
+      "test_matrix": [
+        {"test": "single_line", "aci": 7, "param": "Vibrate 80"},
+        {"test": "single_rectangle_closed", "aci": 7, "param": "Vibrate 80"},
+        {"test": "single_circle_r500", "aci": 5, "param": "Vibrate 100"},
+        {"test": "two_disconnected_lines", "aci": 1, "param": "Vibrate 150"},
+        {"test": "one_polyline_3_segments", "aci": 7, "param": "Vibrate 80"},
+        {"test": "rectangle_vslot", "aci": 3, "param": "V-slot 200"},
+        {"test": "circle_vslot", "aci": 4, "param": "V-slot 300"},
+        {"test": "two_layers_line+circle", "aci": "7 + 5", "param": "Vibrate 80 + Vibrate 100"},
+        {"test": "three_layers_all_types", "aci": "7 + 3 + 5", "param": "mix"},
+        {"test": "complex_shape_connected", "aci": 7, "param": "Vibrate 80", "note": "Složitý tvar s více path segmenty — pro konsolidaci"}
+      ],
+      "expected_output": "Minimálně 10 párových VCF+DXF souborů vytvořených VCutWorks"
+    }
+  },
+
+  "==================================================================================": "",
+  "A.5": "IMPLEMENTAČNÍ PRIORITY — SESSION 8+",
+  "==================================================================================": "",
+
+  "implementation_priorities": {
+    "immediate_session_8": {
+      "items": [
+        "P0. GUI test circle_ph4 — nejvyšší priorita (rozhodne mezi scénářem 1 a 2)",
+        "P0. GUI test double_line_ph4 — multi-element detection",
+        "P0. GUI test botanic_ph4 — 16-element detection"
+      ],
+      "decision_gate": "Výsledky těchto 3 testů určí zda pokračovat Track A, nebo přejít na Track B"
+    },
+    "short_term_session_9_10": {
+      "scenario_dependent": true,
+      "if_track_a_works": [
+        "P1. Opravit 8. float64 v circle segmentech (pokud circle selhal)",
+        "P2. RE footer content divergence (OP1) hex diffem multi-element native",
+        "P3. Fishbone konsolidace: navrhnout pravidla, implementovat v adapteru",
+        "P4. Doplnit unit testy (multi-element, circle params, footer/tail, trailer)",
+        "P5. Doplnit roundtrip testy (circle, multi-element, fishbone, manchester)",
+        "P6. Verifikace: batch kompilace všech 16 DXF souborů + GUI test každého"
+      ],
+      "if_track_b_needed": [
+        "P1. Implementovat TemplateInjector PoC (square template + nová geometrie)",
+        "P2. GUI test template injection výstupu",
+        "P3. Rozšířit na circle template",
+        "P4. Rozšířit na multi-element template",
+        "P5. Integrovat do compile_dxf() jako fallback: zkusit writer, if fail → template injection",
+        "P6. Paralelně Track C: RE circle formátu a footer struktury pro budoucí writer fix"
+      ]
+    },
+    "medium_term": {
+      "items": [
+        "Q1. Automatizovat GUI testování (pywinauto oracle) — odstraní bottleneck",
+        "Q2. Kalibrovat machine_profile.json na reálném stroji",
+        "Q3. Dosáhnout 150+ VCF souborů pro statistickou ACI analýzu",
+        "Q4. Implementovat write() → read() → compare() → fix() feedback loop"
+      ]
+    },
+    "long_term": {
+      "items": [
+        "R1. Full roundtrip: DXF → JSON → VCF → CNC → časová predikce → kalibrace",
+        "R2. ERP pipeline: CAD → DXF → VCF → CNC without VCutWorks",
+        "R3. Template-based parametrické generování (zakázky s proměnnými rozměry)"
+      ]
+    }
+  },
+
+  "==================================================================================": "",
+  "A.6": "PIVOT ANALYSIS — KDY A PROČ MĚNIT STRATEGII",
+  "==================================================================================": "",
+
+  "pivot_analysis": {
+    "pivot_to_track_b": {
+      "trigger": "Track A GUI testy selžou na circle NEBO multi-element",
+      "expected_effort": "2-3 session na funkční template injection pipeline",
+      "success_criteria": "Template injection VCF se otevře v VCutWorks se stejnou geometrií jako native",
+      "risk": "Template fixita — pokud DXF produkuje více elementů než template alokuje, pipeline selže",
+      "mitigation": "Více template archetypů; auto-detekce vhodného template podle element/layer count"
+    },
+    "pivot_to_track_c": {
+      "trigger": "Track B nefunguje (VCutWorks validuje template konzistenci) NEBO je příliš mnoho template archetypů",
+      "expected_effort": "5-8 session na plnou RE kompilace VCutWorks",
+      "success_criteria": "Plně deterministický writer produkující VCF s 0 diffs proti native v HEADER/GEOMETRY/TRAILER",
+      "risk": "Nejistá časová náročnost — VCutWorks kompilace může být arbitrárně komplexní",
+      "mitigation": "Inkrementální přístup: nejdříve single-element polyline, pak circle, pak multi-element, pak multi-layer"
+    },
+    "no_pivot": {
+      "trigger": "Track A funguje v GUI (circle i multi-element OK)",
+      "expected_effort": "3-4 session na produkční pipeline",
+      "success_criteria": "Všech 16 DXF souborů -> VCF -> VCutWorks -> geometrie korektní",
+      "risk": "Nízké — zbývají jen kosmetické úpravy (footer content, test coverage, fishbone konsolidace)"
+    }
+  },
+
+  "==================================================================================": "",
+  "A.7": "SUMMARY — KLÍČOVÁ DOPORUČENÍ",
+  "==================================================================================": "",
+
+  "key_recommendations": [
+    "1. NEJDŘÍVE GUI TESTY — circle_ph4, double_line_ph4, botanic_ph4. Výsledek rozhodne o směru.",
+    "2. HEX DIFF NENÍ DIAGNOSTIKA — binary search variant methodology je dražší ale přesnější. Investovat čas do variant generatoru, ne do hex diff analýzy.",
+    "3. B2B READER ≠ VCutWorks — reader roundtrip testy (28/28) nestačí. Jediný ground truth je VCutWorks.",
+    "4. TEMPLATE INJECTION JE POJISTKA — implementovat jako fallback, ne jako primární pipeline. Writer je flexibilnější pro obecné použití.",
+    "5. INVERSION RE JE INVESTICE — VCutWorks→DXF párová analýza odhalí kompilační pravidla během 1-2 session. Doporučeno provést nezávisle na Track A/B výsledku.",
+    "6. FISHBONE 41→14 JE HINT — native konsolidace elementů je pravděpodobně VCutWorks optimalizace, ne chyba. Writer nemusí konsolidovat, ale měl by být schopen.",
+    "7. AUTOMATIZOVAT GUI TESTY — pywinauto oracle odstraní největší bottleneck pipeline.",
+    "8. SBÍRAT VICE VCF — statistická ACI analýza (N=35) nestačí. Cíl: 150-200 VCF pro produkční config.",
+    "9. KALIBROVAT STROJ — machine_profile.json ECI=0.0. Bez kalibrace je časová predikce neobhajitelná.",
+    "10. DOKUMENTOVAT VŠE — handoff JSON před každou pauzou (Golden Rule #10). GT dokument udržovat aktuální."
+  ]
+}

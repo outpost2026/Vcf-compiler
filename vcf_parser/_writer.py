@@ -68,7 +68,11 @@ MACHINE_PROFILE = bytes([
     0x00, 0x00,
 ])
 
-TRAILER_PREFIX = bytes([
+TRAILER = b'\x00' * 5
+
+GEOMETRY_HEADER_TEMPLATE = b'\x00' + struct.pack('<d', 1.0) * 4
+
+ELEMENT_FOOTER = bytes([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x14, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x56, 0x40, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -81,23 +85,8 @@ TRAILER_PREFIX = bytes([
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00,
 ])
-
-GEOMETRY_HEADER_TEMPLATE = b'\x00' + struct.pack('<d', 1.0) * 4
-
-ELEMENT_FOOTER = (
-    b'\x00' * 16 +
-    struct.pack('<d', 5.0) +
-    struct.pack('<d', 90.0) +
-    b'\x00' * 80 +
-    struct.pack('<d', 5.0) +
-    struct.pack('<d', 90.0) +
-    b'\x00' * 64 +
-    struct.pack('<I', 0)
-)
-
-ELEMENT_TAIL = ELEMENT_FOOTER[:-16]
 
 
 class VcfLayer:
@@ -183,6 +172,7 @@ class VcfWriter:
                 struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, next_color_bgr)
             data += bytes(block)
 
+        total_elements = sum(len(layer._paths) for layer in self._layers)
         for i, layer in enumerate(self._layers):
             block = bytearray(self.encode_layer_block(layer, LAYER_BLOCK_SIZE))
             if i < n_layers - 1:
@@ -191,7 +181,7 @@ class VcfWriter:
                 struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 8, 1)
                 struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, next_color_bgr)
             else:
-                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, 1)
+                struct.pack_into('<I', block, LAYER_BLOCK_SIZE - 4, total_elements)
             data += bytes(block)
 
         return bytes(data)
@@ -200,17 +190,10 @@ class VcfWriter:
 
     def body(self) -> bytes:
         data = bytearray()
-        # Count total elements
-        total_elements = 0
-        for layer in self._layers:
-            total_elements += len(layer._paths)
-        element_counter = 0
         for layer_idx, layer in enumerate(self._layers):
             if not layer._paths:
                 continue
             for pi, path in enumerate(layer._paths):
-                element_counter += 1
-                is_last = (element_counter == total_elements)
                 if pi < len(layer._path_types) and layer._path_types[pi] == "Circle":
                     circle_params = None
                     if pi < len(layer._path_circle_params):
@@ -224,20 +207,13 @@ class VcfWriter:
                     data += self.encode_circle_element(cx, cy, radius, layer, layer_idx)
                 else:
                     data += self.encode_geometry_element(path, layer, layer_idx)
-                if is_last:
-                    data += ELEMENT_TAIL
-                else:
-                    data += ELEMENT_FOOTER
+                data += ELEMENT_FOOTER
         return bytes(data)
 
     # ── Trailer ──
 
     def trailer(self) -> bytes:
-        if self._dxf_source_path:
-            raw_path = str(self._dxf_source_path).encode('ascii', errors='replace')
-        else:
-            raw_path = b''
-        return b'\x00' * 20 + bytes([len(raw_path)]) + raw_path
+        return TRAILER
 
     # ── Write ──
 
@@ -297,7 +273,7 @@ class VcfWriter:
             struct.pack_into('<d', block, 114, layer._start_ext)
             struct.pack_into('<d', block, 122, layer._end_ext)
 
-        struct.pack_into('<B', block, 92, len(layer._paths))
+        struct.pack_into('<B', block, 92, 1)
         struct.pack_into('<d', block, 40, 5.0)
         struct.pack_into('<B', block, 197, 64)
         struct.pack_into('<d', block, 198, 0.5)

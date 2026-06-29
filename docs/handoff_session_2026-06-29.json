@@ -1,0 +1,286 @@
+{
+  "handoff_session": "Vcf-compiler session 2026-06-29 (Session 7)",
+  "date": "2026-06-29",
+  "author": "Dev (LLM-augmentovaná analýza)",
+  "session_type": "debugging + binary RE + writer fixes — circle cx/cy/r pass-through, ACI fixes, multi-element trailer+tail",
+  "total_commits_in_session": 7,
+  "all_commits": [
+    {"hash": "1861c66", "date": "2026-06-29", "message": "fix: circle cx/cy/r DXF pass-through, ACI 0 vs 7 color collision, ByLayer resolution, 20B trailer prefix, 180B last-element tail"},
+    {"hash": "fa5e3d6", "date": "2026-06-27", "message": "fix: remove spurious 200-byte TRAILER_PREFIX from trailer structure — root cause of 'unknown element' and 'empty canvas' in Ruida; recompile all VCFs as ph3"},
+    {"hash": "73cd9d3", "date": "2026-06-27", "message": "feat: Phase 2 fixes — circle Bézier encoding (H11), 196B element footer (H12), multi-layer support (H13); batch compile all 16 DXF files"},
+    {"hash": "ff7c88a", "date": "2026-06-21", "message": "fix: writer breakthrough — 3 root causes fixed (trailer, element_count@92, direction@104); update DEV_REPORT v2 with GUI test results; add REPORT_dev_phase_evolution.md with full RE evolution"},
+    {"hash": "1b653e8", "date": "2026-06-21", "message": "feat: binary search variant generator + native-patched VCF isolates empty block init as primary cause"},
+    {"hash": "15b8572", "date": "2026-06-21", "message": "fix: restore color@12 in encode_layer_block() — critical fix for VCutWorks layer matching"},
+    {"hash": "f21429d", "date": "2026-06-21", "message": "chore: git history analysis — identify first working VCF phase (4ba9446), trace regression, add REPORT_early_dev_phase_anomaly; update .ai_state.json"}
+  ],
+  "writer_state": {
+    "version": "1.4",
+    "status": "functional — self-contained",
+    "header": "Full 472B: 54B preamble + 418B machine profile. Magic 1.0.012/1.0.013 + 0x13 prefix + stock dims (1220×2900).",
+    "layer_blocks": "257 blocks × 610B (empty-first, active-last). Block index counter at [10] (uint16, 0-255 across empty blocks). 8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2.",
+    "layer_block_fields": "output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, vs_comp@106, ext@114/122",
+    "geometry_header": "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44)",
+    "element_footer": "ELEMENT_FOOTER=196B (inter-element), ELEMENT_TAIL=180B (last element) — FIXED in ph4",
+    "trailer": "20 zero bytes + path length + DXF source path — FIXED in ph4 (was 4B zeros, then 200B TRAILER_PREFIX)",
+    "circle_encoding": "encode_circle_element with 4 Bezier arcs (type=1, sub=3). Now accepts direct cx/cy/radius — FIXED in ph4",
+    "not_implemented": ["Scrambling (raises UnsupportedFeatureError)", "Unknown block fields at offsets 40-47, 92, 104, 176-177, 184-185, 197, 204-205, 606"]
+  },
+  "reader_state": {
+    "status": "functional",
+    "features": ["Backward scan from geometry (k=1..32 blocks)", "Color from trailer at pos-4", "Layer extraction: speed, color, cutter, h1, h2, feed, output_flag", "V-slot direction, extensions", "Color name mapping (14 known + custom fallback)", "Version detection (1.0.012 vs 1.0.013)"]
+  },
+  "dxf_adapter_state": {
+    "status": "functional",
+    "features": ["compile_dxf(dxf_path, output_path, config_path)", "ACI_TO_RGB mapping with unique colors per ACI index", "Config loader with fallback defaults", "Density-based ACI 4 ambiguity resolution", "Coordinate transform (+67.5, -287.5 mm)", "Circle center/radius pass-through from DXF indexer to VCF writer"]
+  },
+  "tests": {"total": 28, "pass": 28, "skip": 2, "files": ["tests/test_writer_unit.py (23 tests)", "tests/test_roundtrip.py (5 tests)"]},
+  "root_causes_fixed_this_session": [
+    {
+      "id": "RC1",
+      "title": "Circle rendering: 3/4 Bezier arcs degenerate to straight lines",
+      "root_cause": "dxf_geometry_indexer_v2._circle_length() correctly reads entity.dxf.radius and entity.dxf.center from DXF, but discards them — only stores 36-point discretized polygon. _dxf_adapter._build_vcf_spec() labels geom_type='Circle' but passes 36-point polygon. _writer._compute_circle_params() back-computes cx/cy/radius from bounding box with floating point error → 3 of 4 Bezier arcs degenerate.",
+      "fix": "3-file change: (1) indexer stores circle_cx/cy/radius in entity dict for CIRCLE. (2) adapter passes circle_params in element dict (with coord transform). (3) writer checks _path_circle_params, uses direct cx/cy/radius when available, falls back to _compute_circle_params() only when None.",
+      "files_changed": ["dxf_integrace/src/dxf_geometry_indexer_v2.py", "vcf_parser/_dxf_adapter.py", "vcf_parser/_writer.py"],
+      "verification": "circle_ph4.VCF = 157876B (same as native). Geometry header matches native byte-for-byte.",
+      "confidence": 0.95
+    },
+    {
+      "id": "RC2a",
+      "title": "ACI 0 vs 7 color collision — both mapped to (0,0,0)",
+      "root_cause": "ACI_TO_RGB[0] and ACI_TO_RGB[7] both (0,0,0). geom_color = 0x00000000 for both layers. Reader matches geom_color against layer block colors, so same geom_color = only first layer found.",
+      "fix": "ACI_TO_RGB[0] changed to (10, 10, 10) — visually identical black but unique geom_color.",
+      "files_changed": ["vcf_parser/_dxf_adapter.py"],
+      "confidence": 0.99
+    },
+    {
+      "id": "RC2b",
+      "title": "ByLayer (color=256) unresolved — always mapped to ACI 7",
+      "root_cause": "dxf_geometry_indexer_v2.py line 1395: if color_idx == 256: color_idx = 7. layer_colors dict (built at line 1388) was NEVER USED.",
+      "fix": "if color_idx == 256: color_idx = layer_colors.get(entity.dxf.layer, 7) — now resolves to actual layer color.",
+      "files_changed": ["dxf_integrace/src/dxf_geometry_indexer_v2.py"],
+      "confidence": 0.99
+    },
+    {
+      "id": "RC3",
+      "title": "Trailer prefix: 200B TRAILER_PREFIX causes Ruida errors",
+      "root_cause": "Original writer appended 200B TRAILER_PREFIX (float64 5.0 and 90.0) before path data. Native files have NO such prefix. ph3 tried 4B zeros — still wrong. ph4: 20B zeros matches native.",
+      "fix": "trailer(): \\x00 × 20 + len + path (not \\x00 × 4, not 200B TRAILER_PREFIX).",
+      "files_changed": ["vcf_parser/_writer.py"],
+      "verification": "Confirmed against ALL native files (1ks, fishbone, manchester, botanic, circle, square).",
+      "confidence": 0.99
+    },
+    {
+      "id": "RC4",
+      "title": "Last element gets 196B FOOTER not 180B TAIL",
+      "root_cause": "All 4 native multi-element files show exactly 180 bytes after last element before trailer. Inter-element gaps are 196B. Writer was writing 196B footer for ALL elements including last.",
+      "fix": "ELEMENT_TAIL = ELEMENT_FOOTER[:-16] (180B). body() tracks total_elements count, writes ELEMENT_TAIL for last element only.",
+      "files_changed": ["vcf_parser/_writer.py"],
+      "verification": "Confirmed against ALL native multi-element files (1ks=6elem, fishbone=14elem, manchester=3elem, botanic=16elem).",
+      "confidence": 0.99
+    }
+  ],
+  "critical_discoveries": [
+    {
+      "id": "D1",
+      "title": "b2b reader != VCutWorks rendering engine",
+      "description": "První funkční VCF (commit 4ba9446) měl 0 layers dle b2b readeru (geom_color mismatch), přesto se v GUI vykreslil. VCutWorks používá vlastní parser s odlišnou logikou.",
+      "confidence": 0.95
+    },
+    {
+      "id": "D2",
+      "title": "Native header je vždy 472 B (machine profile)",
+      "description": "Všechny native VCF s obsahem sdílejí identický 472B header (54B preamble + 418B machine profile) bez ohledu na geometrii.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D3",
+      "title": "TRAILER PREFIX: 20B zeros (not 200B, not 4B)",
+      "description": "Native files have 20 zero bytes before path data in trailer. Original writer had 200B TRAILER_PREFIX (float64 5.0+90.0). ph3 had 4B zeros. Both caused Ruida errors.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D4",
+      "title": "LAST ELEMENT TAIL: 180B (not 196B footer)",
+      "description": "Confirmed across ALL 4 native multi-element files: inter-element gaps = 196B, last-element gap = 180B (= footer - 16B).",
+      "confidence": 0.99
+    },
+    {
+      "id": "D5",
+      "title": "Circle needs cx/cy/radius pass-through, not recomputation",
+      "description": "DXF indexer discards circle center/radius. Writer recomputes from 36-point polygon → floating point errors → 3/4 arcs degenerate. Fix: pass cx/cy/radius through pipeline.",
+      "confidence": 0.95
+    },
+    {
+      "id": "D6",
+      "title": "ACI 0 ≠ ACI 7 — unique geom_color required",
+      "description": "Both mapped to (0,0,0) → geom_color collision → reader cannot distinguish layers. Fix: ACI 0 → (10,10,10).",
+      "confidence": 0.99
+    },
+    {
+      "id": "D7",
+      "title": "ByLayer (256) must resolve to actual layer color",
+      "description": "Hardcoded to ACI 7. layer_colors dict was built but never used. Fix: resolve via layer_colors.get().",
+      "confidence": 0.99
+    }
+  ],
+  "aci_mapping_state": {
+    "standard": "Custom ACI_TO_RGB (not AutoCAD, not LightBurn) calibrated from native VCF analysis",
+    "key_mappings": {
+      "ACI 0": "(10,10,10) — FIXED from (0,0,0) to avoid collision with ACI 7",
+      "ACI 7": "(0,0,0) — confirmed from native square_1_aci (black default layer)",
+      "ByLayer": "Now resolves to actual DXF layer color — FIXED"
+    },
+    "confidence": 0.99
+  },
+  "test_results": {
+    "test_suite": "28/28 passed (2 skipped expected)",
+    "tests_passed": ["test_writer_unit.py (23)", "test_roundtrip.py (5)"],
+    "tests_skipped": ["test_primitive.VCF (unsupported features)", "empty_01.VCF (edge case)"]
+  },
+  "file_naming_convention": {
+    "description": "Suffix indicates version/fix stage. _ph4 = latest with all fixes.",
+    "suffixes": {
+      "_ph4": "LATEST — 20B trailer prefix, 180B last-element tail, circle cx/cy/r pass-through, ACI fixes (ALL FIXES APPLIED)",
+      "_ph3": "OLD — 4B trailer prefix (wrong), 196B footer for last elem (wrong), no circle pass-through",
+      "(no suffix)": "ORIGINAL — 200B TRAILER_PREFIX (wrong), 196B footer (wrong), no circle pass-through"
+    }
+  },
+  "files_created_in_session_7": [
+    "demo_data/synthethic_vcf/*_ph4.VCF (all 16 DXF files recompiled)",
+    "demo_data/synthethic_vcf/test_circle_params_ph4.VCF",
+    "demo_data/synthethic_vcf/test_multi_element_ph4.VCF",
+    "demo_data/synthethic_vcf/test_multi_layer_ph4.VCF",
+    "docs/handoff_session_2026-06-29.json (this file)"
+  ],
+  "files_modified_in_session_7": [
+    "vcf_parser/_writer.py — trailer 20B zeros, ELEMENT_TAIL 180B, body() is_last detection, _path_circle_params, circle_params usage",
+    "vcf_parser/_dxf_adapter.py — ACI_TO_RGB[0]=(10,10,10), circle_params pass-through in _build_vcf_spec()",
+    "dxf_integrace/src/dxf_geometry_indexer_v2.py — ByLayer resolution (line 1394-1395), circle_cx/cy/radius stored in entity dict"
+  ],
+  "pending_gui_tests": [
+    {
+      "item": "circle_ph4 — circle rendering after cx/cy/r pass-through fix",
+      "file": "demo_data/synthethic_vcf/circle_500_single_aci_ph4.VCF",
+      "expected": "True circle (4 curved Bezier arcs, not 4-gon with 1 curved edge)",
+      "priority": "HIGH"
+    },
+    {
+      "item": "double_line_ph4 — multi-element detection (2 elements)",
+      "file": "demo_data/synthethic_vcf/double_line_1_aci_ph4.VCF",
+      "expected": "Both line elements visible and selectable",
+      "priority": "HIGH"
+    },
+    {
+      "item": "botanic_ph4 — multi-element detection (16 elements)",
+      "file": "demo_data/synthethic_vcf/botanic_simple_1_aci_ph4.VCF",
+      "expected": "All 16 elements visible and selectable",
+      "priority": "HIGH"
+    },
+    {
+      "item": "test_multi_layer_ph4 — multi-layer with different ACI colors",
+      "file": "demo_data/synthethic_vcf/test_multi_layer_ph4.VCF",
+      "expected": "2 layers with different colors and correct cutter parameters",
+      "priority": "HIGH"
+    },
+    {
+      "item": "test_multi_element_ph4 — synthetic multi-element",
+      "file": "demo_data/synthethic_vcf/test_multi_element_ph4.VCF",
+      "expected": "Multiple elements visible",
+      "priority": "MEDIUM"
+    },
+    {
+      "item": "fishbone_ph4 — element consolidation (41 DXF entities vs 14 native elements)",
+      "file": "demo_data/synthethic_vcf/fishbone_2790x1200_ph4.VCF",
+      "expected": "Visible elements (may differ from native 14-element grouping)",
+      "priority": "MEDIUM"
+    }
+  ],
+  "open_problems": [
+    {
+      "problem": "ELEMENT_FOOTER content differs from native at offsets 32-39, 40-47, 112-143",
+      "severity": "low",
+      "workaround": "Writer has zeros; native has non-zero data. Not yet verified as critical — all 4 native multi-element files work with their footer content.",
+      "investigation_needed": "Compare writer vs native footer byte-by-byte; determine if non-zero data is required for rendering."
+    },
+    {
+      "problem": "GEOMETRY_HEADER_TEMPLATE content not verified against multi-element native files",
+      "severity": "low",
+      "workaround": "Currently 4× float64 1.0 (verified against single-element native only). May differ for multi-element.",
+      "investigation_needed": "Compare GEOMETRY_HEADER_TEMPLATE bytes 12-44 against multi-element native files (1ks, fishbone, manchester, botanic)."
+    },
+    {
+      "problem": "Fishbone element consolidation: 41 DXF entities vs 14 native elements",
+      "severity": "medium",
+      "workaround": "Writer writes one element per DXF entity (41 elements). Native consolidates to 14. VCutWorks may handle both, but consolidation would be more compatible.",
+      "investigation_needed": "Analyze native fishbone to determine consolidation rules (connected paths? same color? same layer?)."
+    },
+    {
+      "problem": "No GUI oracle (automated VCutWorks testing)",
+      "severity": "medium",
+      "workaround": "Manual GUI testing in VCutWorks for now.",
+      "investigation_needed": "Build pywinauto-based GUI test automation for regression testing."
+    }
+  ],
+  "next_steps": [
+    "1. GUI test circle_ph4 in VCutWorks (highest priority — circle rendering fix)",
+    "2. GUI test double_line_ph4 (multi-element detection)",
+    "3. GUI test botanic_ph4 (16-element detection)",
+    "4. GUI test test_multi_layer_ph4 (multi-layer with ACI colors)",
+    "5. GUI test test_multi_element_ph4 (synthetic multi-element)",
+    "6. GUI test fishbone_ph4 (element consolidation behavior)",
+    "7. If all GUI tests pass: validate ELEMENT_FOOTER content vs native (offsets 32+, 112+)",
+    "8. If all GUI tests pass: audit GEOMETRY_HEADER_TEMPLATE against multi-element native files",
+    "9. Investigate fishbone element consolidation (41→14)"
+  ],
+  "post_session_addendum_2026_06_30": {
+    "note": "Tento addendum byl přidán 2026-06-30 po session 8. Dokumentuje multi-iterační debugging journey a B2B parser breakthrough, který odhalil správný význam ec@92 a offset606.",
+    "debugging_journey_summary": [
+      "Session 7 skončila s 28/28 testy, ale multi-element VCF se v GUI stále zobrazoval jako 1 element.",
+      "Iterace 8.1: Analýza off-by-2 chyby v preamble — POST_STOCK_HEADER je 14B (4+8+2), ne 12B. To zneplatnilo dřívější závěr o ec@92=0.",
+      "Iterace 8.2: Ruční hex diff všech native VCF (1-elem i 2-elem) — ec@92=1 vždy. ec@92 je 'has geometry' flag, ne element count.",
+      "Iterace 8.3: Průzkum produkčního parseru vcf_parser_b2b (repo: C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src\\). Parser používá GEOMETRY_SIG (bytes 444-449: b'\\x89G\\x00\\x10\\x00\\x00') forward scan + backward layer block scan.",
+      "Iterace 8.4: B2B parser nečte ec@92 ani offset606! Pouze skenuje binární strukturu. Proto parser vždy našel 2 elementy i v synth VCF před fixem — ale GUI používalo offset606 a zobrazovalo jen 1.",
+      "BREAKTHROUGH: Poslední 4B posledního layer bloku (offset606) = celkový počet elementů. V nativních souborech: 1-elem→1, 2-elem→2. Writer psal vždy 1.",
+      "FIX: ec@92=1 (line 275), offset606=total_elements (line 183). Obě jednoduché změny, ale trvalo 8 iterací je najít."
+    ],
+    "critical_discoveries_addendum": [
+      {
+        "id": "D8", "title": "Off-by-2 bug v preamble výpočtu",
+        "description": "POST_STOCK_HEADER = pack('<I',0)+pack('<d',100.0)+pack('<H',1) = 14B. Dříve používáno 12B. To posunulo celou layer block analýzu o 2B."
+      },
+      {
+        "id": "D9", "title": "ec@92 ≠ element_count — je to 'has geometry' flag",
+        "description": "Všechny nativní VCF (1-elem i 2-elem) mají ec@92=1. Toto pole indikuje přítomnost geometrie, ne počet elementů."
+      },
+      {
+        "id": "D10", "title": "offset606 = element count v posledním layer bloku",
+        "description": "Poslední 4B posledního bloku = celkový počet elementů. VCutWorks GUI čte toto pole. Writer psal vždy 1."
+      },
+      {
+        "id": "D11", "title": "B2B parser nepoužívá offset606 — skenuje GEOMETRY_SIG",
+        "description": "vcf_parser_b2b najde elementy podle signatury, ne podle ec@92/offset606. Proto parser vždy fungoval správně, ale GUI ne."
+      }
+    ],
+    "remaining_problems_addendum": [
+      { "problem": "Square duplicate vertices (7 segmentů místo 4)", "severity": "high", "owner": "DXF adapter deduplication" },
+      { "problem": "Circle/Curve SPLINE oversampling (100+ segmentů)", "severity": "high", "owner": "Bezier encoding in writer/adapter" },
+      { "problem": "Color diff: 0x0A0A0A00 vs native 0x00000000", "severity": "medium", "workaround": "ACI 0 → (10,10,10) aby nedošlo ke kolizi s ACI 7" }
+    ],
+    "gui_verification_result": "single_line_2000_elements_2_inversion.VCF: GUI načte druhý element. Ostatní soubory (square, circle, curve) stále selhávají kvůli geometrii DXF, ne writeru."
+  },
+  "key_file_paths": {
+    "writer": "vcf_parser/_writer.py",
+    "dxf_adapter": "vcf_parser/_dxf_adapter.py",
+    "dxf_indexer": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\dxf_integrace\\src\\dxf_geometry_indexer_v2.py",
+    "reader_b2b": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src\\",
+    "native_gt": "demo_data/native_vcf/",
+    "synthetic_output": "demo_data/synthethic_vcf/",
+    "config": "vcf_compiler_map_config.json",
+    "state": ".ai_state.json",
+    "previous_handoff": "docs/handoff_session_2026-06-27.json",
+    "hex_diff_tool": "dev_scripts/hex_diff_v2.py",
+    "vcf_analyzer": "dev_scripts/VcfWrappingAnalyzer.py",
+    "batch_compiler": "dev_scripts/batch_compile_dxf.py",
+    "research_docs": "research_docs/"
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "handoff_session": "Vcf-compiler session 2026-06-30 (Session 8)",
+  "date": "2026-06-30",
+  "author": "Dev (LLM-augmentovaná analýza)",
+  "session_type": "debugging + binary RE + writer fixes — multi-element element_count journey: ec@92 a offset606 opraveny po 8 iteracích; B2B parser RE breakthrough",
+  "total_commits_in_session": 0,
+  "all_commits": [],
+  "debugging_journey_narrative": {
+    "problem": "Multi-element VCF: GUI zobrazoval jen 1 element místo 2",
+    "timeline": [
+      "Iterace 1: Oprava trailer prefixu 200B→20B → circle se vykreslil, multi-element ne",
+      "Iterace 2: Oprava ELEMENT_TAIL 196B→180B pro poslední element → pořád ne",
+      "Iterace 3: Změna ec@92 na 0 (chybný závěr z posunutých offsetů) → pořád ne",
+      "Iterace 4: Objev off-by-2 v preamble: POST_STOCK_HEADER=14B, ne 12B → zneplatněn závěr o ec@92=0",
+      "Iterace 5: Ruční hex diff všech native VCF → ec@92=1 VŽDY, nezávisle na počtu elementů",
+      "Iterace 6: Analýza produkčního parseru vcf_parser_b2b (separátní repo) → parser používá GEOMETRY_SIG sken, ne ec@92/offset606 → parser vždy našel 2 elementy i v neopravených synth souborech",
+      "Iterace 7: Objev offset606 = poslední 4B posledního layer bloku = skutečný počet elementů → ověřeno na všech nativních souborech",
+      "Iterace 8: FIX: ec@92=1 (ř.275), offset606=total_elements (ř.183) → GUI načte druhý element"
+    ],
+    "breakthrough": "Analýza vcf_parser_b2b odhalila, že parser používá zcela jiný mechanismus (GEOMETRY_SIG scan) než GUI (offset606). To vysvětluje, proč testy (přes parser) vždy procházely, ale GUI selhávalo. Klíčový objev: offset606 není hardcoded konstanta, ale musí být = celkový počet elementů."
+  },
+  "writer_state": {
+    "version": "1.5",
+    "status": "functional — self-contained; GUI nyní detekuje multi-element správně",
+    "header": "Full 472B: 54B preamble + 418B machine profile. Magic 1.0.012/1.0.013 + 0x13 prefix + stock dims (1220×2900). POST_STOCK_HEADER = 14 bytes (pack('<I',0)+pack('<d',100.0)+pack('<H',1)).",
+    "layer_blocks": "257 blocks × 610B (empty-first, active-last). Block index counter at [10] (uint16, 0-255 across empty blocks). 8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2.",
+    "layer_block_fields": "output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, ec@92=1, h2@96, dir@104, vs_comp@106, ext@114/122",
+    "layer_block_tail": "last 4B = element_count (NOT hardcoded 1). 2B before it = 0 for last block (link flag).",
+    "geometry_header": "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44)",
+    "element_footer": "ELEMENT_FOOTER=196B (all elements — no ELEMENT_TAIL variant, all elements get same footer)",
+    "trailer": "5 zero bytes",
+    "circle_encoding": "encode_circle_element with 4 Bezier arcs (type=1, sub=3). Direct cx/cy/radius pass-through.",
+    "not_implemented": ["Scrambling (raises UnsupportedFeatureError)", "Unknown block fields at offsets 40-47, 104, 176-177, 184-185, 197, 204-205"]
+  },
+  "reader_state": {
+    "status": "functional",
+    "features": ["Backward scan from geometry (k=1..32 blocks)", "Color from trailer at pos-4", "Layer extraction: speed, color, cutter, h1, h2, feed, output_flag", "V-slot direction, extensions", "Color name mapping (14 known + custom fallback)", "Version detection (1.0.012 vs 1.0.013)"]
+  },
+  "dxf_adapter_state": {
+    "status": "functional",
+    "features": ["compile_dxf(dxf_path, output_path, config_path)", "ACI_TO_RGB mapping with unique colors per ACI index", "Config loader with fallback defaults", "Density-based ACI 4 ambiguity resolution", "Coordinate transform (+67.5, -287.5 mm)", "Circle center/radius pass-through from DXF indexer to VCF writer"]
+  },
+  "tests": {"total": 28, "pass": 28, "skip": 2, "files": ["tests/test_writer_unit.py (23 tests)", "tests/test_roundtrip.py (5 tests)"]},
+  "root_causes_fixed_this_session": [
+    {
+      "id": "RC5",
+      "title": "Multi-element selhání: ec@92=0 a offset606=1 — obě hodnoty nesprávné",
+      "root_cause": "Dvě pole v posledním layer bloku byla nastavena chybně: (1) ec@92=0 (mělo být 1 — 'has geometry' flag). (2) offset606=1 (mělo být = element_count — VCutWorks GUI čte tento field pro počet elementů). Předchozí závěr 'ec@92=0' byl založen na off-by-2 chybě ve výpočtu preamble (POST_STOCK_HEADER=14B, ne 12B).",
+      "fix": "2 single-line changes: (1) encode_layer_block() line 275: ec@92 = 1. (2) header() line 183: offset606 = sum(len(layer._paths) for layer in self._layers) — actual element count.",
+      "files_changed": ["vcf_parser/_writer.py"],
+      "verification": "GUI: single_line_2000_elements_2_inversion.VCF nyní zobrazuje 2 elementy. Synth 2-elem: ec92=1, offset606=2, sigs=2 — MATCHES native. Native 1-elem: ec=1, offset606=1. Native 2-elem: ec=1, offset606=2. All 28 tests pass.",
+      "confidence": 0.95
+    }
+  ],
+  "critical_discoveries": [
+    {
+      "id": "D8",
+      "title": "Off-by-2 bug v preamble výpočtu",
+      "description": "POST_STOCK_HEADER = struct.pack('<I',0) + struct.pack('<d',100.0) + struct.pack('<H',1) = 4+8+2 = 14 bytes. Dříve používáno 12. To posunulo všechny layer block analýzy o 2 bytes. Závěr 'ec@92=0' byl neplatný.",
+      "correct_preamble": "1 (prefix) + 20 (magic) + 3 (post_magic) + 8 (stock_w) + 8 (stock_h) + 14 (POST_STOCK_HEADER) + 418 (MACHINE_PROFILE) = 472 bytes",
+      "confidence": 0.99
+    },
+    {
+      "id": "D9",
+      "title": "ec@92 ≠ element_count — je to 'has geometry' flag",
+      "description": "Všechny nativní VCF (1-elem i 2-elem) mají ec@92=1. Toto pole není element count, ale indikátor přítomnosti geometrie. VCutWorks GUI používá offset606 pro skutečný počet elementů.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D10",
+      "title": "offset606 = element count v posledním layer bloku",
+      "description": "Poslední 4 bytes posledního layer bloku (LAYER_BLOCK_SIZE-4 = 606) obsahují celkový počet elementů napříč všemi vrstvami. Ověřeno na všech nativních testovacích souborech: 1-elem→1, 2-elem→2. Writer psal vždy 1.",
+      "confidence": 0.95
+    },
+    {
+      "id": "D11",
+      "title": "B2B parser (vcf_parser_b2b) nepoužívá ec@92 ani offset606",
+      "description": "Parser používá GEOMETRY_SIG (bytes 444-449: b'\\x89G\\x00\\x10\\x00\\x00') forward scan + backward scan layer bloků. NESPOLÉHÁ na ec@92 nebo offset606. Proto parser našel 2 elementy v obou souborech (native i synth) i před fixem — ale GUI používalo offset606 a zobrazovalo jen 1.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D12",
+      "title": "Parser != GUI — dva různé element-count mechanismy",
+      "description": "Toto je klíčové ponaučení: production parser a VCutWorks GUI používají odlišnou logiku pro detekci elementů. Parser = binární sken struktury. GUI = čte offset606 z layer bloku. Oba musí být konzistentní pro korektní zobrazení.",
+      "confidence": 0.99
+    }
+  ],
+  "aci_mapping_state": {
+    "standard": "Custom ACI_TO_RGB (not AutoCAD, not LightBurn) calibrated from native VCF analysis",
+    "key_mappings": {
+      "ACI 0": "(10,10,10) — unique vs ACI 7 (0,0,0)",
+      "ACI 7": "(0,0,0)",
+      "ByLayer": "Resolves to actual DXF layer color"
+    },
+    "confidence": 0.99
+  },
+  "test_results": {
+    "test_suite": "28/28 passed (2 skipped expected)",
+    "tests_passed": ["test_writer_unit.py (23)", "test_roundtrip.py (5)"],
+    "tests_skipped": ["test_primitive.VCF (unsupported features)", "empty_01.VCF (edge case)"]
+  },
+  "gui_verification": {
+    "single_line_2000_elements_2_inversion.VCF": "NAČTE 2 ELEMENTY ✓ — první úspěšný multi-element v GUI",
+    "single_line_2000_inversion.VCF": "1 element ✓",
+    "single_square_500_elements_2_inversion.VCF": "stále selhává — pravděpodobně duplicitní vertexy v DXF adaptéru",
+    "single_circle_1500_elements_2_inversion.VCF": "stále selhává — SPLINE oversampling",
+    "single_curve_elements_2_inversion.VCF": "stále selhává — SPLINE oversampling"
+  },
+  "files_created_in_session_8": [
+    "docs/handoff_session_2026-06-30.json (this file)"
+  ],
+  "files_modified_in_session_8": [
+    ".ai_state.json — comprehensive update with debugging journey narrative and B2B parser discoveries",
+    "docs/handoff_session_2026-06-29.json — added post_session_addendum with bridging narrative",
+    "vcf_parser/_writer.py — ec@92: 0→1 (line 275), offset606: 1→total_elements (line 183)",
+    "demo_data/synthethic_vcf/*_inversion.VCF (all 8 regenerated with both fixes)"
+  ],
+  "open_problems": [
+    {
+      "problem": "Square duplicate vertices (7 segments vs native 4)",
+      "severity": "high",
+      "owner": "DXF adapter",
+      "investigation_needed": "Deduplikace konsekutivních identických souřadnic v _dxf_adapter.py nebo v indexeru. Polygon 5 bodů, první=poslední → 4 unikátní segmenty."
+    },
+    {
+      "problem": "Circle/Curve SPLINE oversampling (100+ segments vs native 4 Bezier arcs)",
+      "severity": "high",
+      "owner": "Writer/DXF adapter",
+      "investigation_needed": "SPLINE entity z DXF jsou diskretizovány na mnoho segmentů. Potřeba: detekovat kružnici/oblouk z DXF entit a použít encode_circle_element (4 Bezier arcs)."
+    },
+    {
+      "problem": "Color difference: synth=0x0A0A0A00, native=0x00000000 v geometrii",
+      "severity": "medium",
+      "workaround": "ACI 0 maps to (10,10,10) to avoid collision with ACI 7. Může ovlivnit GUI rendering barev."
+    }
+  ],
+  "next_steps": [
+    "1. P1 fix: square duplicate vertices — deduplikace konsekutivních identických bodů",
+    "2. P1 fix: circle/curve SPLINE → detekce kružnice z DXF a encode_circle_element",
+    "3. GUI test: square/circle/curve po fixech geometrie",
+    "4. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot"
+  ],
+  "key_file_paths": {
+    "writer": "vcf_parser/_writer.py",
+    "dxf_adapter": "vcf_parser/_dxf_adapter.py",
+    "dxf_indexer": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\dxf_integrace\\src\\dxf_geometry_indexer_v2.py",
+    "reader_b2b": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src\\",
+    "native_gt": "demo_data/native_vcf/",
+    "synthetic_output": "demo_data/synthethic_vcf/",
+    "config": "vcf_compiler_map_config.json",
+    "state": ".ai_state.json",
+    "previous_handoff": "docs/handoff_session_2026-06-29.json",
+    "current_handoff": "docs/handoff_session_2026-06-30.json",
+    "dev_scripts": "dev_scripts/"
+  }
+}

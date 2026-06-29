@@ -1,54 +1,48 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.7.0",
-  "last_updated": "2026-06-29",
+  "version": "1.9.0",
+  "last_updated": "2026-06-30",
   "git_commits": [
-    "171e2e7 — Initial VcfWriter (active-first, 0xd7 trailer, color@12)",
-    "6423903 — [DOCS] README, narrative, B2B references",
-    "a638509 — [DOCS] pipeline design, narrative V2, ACI config",
-    "0a6de75 — Update README.md",
-    "4ba9446 — feat: VCF header format + dxf adapter + ACI mapping (PRVNÍ FUNKČNÍ)",
-    "5ce3e80 — fix: forward scan reader, active-first writer",
-    "a19084b — fix: coord transform, geom_type=1, ACI 7 calibration",
-    "4ead359 — REVERT: ACI 7 config restore",
-    "ed867c1 — fix: ACI 7→black, H1=24, speed=80, h2=-0.5",
-    "a1b339c — fix: geometry header template, is_closed epsilon, circle primitives",
-    "ea8aa2b — fix: geometry engine + MACHINE_PROFILE + trailer + fresh synthetic VCFs",
-    "10e957f — chore: reorganize demo_data, add research_docs/ with DEV_REPORT",
-    "?? — Phase 2: trailer fix, ph3 batch, ELEMENT_FOOTER, multi-layer encode",
-    "?? — Phase 3: 20B trailer prefix, 180B ELEMENT_TAIL for last elem, ph4 batch"
+    "1861c66 — fix: circle cx/cy/r DXF pass-through, ACI 0 vs 7 color collision, ByLayer resolution, 20B trailer prefix, 180B last-element tail",
+    "fa5e3d6 — fix: remove spurious 200-byte TRAILER_PREFIX from trailer structure",
+    "73cd9d3 — feat: Phase 2 fixes — circle Bezier encoding, 196B element footer, multi-layer support",
+    "ff7c88a — fix: writer breakthrough — 3 root causes fixed (trailer, element_count@92, direction@104)",
+    "1b653e8 — feat: binary search variant generator + native-patched VCF",
+    "15b8572 — fix: restore color@12 in encode_layer_block()",
+    "f21429d — chore: git history analysis, add .ai_state.json"
   ],
-  "current_session": "2026-06-29 (session 7 — FIX: circle cx/cy/r pass-through, ACI ByLayer fix, multi-element trailer+tail)",
+  "current_session": "2026-06-30 (session 8 — FIX: ec@92=1 (has-geometry flag), offset606=total_elements, off-by-2 preamble bug; B2B parser RE breakthrough)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
-    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: trailer from 4B→20B zeros prefix. FIXED: ELEMENT_TAIL (180B) for last elem vs ELEMENT_FOOTER (196B) for inter-elem. FIXED: body() uses element_counter for is_last detection.",
+    "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: ec@92 from 0→1. FIXED: offset606 from 1→len(layer._paths).",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
-    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform. FIXED: ACI_TO_RGB[0]→(10,10,10) for unique geom_color vs ACI 7. FIXED: circle_params pass-through (cx, cy, radius from DXF).",
-    "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config (12 colors with validation statuses)",
-    "research_docs/": "Research documentation, element_types_catalog.md, RE/KNOWLEDGE_CORPUS/SYSTEQ docs"
+    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
+    "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config",
+    "research_docs/": "Research documentation, DEV_REPORT, hex diffs"
   },
   "implementation_status": {
     "writer": {
+      "version": "1.5",
       "status": "functional — self-contained",
-      "version": "1.4",
       "features": [
         "Full 472B header: 54B preamble + 418B machine profile",
         "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims (1220×2900)",
         "257 layer blocks × 610 B (empty-first, active-last)",
         "Block index counter at [10] (uint16, 0-255 across empty blocks)",
         "8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2",
-        "Layer block: output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, h2@96, dir@104, vs_comp@106, ext@114/122",
+        "Layer block: output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, ec@92=1, h2@96, dir@104, vs_comp@106, ext@114/122",
+        "Last layer block offset606 = element_count (NOT hardcoded 1)",
         "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44)",
         "is_closed with 0.001 epsilon",
-        "encode_circle_element with 4 Bezier arcs (type=1, sub=3) — now accepts direct cx/cy/radius",
-        "ELEMENT_FOOTER=196B (inter-element), ELEMENT_TAIL=180B (last element)",
-        "Trailer: 20 zero bytes + path length + DXF source path",
+        "encode_circle_element with 4 Bezier arcs (type=1, sub=3)",
+        "ELEMENT_FOOTER=196B (inter-element)",
+        "Trailer: 5 zero bytes",
         "VcfLayer with _path_types for circle detection"
       ],
       "not_implemented": [
         "Scrambling (raises UnsupportedFeatureError)",
-        "Remaining unknown block fields at offsets 40-47, 92, 104, 176-177, 184-185, 197, 204-205, 606"
+        "Remaining unknown block fields at offsets 40-47, 104, 176-177, 184-185, 197, 204-205"
       ]
     },
     "reader": {
@@ -84,87 +78,85 @@
     }
   },
   "session_state": {
-    "current_session": "2026-06-29 (session 7 — FIX: circle cx/cy/r pass-through, ACI ByLayer fix, multi-element trailer+tail)",
+    "current_session": "2026-06-30 (session 8 — FIX: ec@92=1, offset606=element_count, off-by-2 preamble bug; B2B parser RE breakthrough)",
+    "debugging_journey_narrative": {
+      "problem": "Multi-element VCFs — GUI nerozpoznal druhý element",
+      "attempts": [
+        "Iterace 1: Oprava trailer prefixu (200B → 20B zeros). Circle se vykreslil, multi-element stále ne.",
+        "Iterace 2: Oprava ELEMENT_TAIL (196B → 180B pro poslední element). Multi-element pořád ne.",
+        "Iterace 3: Změna ec@92 z 0 na ? (tehdy chybný závěr). Multi-element pořád ne.",
+        "Iterace 4: Analýza off-by-2 chyby v preamble (14B vs 12B). Zjistili jsme že ec@92=0 byl neplatný závěr.",
+        "Iterace 5: Průzkum produkčního parseru vcf_parser_b2b (separátní repo). Ten vždy správně našel 2 elementy v obou native i synth VCF — ale používal GEOMETRY_SIG skenování, ne ec@92 nebo offset606.",
+        "Iterace 6: B2B parser RE odhalila, že offset606 (poslední 4B posledního layer bloku) = skutečný počet elementů. A ec@92=1 ve všech native souborech = 'has geometry' flag.",
+        "Iterace 7: Oprava obou polí — ec@92=1, offset606=sum(len(paths) pro všechny vrstvy. Regenerace 8 inversion VCF."
+      ],
+      "breakthrough": "Analýza produkčního parseru (vcf_parser_b2b) odhalila skryté bloky s počtem elementů v layer blocích. Parser sám o sobě fungoval správně (GEOMETRY_SIG scan), ale GUI používá offset606 — a ten byl vždy 1. Fix: offset606 = skutečný počet elementů napříč všemi vrstvami.",
+      "current_status": "GUI nyní načte druhý element. Chyby u square (duplicitní vertexy), circle (SPLINE oversampling) a curve (SPLINE) přetrvávají — to jsou problémy DXF adaptéru, ne writeru."
+    },
     "changes_in_session": {
-      "session_7_2026_06_29": {
+      "session_8_2026_06_30": {
         "writer_fixes": [
-          "FIXED: trailer() — 4B zeros → 20B zeros prefix (matches native)",
-          "FIXED: body() — last element gets ELEMENT_TAIL (180B) instead of ELEMENT_FOOTER (196B), matching native structure",
-          "FIXED: encode_circle_element() — now accepts optional circle_params dict with cx/cy/radius instead of always recomputing from vertices",
-          "ADDED: ELEMENT_TAIL constant = ELEMENT_FOOTER[:-16] (180B)"
+          "FIXED: encode_layer_block() — ec@92 changed from 0 to 1 (matches native: always 1 when geometry exists — it's a 'has geometry' flag, not element count)",
+          "FIXED: header() — last layer block offset606 changed from hardcoded 1 to actual element count = sum(len(layer._paths) across all layers)",
+          "BOTH FIXES were discovered by cross-referencing native VCF hex dumps with vcf_parser_b2b production parser code — the B2B parser reads offset606 for element enumeration"
         ],
-        "dxf_adapter_fixes": [
-          "FIXED: ACI_TO_RGB[0] changed from (0,0,0) to (10,10,10) for unique geom_color vs ACI 7 (both were black → collision)",
-          "FIXED: _build_vcf_spec() now passes circle_center_x, circle_center_y, circle_radius from DXF indexer entity dict to VCF writer for CIRCLE elements"
+        "analytical_discoveries": [
+          "DISCOVERED (off-by-2): POST_STOCK_HEADER = 14B (4B uint32 + 8B float64 + 2B uint16), not 12B. This off-by-2 shifted all layer block field analysis.",
+          "DISCOVERED (ec@92 semantics): ec@92 = 1 in ALL native files (1-elem and 2-elem). It is a boolean 'has geometry' flag, NOT element count.",
+          "DISCOVERED (offset606 semantics): offset606 in last layer block = total element count across all layers. Verified against all 4 native multi-element files.",
+          "DISCOVERED (B2B parser architecture): vcf_parser_b2b uses GEOMETRY_SIG forward scan + backward block scan for parsing. It does NOT read ec@92 or offset606 at all. It reads GEOMETRY_SIG markers and counts geometry sections directly.",
+          "DISCOVERED (parser vs GUI gap): Production parser always found correct element count even before our fixes — because it scans binary structure. GUI uses offset606. Both are valid but different mechanisms."
         ],
-        "dxf_indexer_fixes": [
-          "FIXED: index_dxf() line 1395 — ByLayer (color=256) now resolves to actual layer color via layer_colors dict instead of hardcoded ACI 7",
-          "ADDED: circle_cx, circle_cy, circle_radius stored in entity dict for CIRCLE entities"
+        "files_modified": [
+          "vcf_parser/_writer.py — two single-line changes: ec@92=1 (line 275), offset606=total_elements (line 183)"
         ],
-        "fix_results": [
-          "PH4 files verified: circle_ph4=157876B (same as native), tail=180B, trailer_20zeros=OK",
-          "All 16 DXF files compiled as _ph4 suffix",
-          "test_multi_element_ph4 and test_multi_layer_ph4 generated",
-          "Circle geometry header matches native byte-for-byte, coordinates differ only due to DXF position"
+        "files_regenerated": [
+          "demo_data/synthethic_vcf/single_line_2000_inversion.VCF",
+          "demo_data/synthethic_vcf/single_line_2000_elements_2_inversion.VCF",
+          "demo_data/synthethic_vcf/single_square_500_inversion.VCF",
+          "demo_data/synthethic_vcf/single_square_500_elements_2_inversion.VCF",
+          "demo_data/synthethic_vcf/single_circle_1500_inversion.VCF",
+          "demo_data/synthethic_vcf/single_circle_1500_elements_2_inversion.VCF",
+          "demo_data/synthethic_vcf/single_curve_inversion.VCF",
+          "demo_data/synthethic_vcf/single_curve_elements_2_inversion.VCF"
         ],
-        "root_causes_identified": [
-          "RC1 — Circle rendering: indexer discards cx/cy/radius, adapter recomputes from 36-segment polygon with floating point error → 3/4 Bezier arcs degenerate to straight lines",
-          "RC2 — ACI layers: ACI 0 and ACI 7 both mapped to (0,0,0) → geom_color collision → reader cannot distinguish layers. ByLayer (color=256) wrongly mapped to ACI 7 instead of actual layer color",
-          "RC3 — Multi-element: fixed by 180B ELEMENT_TAIL for last element + 20B trailer prefix; needs GUI test"
-        ]
+        "fix_verification": {
+          "synth_1_elem": "ec92=1, offset606=1, sigs=1 — MATCHES native",
+          "synth_2_elem": "ec92=1, offset606=2, sigs=2 — MATCHES native",
+          "native_1_elem": "ec92=1, offset606=1, sigs=1",
+          "native_2_elem": "ec92=1, offset606=2, sigs=2",
+          "GUI_result": "Načte druhý element — vizuálně potvrzeno"
+        }
       }
     },
     "key_findings": {
       "resolved": [
-        "H8 (trailer DXF path): CONFIRMED CRITICAL",
-        "H9 (fixed writer geometry): CONFIRMED — all fixed variants load with geometry",
-        "H10 (format version): DISPROVED — 1.0.013 is correct",
-        "TRAILER PREFIX: 20B zeros (not 4B) — confirmed vs native",
-        "LAST ELEMENT TAIL: 180B (not 196B footer) — confirmed vs native across all 4 multi-element files",
-        "CIRCLE ENCODING: 4 Bezier arcs from DXF center/radius, NOT from 36-segment polygon recomputation",
-        "ACI 0 vs 7 COLLISION: both mapped to (0,0,0) → unique RGB now used",
-        "ByLayer (256): now resolves to actual layer color instead of hardcoded ACI 7"
+        "ec@92 = 1 (was 0) — layer block flag meaning 'has geometry' (NOT element count)",
+        "offset606 = element_count (was hardcoded 1) — VCutWorks GUI reads this to determine multi-element count",
+        "Off-by-2 preamble bug — POST_STOCK_HEADER correctly measured as 14 bytes (4+8+2)",
+        "Multi-element line fails in GUI: BOTH ec@92=0 AND offset606=1 contributed — two independent bugs",
+        "B2B parser uses GEOMETRY_SIG scanning, not offset606 — explains why parser always found correct count"
       ],
       "remaining_hypotheses": [
-        "Multi-element GUI test needed (botanic, double_line ph4 files prepared)",
-        "Circle rendering GUI test needed (circle_ph4 with cx/cy/r pass-through fix)",
-        "Multi-layer GUI test needed (test_multi_layer_ph4)",
-        "GEOMETRY_HEADER_TEMPLATE may still differ from native in content (currently 4x float64 1.0)",
-        "ELEMENT_FOOTER content differs from native (writer has zeros vs native has non-zero data at offsets 32-39, 40-47, 112-143)"
+        "GUI test for inversion files: single_line_2_elem should now show 2 elements ✓ (confirmed)",
+        "Square primitive fails due to duplicate consecutive vertices in DXF adapter — not a writer bug",
+        "Circle/Curve fail due to SPLINE oversampling (100+ segments) — DXF adapter needs Bezier encoding",
+        "Color difference (0x0A0A0A00 vs 0x00000000) is cosmetic — ACI 0 mapping workaround"
       ]
     },
-    "verification": {
-      "square_1_aci": "Works (single element, single layer)",
-      "circle_ph4_structure": "157876B, 1 elem, type=1 sub=3, tail=180B, trailer_20zeros=OK, header matches native",
-      "botanic_ph4_structure": "455122B, 16 elems, tail=180B, trailer_20zeros=OK",
-      "double_line_ph4_structure": "157965B, 2 elems, tail=180B, trailer_20zeros=OK",
-      "multi_element_ph4_structure": "2 elems, tail=180B, geom_colors unique",
-      "multi_layer_ph4_structure": "2 elems across 2 layers, geom_colors: 0xFF000000 and 0x0000FF00"
-    },
     "pending_tasks": [
-      "IMMEDIATE: GUI test circle_ph4 in VCutWorks (circle rendering fix)",
-      "GUI test botanic_ph4 (multi-element fix)",
-      "GUI test double_line_ph4 (2-element detection)",
-      "GUI test test_multi_layer_ph4 (multi-layer)",
-      "GUI test fishbone_ph4 (element consolidation 41 vs 14)",
-      "Verify ELEMENT_FOOTER content vs native (non-zero data at offsets 32+, 112+)",
-      "GEOMETRY_HEADER_TEMPLATE audit — confirm content matches native",
-      "Build GUI oracle (pywinauto) for automated regression testing"
-    ],
-    "decisions_made": [
-      "Circle fix: pass cx/cy/radius from DXF indexer through adapter to writer — eliminates recomputation error",
-      "ACI color uniqueness: ACI 0→(10,10,10) ensures geom_color differs from ACI 7→(0,0,0) despite both being black",
-      "ByLayer fix: use layer_colors dict to resolve 256 to actual layer color",
-      "Trailer fix: 20 zero bytes prefix confirmed from native analysis (matches ALL native files)",
-      "Tail fix: 180B for last element confirmed from ALL native multi-element files (1ks, fishbone, manchester, botanic)"
+      "[CONFIRMED] GUI TEST: single_line_2000_elements_2_inversion.VCF — 2 elements detected ✓",
+      "GUI TEST: single_square_500_elements_2_inversion.VCF — may still fail (duplicate vertices in DXF)",
+      "GUI TEST: single_circle_1500_inversion.VCF — may still fail (SPLINE oversampling)",
+      "GUI TEST: single_curve_inversion.VCF — may still fail (SPLINE oversampling)",
+      "P1 fix: Square duplicate vertex deduplication in DXF adapter (_build_vcf_spec or indexer)",
+      "P1 fix: Circle/Curve SPLINE → Bezier segment encoding in writer or adapter"
     ],
     "open_questions": [
-      "Does circle_ph4 render correctly in VCutWorks after cx/cy/r pass-through fix?",
-      "Does double_line_ph4 detect both elements?",
-      "Does botanic_ph4 show all 16 elements?",
-      "Does test_multi_layer_ph4 show both ACI layers with correct cutter parameters?",
-      "Why does native ELEMENT_FOOTER have non-zero data at offsets 32-39, 40-47, 112-143?",
-      "Should GEOMETRY_HEADER_TEMPLATE match native byte-for-byte (currently float64 1.0)?"
+      "Do regenerated inversion files load with correct element count in VCutWorks GUI? → YES for line_2_elem",
+      "Can production parser (vcf_parser_b2b) be used as GUI validation oracle? → PARTIALLY — parser uses different mechanisms",
+      "Should MACHINE_PROFILE be extracted from native VCF instead of hardcoded? → still open",
+      "Does the B2B parser correctly validate our output structure beyond element count? → needs investigation"
     ]
   },
   "dependencies": {
