@@ -212,15 +212,11 @@ class VcfWriter:
     # ── Trailer ──
 
     def trailer(self) -> bytes:
-        data = bytearray(TRAILER_PREFIX)
-        data.append(0x00)
         if self._dxf_source_path:
             raw_path = str(self._dxf_source_path).encode('ascii', errors='replace')
         else:
             raw_path = b''
-        data.append(len(raw_path))
-        data.extend(raw_path)
-        return bytes(data)
+        return b'\x00\x00\x00\x00' + bytes([len(raw_path)]) + raw_path
 
     # ── Write ──
 
