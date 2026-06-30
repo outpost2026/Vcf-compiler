@@ -272,7 +272,7 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
                     "cy": cy + _DXF_TO_VCF_OFFSET_Y,
                     "radius": r
                 }
-        else:
+        elif etype == "SPLINE":
             circle_info = _points_on_circle(vertices)
             if circle_info:
                 elem["geom_type"] = "Circle"
