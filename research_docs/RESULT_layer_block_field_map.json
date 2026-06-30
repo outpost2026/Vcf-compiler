@@ -1,0 +1,7174 @@
+{
+  "meta": {
+    "tool": "dissect_layer_blocks.py",
+    "files_analyzed": 62
+  },
+  "crossfile_summary": {
+    "files_013": 39,
+    "empty_block_patterns": {
+      "identical=False": 38,
+      "identical=?": 1
+    },
+    "exact_block_count_match": 0,
+    "files_with_remainder": 12
+  },
+  "per_file": [
+    {
+      "filename": "1ks.VCF",
+      "size_bytes": 169381,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 257,
+          "all_identical": false,
+          "unique_hashes": 257,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            36,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            120
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "26ks_skladba.VCF",
+      "size_bytes": 471712,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157852,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157852,
+        "block_region_size": 157380,
+        "found_blocks": 258,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 257,
+          "all_identical": false,
+          "unique_hashes": 257,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            36,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            120
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 100.0,
+            "max": 100.0,
+            "avg": 100.0,
+            "unique": [
+              100.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16473,
+            "max": 16473,
+            "avg": 16473.0,
+            "unique": [
+              16473
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 10.0,
+            "max": 10.0,
+            "avg": 10.0,
+            "unique": [
+              10.0
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 183,
+            "max": 183,
+            "avg": 183.0,
+            "unique": [
+              183
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "bigcoffee_12_8_2790x1200.VCF",
+      "size_bytes": 164594,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 158462,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 158462,
+        "block_region_size": 157990,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 3,
+          "output_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 3,
+            "constant": false,
+            "min": 80.0,
+            "max": 300.0,
+            "avg": 226.6667,
+            "unique": [
+              80.0,
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 3,
+            "constant": false,
+            "min": 16468,
+            "max": 16498,
+            "avg": 16488.0,
+            "unique": [
+              16468,
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 3,
+            "avg": 2.0,
+            "unique": [
+              0,
+              3
+            ]
+          },
+          "field_40": {
+            "n": 3,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 24.0,
+            "avg": 8.0,
+            "unique": [
+              0.0,
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 3,
+            "constant": false,
+            "min": -0.5,
+            "max": 9.0,
+            "avg": 5.8333,
+            "unique": [
+              -0.5,
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 2,
+            "avg": 1.3333,
+            "unique": [
+              0,
+              2
+            ]
+          },
+          "field_106": {
+            "n": 3,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "end_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "field_197": {
+            "n": 3,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 3,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 52428,
+            "avg": 17480.3333,
+            "unique": [
+              0,
+              13,
+              52428
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 7,
+            "constant_count": 134,
+            "most_varying": [
+              [
+                "64",
+                3
+              ],
+              [
+                "604",
+                3
+              ],
+              [
+                "8",
+                2
+              ],
+              [
+                "84",
+                2
+              ],
+              [
+                "100",
+                2
+              ],
+              [
+                "120",
+                2
+              ],
+              [
+                "128",
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "filename": "botanic_2790x1200.VCF",
+      "size_bytes": 187197,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 158462,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 158462,
+        "block_region_size": 157990,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 3,
+          "output_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 3,
+            "constant": false,
+            "min": 80.0,
+            "max": 300.0,
+            "avg": 226.6667,
+            "unique": [
+              80.0,
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 3,
+            "constant": false,
+            "min": 16468,
+            "max": 16498,
+            "avg": 16488.0,
+            "unique": [
+              16468,
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 3,
+            "avg": 2.0,
+            "unique": [
+              0,
+              3
+            ]
+          },
+          "field_40": {
+            "n": 3,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 24.0,
+            "avg": 8.0,
+            "unique": [
+              0.0,
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 3,
+            "constant": false,
+            "min": -0.5,
+            "max": 9.0,
+            "avg": 5.8333,
+            "unique": [
+              -0.5,
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 2,
+            "avg": 1.3333,
+            "unique": [
+              0,
+              2
+            ]
+          },
+          "field_106": {
+            "n": 3,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "end_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "field_197": {
+            "n": 3,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 3,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 52428,
+            "avg": 17482.3333,
+            "unique": [
+              0,
+              19,
+              52428
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 7,
+            "constant_count": 134,
+            "most_varying": [
+              [
+                "64",
+                3
+              ],
+              [
+                "604",
+                3
+              ],
+              [
+                "8",
+                2
+              ],
+              [
+                "84",
+                2
+              ],
+              [
+                "100",
+                2
+              ],
+              [
+                "120",
+                2
+              ],
+              [
+                "128",
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "filename": "botanic_one_curve_1_aci.VCF",
+      "size_bytes": 158692,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "botanic_simple_1_aci.VCF",
+      "size_bytes": 184578,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 300.0,
+            "max": 300.0,
+            "avg": 300.0,
+            "unique": [
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16498,
+            "max": 16498,
+            "avg": 16498.0,
+            "unique": [
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 3,
+            "max": 3,
+            "avg": 3.0,
+            "unique": [
+              3
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 9.0,
+            "max": 9.0,
+            "avg": 9.0,
+            "unique": [
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 16,
+            "max": 16,
+            "avg": 16.0,
+            "unique": [
+              16
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "circle_500_single_aci.VCF",
+      "size_bytes": 157876,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "circle_diameter_600_native.VCF",
+      "size_bytes": 157881,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "double_line_1_aci.VCF",
+      "size_bytes": 157965,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "double_line_2_aci.VCF",
+      "size_bytes": 158575,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157852,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157852,
+        "block_region_size": 157380,
+        "found_blocks": 258,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 2,
+          "output_flag": {
+            "n": 2,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 2,
+            "constant": false,
+            "min": 80.0,
+            "max": 300.0,
+            "avg": 190.0,
+            "unique": [
+              80.0,
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 2,
+            "constant": false,
+            "min": 16468,
+            "max": 16498,
+            "avg": 16483.0,
+            "unique": [
+              16468,
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 2,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 2,
+            "constant": false,
+            "min": 0,
+            "max": 3,
+            "avg": 1.5,
+            "unique": [
+              0,
+              3
+            ]
+          },
+          "field_40": {
+            "n": 2,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 2,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 2,
+            "constant": false,
+            "min": 0.0,
+            "max": 24.0,
+            "avg": 12.0,
+            "unique": [
+              0.0,
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 2,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 2,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 2,
+            "constant": false,
+            "min": -0.5,
+            "max": 9.0,
+            "avg": 4.25,
+            "unique": [
+              -0.5,
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 2,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 2,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 2,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 10.0,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "end_extension": {
+            "n": 2,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 10.0,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "field_197": {
+            "n": 2,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 2,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 2,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 2,
+            "constant": false,
+            "min": 0,
+            "max": 2,
+            "avg": 1.0,
+            "unique": [
+              0,
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 7,
+            "constant_count": 134,
+            "most_varying": [
+              [
+                "8",
+                2
+              ],
+              [
+                "64",
+                2
+              ],
+              [
+                "84",
+                2
+              ],
+              [
+                "100",
+                2
+              ],
+              [
+                "120",
+                2
+              ],
+              [
+                "128",
+                2
+              ],
+              [
+                "604",
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "filename": "empty_canvas.VCF",
+      "size_bytes": 156637,
+      "version": "1.0.013",
+      "block_analysis": {
+        "note": "no geometry sig found, cannot locate blocks"
+      }
+    },
+    {
+      "filename": "fishbone_2790x1200.VCF",
+      "size_bytes": 165421,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 158462,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 158462,
+        "block_region_size": 157990,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 3,
+          "output_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 3,
+            "constant": false,
+            "min": 80.0,
+            "max": 300.0,
+            "avg": 226.6667,
+            "unique": [
+              80.0,
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 3,
+            "constant": false,
+            "min": 16468,
+            "max": 16498,
+            "avg": 16488.0,
+            "unique": [
+              16468,
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 3,
+            "avg": 2.0,
+            "unique": [
+              0,
+              3
+            ]
+          },
+          "field_40": {
+            "n": 3,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 24.0,
+            "avg": 8.0,
+            "unique": [
+              0.0,
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 3,
+            "constant": false,
+            "min": -0.5,
+            "max": 9.0,
+            "avg": 5.8333,
+            "unique": [
+              -0.5,
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 2,
+            "avg": 1.3333,
+            "unique": [
+              0,
+              2
+            ]
+          },
+          "field_106": {
+            "n": 3,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "end_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "field_197": {
+            "n": 3,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 3,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 52428,
+            "avg": 17480.6667,
+            "unique": [
+              0,
+              14,
+              52428
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 7,
+            "constant_count": 134,
+            "most_varying": [
+              [
+                "64",
+                3
+              ],
+              [
+                "604",
+                3
+              ],
+              [
+                "8",
+                2
+              ],
+              [
+                "84",
+                2
+              ],
+              [
+                "100",
+                2
+              ],
+              [
+                "120",
+                2
+              ],
+              [
+                "128",
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "filename": "fluenz_xl.VCF",
+      "size_bytes": 330446,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157852,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157852,
+        "block_region_size": 157380,
+        "found_blocks": 258,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 257,
+          "all_identical": false,
+          "unique_hashes": 257,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            36,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            120
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 204,
+            "max": 204,
+            "avg": 204.0,
+            "unique": [
+              204
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "line_10_elements.VCF",
+      "size_bytes": 160397,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 10,
+            "max": 10,
+            "avg": 10.0,
+            "unique": [
+              10
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "manchester_3_subjobs.VCF",
+      "size_bytes": 181917,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 158462,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 158462,
+        "block_region_size": 157990,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 3,
+          "output_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 3,
+            "constant": false,
+            "min": 80.0,
+            "max": 300.0,
+            "avg": 226.6667,
+            "unique": [
+              80.0,
+              300.0
+            ]
+          },
+          "block_index": {
+            "n": 3,
+            "constant": false,
+            "min": 16468,
+            "max": 16498,
+            "avg": 16488.0,
+            "unique": [
+              16468,
+              16498
+            ]
+          },
+          "color_val": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 3,
+            "avg": 2.0,
+            "unique": [
+              0,
+              3
+            ]
+          },
+          "field_40": {
+            "n": 3,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 24.0,
+            "avg": 8.0,
+            "unique": [
+              0.0,
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 3,
+            "constant": false,
+            "min": -0.5,
+            "max": 9.0,
+            "avg": 5.8333,
+            "unique": [
+              -0.5,
+              9.0
+            ]
+          },
+          "direction": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 2,
+            "avg": 1.3333,
+            "unique": [
+              0,
+              2
+            ]
+          },
+          "field_106": {
+            "n": 3,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "end_extension": {
+            "n": 3,
+            "constant": false,
+            "min": 0.0,
+            "max": 20.0,
+            "avg": 6.6667,
+            "unique": [
+              0.0,
+              20.0
+            ]
+          },
+          "field_197": {
+            "n": 3,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 3,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 3,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 3,
+            "constant": false,
+            "min": 0,
+            "max": 52428,
+            "avg": 17500.0,
+            "unique": [
+              0,
+              72,
+              52428
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 7,
+            "constant_count": 134,
+            "most_varying": [
+              [
+                "64",
+                3
+              ],
+              [
+                "604",
+                3
+              ],
+              [
+                "8",
+                2
+              ],
+              [
+                "84",
+                2
+              ],
+              [
+                "100",
+                2
+              ],
+              [
+                "120",
+                2
+              ],
+              [
+                "128",
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_circle_1500.VCF",
+      "size_bytes": 157784,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_circle_1500_elements_2.VCF",
+      "size_bytes": 158321,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_curve.VCF",
+      "size_bytes": 157636,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_curve_elements_2.VCF",
+      "size_bytes": 158025,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_line_1_aci.VCF",
+      "size_bytes": 157650,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_line_2000.VCF",
+      "size_bytes": 157562,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_line_2000_elements_2.VCF",
+      "size_bytes": 157877,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_square_500.VCF",
+      "size_bytes": 157784,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_square_500_elements_2.VCF",
+      "size_bytes": 158321,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "single_star_1_aci.VCF",
+      "size_bytes": 158316,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "square_1_aci.VCF",
+      "size_bytes": 157867,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 80.0,
+            "max": 80.0,
+            "avg": 80.0,
+            "unique": [
+              80.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16468,
+            "max": 16468,
+            "avg": 16468.0,
+            "unique": [
+              16468
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.5,
+            "max": -0.5,
+            "avg": -0.5,
+            "unique": [
+              -0.5
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "square_5_elements.VCF",
+      "size_bytes": 159932,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157242,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157242,
+        "block_region_size": 156770,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 0,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ],
+          "varying_unknown_offsets": [
+            8,
+            28,
+            44,
+            48,
+            52,
+            56,
+            64,
+            72,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 1,
+          "output_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "speed_mms": {
+            "n": 1,
+            "constant": true,
+            "min": 200.0,
+            "max": 200.0,
+            "avg": 200.0,
+            "unique": [
+              200.0
+            ]
+          },
+          "block_index": {
+            "n": 1,
+            "constant": true,
+            "min": 16489,
+            "max": 16489,
+            "avg": 16489.0,
+            "unique": [
+              16489
+            ]
+          },
+          "color_val": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "cutter_type_raw": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "field_40": {
+            "n": 1,
+            "constant": true,
+            "min": 5.0,
+            "max": 5.0,
+            "avg": 5.0,
+            "unique": [
+              5.0
+            ]
+          },
+          "color_76": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "h1_mm": {
+            "n": 1,
+            "constant": true,
+            "min": 24.0,
+            "max": 24.0,
+            "avg": 24.0,
+            "unique": [
+              24.0
+            ]
+          },
+          "feed_count": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "element_count_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 1,
+            "max": 1,
+            "avg": 1.0,
+            "unique": [
+              1
+            ]
+          },
+          "h2_mm": {
+            "n": 1,
+            "constant": true,
+            "min": -0.2,
+            "max": -0.2,
+            "avg": -0.2,
+            "unique": [
+              -0.2
+            ]
+          },
+          "direction": {
+            "n": 1,
+            "constant": true,
+            "min": 2,
+            "max": 2,
+            "avg": 2.0,
+            "unique": [
+              2
+            ]
+          },
+          "field_106": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "start_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "end_extension": {
+            "n": 1,
+            "constant": true,
+            "min": 0.0,
+            "max": 0.0,
+            "avg": 0.0,
+            "unique": [
+              0.0
+            ]
+          },
+          "field_197": {
+            "n": 1,
+            "constant": true,
+            "min": 64,
+            "max": 64,
+            "avg": 64.0,
+            "unique": [
+              64
+            ]
+          },
+          "field_198": {
+            "n": 1,
+            "constant": true,
+            "min": 0.5,
+            "max": 0.5,
+            "avg": 0.5,
+            "unique": [
+              0.5
+            ]
+          },
+          "next_layer_flag": {
+            "n": 1,
+            "constant": true,
+            "min": 0,
+            "max": 0,
+            "avg": 0.0,
+            "unique": [
+              0
+            ]
+          },
+          "next_layer_color": {
+            "n": 1,
+            "constant": true,
+            "min": 5,
+            "max": 5,
+            "avg": 5.0,
+            "unique": [
+              5
+            ]
+          },
+          "_unknown_4b_varying": {
+            "total_unknown_offsets": 141,
+            "varying_count": 0,
+            "constant_count": 141,
+            "most_varying": []
+          }
+        }
+      }
+    },
+    {
+      "filename": "1ks.VCF",
+      "size_bytes": 66605,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "2560x150 s fazetou 45st hl6.VCF",
+      "size_bytes": 55599,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "26ks skladba.VCF",
+      "size_bytes": 471711,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157849,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157849,
+        "block_region_size": 157377,
+        "found_blocks": 257,
+        "expected_blocks": 288,
+        "remainder_bytes": 607,
+        "empty_blocks": {
+          "count": 257,
+          "all_identical": false,
+          "unique_hashes": 257,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            8,
+            24,
+            28,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "26ks skladba_nesting.VCF",
+      "size_bytes": 1287228,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159069,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159069,
+        "block_region_size": 158597,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 607,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            8,
+            24,
+            28,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "2790x1200 s fazetou.VCF",
+      "size_bytes": 55728,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "Arbyd_výrobní data_V1 20.5.2025.VCF",
+      "size_bytes": 1108160,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 158466,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 158466,
+        "block_region_size": 157994,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 4,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            36,
+            44,
+            48,
+            52,
+            56,
+            60,
+            68,
+            100,
+            108,
+            124
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "big coffee 12.8.2790x1200 bezotočení.VCF",
+      "size_bytes": 61062,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "Big_coffee_dune_2790_600.VCF",
+      "size_bytes": 61837,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "bigcoffee 12.8. 2790x1200.VCF",
+      "size_bytes": 61047,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "botanic 2790 x1200.VCF",
+      "size_bytes": 83698,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "botanic vše_3780.VCF",
+      "size_bytes": 741123,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "data řez.VCF",
+      "size_bytes": 66932,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "Fishbone 2790x1200.VCF",
+      "size_bytes": 61926,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD M_Varianta A 2ks skladba.VCF",
+      "size_bytes": 524410,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD M_Varianta A.VCF",
+      "size_bytes": 204861,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD S upr.VCF",
+      "size_bytes": 182579,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD S_ozub kolo na objímku.VCF",
+      "size_bytes": 65701,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD S_Zdroj světla dole.VCF",
+      "size_bytes": 210610,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ BOLD S_Zdroj světla nahoře.VCF",
+      "size_bytes": 222100,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ L.VCF",
+      "size_bytes": 343682,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ M.VCF",
+      "size_bytes": 185110,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ S.VCF",
+      "size_bytes": 204669,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "FLUENZ XL.VCF",
+      "size_bytes": 227206,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "manchester vše_3781.VCF",
+      "size_bytes": 181472,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157897,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157897,
+        "block_region_size": 157425,
+        "found_blocks": 258,
+        "expected_blocks": 288,
+        "remainder_bytes": 45,
+        "empty_blocks": {
+          "count": 258,
+          "all_identical": false,
+          "unique_hashes": 258,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100,
+            116
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "musica 2790x1200.VCF",
+      "size_bytes": 135245,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "PCB.VCF",
+      "size_bytes": 746544,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 160288,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 160288,
+        "block_region_size": 159816,
+        "found_blocks": 261,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 261,
+          "all_identical": false,
+          "unique_hashes": 261,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "small coffee 2790x1200.VCF",
+      "size_bytes": 71281,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "small fishbone 2790x1200.VCF",
+      "size_bytes": 71900,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "stripe sixty 1200x2790.VCF",
+      "size_bytes": 106720,
+      "version": "1.0.012",
+      "block_analysis": {
+        "note": "unsupported version: 1.0.012"
+      }
+    },
+    {
+      "filename": "V měřítku.VCF",
+      "size_bytes": 422663,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 157239,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 157239,
+        "block_region_size": 156767,
+        "found_blocks": 256,
+        "expected_blocks": 288,
+        "remainder_bytes": 607,
+        "empty_blocks": {
+          "count": 256,
+          "all_identical": false,
+          "unique_hashes": 256,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            44,
+            48,
+            52,
+            60,
+            68,
+            544,
+            548,
+            552
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "vyrobni_data_Pernerka-Service for office_Camel_12mm.VCF",
+      "size_bytes": 1014762,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "vyrobni_data_Pernerka-Service for office_Dark Knight_12mm.VCF",
+      "size_bytes": 464097,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "vyrobni_data_Pernerka-Service for office_Matcha_12mm.VCF",
+      "size_bytes": 2430716,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "vyrobni_data_Pernerka-Service for office_Savanna_12mm.VCF",
+      "size_bytes": 523253,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    },
+    {
+      "filename": "vyrobni_data_Pernerka-Service for office_Terracota_12mm.VCF",
+      "size_bytes": 739267,
+      "version": "1.0.013",
+      "block_analysis": {
+        "version": "1.0.013",
+        "first_geom_offset": 159068,
+        "header_size": 472,
+        "block_region_start": 472,
+        "block_region_end": 159068,
+        "block_region_size": 158596,
+        "found_blocks": 259,
+        "expected_blocks": 288,
+        "remainder_bytes": 606,
+        "empty_blocks": {
+          "count": 259,
+          "all_identical": false,
+          "unique_hashes": 259,
+          "indices": [
+            0
+          ],
+          "varying_unknown_offsets": [
+            24,
+            28,
+            36,
+            44,
+            48,
+            52,
+            60,
+            68,
+            84,
+            100
+          ]
+        },
+        "active_blocks": {
+          "count": 0
+        }
+      }
+    }
+  ]
+}
