@@ -116,7 +116,8 @@
     "demo_data/synthethic_vcf/*_inversion.VCF (all 8 regenerated with both fixes)"
   ],
   "files_modified_in_session_9": [
-    "vcf_parser/_dxf_adapter.py — Fix #1: _dedup_consecutive() for consecutive duplicate vertices (epsilon=0.01mm). Fix #2: _points_on_circle() for non-CIRCLE entity circle detection (tolerance=0.5mm). Added import math."
+    "vcf_parser/_dxf_adapter.py — Fix #1: _dedup_consecutive() for consecutive duplicate vertices (epsilon=0.01mm). Fix #2: _points_on_circle() for non-CIRCLE entity circle detection (tolerance=0.5mm). Added import math.",
+    "vcf_parser/_dxf_adapter.py — REGRESSION FIX: _points_on_circle now only called for SPLINE entities, not LWPOLYLINE. Prevents false-positive circle detection on rectangles."
   ],
   "open_problems": [
     {
@@ -131,7 +132,14 @@
       "severity": "high",
       "owner": "Writer/DXF adapter",
       "investigation_needed": "SPLINE entity z DXF jsou diskretizovány na mnoho segmentů. Potřeba: detekovat kružnici/oblouk z DXF entit a použít encode_circle_element (4 Bezier arcs).",
-      "status": "Fix #2 applied (_points_on_circle with tolerance=0.5mm). Needs GUI test."
+      "status": "Fix #2 applied but tolerance too tight (0.5mm vs 133mm actual deviation). SPLINE entities are NOT circles — they are B-splines that VCutWorks internally converts. DXF export loses circle mapping."
+    },
+    {
+      "problem": "Regression: _points_on_circle matched LWPOLYLINE rectangles as circles",
+      "severity": "critical",
+      "owner": "DXF adapter",
+      "status": "FIXED: restricted _points_on_circle to SPLINE entities only. Rectangles have all 4 corners on circumcircle → false positive. Verified: square_5_elements now byte-identical with native.",
+      "confidence": 0.99
     },
     {
       "problem": "Color difference: synth=0x0A0A0A00, native=0x00000000 v geometrii",
@@ -142,9 +150,10 @@
   "next_steps": [
     "1. ✅ P1 fix: square duplicate vertices — _dedup_consecutive applied (session 9)",
     "2. ✅ P1 fix: circle/curve SPLINE → _points_on_circle detection (session 9)",
-    "3. GUI test: square/circle/curve po fixech geometrie — PENDING (needs VCutWorks)",
-    "4. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot",
-    "5. Commit session 9 changes (Fix #1 + Fix #2 in _dxf_adapter.py)"
+    "3. ✅ REGRESSION FIX: _points_on_circle restricted to SPLINE only (session 9)",
+    "4. GUI test: square/circle/curve po fixech geometrie — PENDING (needs VCutWorks)",
+    "5. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot",
+    "6. Commit session 9 changes (Fix #1 + Fix #2 + regression fix in _dxf_adapter.py)"
   ],
   "key_file_paths": {
     "writer": "vcf_parser/_writer.py",
