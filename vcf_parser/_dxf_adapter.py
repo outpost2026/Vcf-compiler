@@ -11,6 +11,7 @@ Usage:
 
 import json
 import logging
+import math
 import sys
 from pathlib import Path
 
@@ -123,12 +124,44 @@ def _aci_to_rgb(aci):
 _DXF_TO_VCF_OFFSET_X = 67.5
 _DXF_TO_VCF_OFFSET_Y = -287.5
 
+_DEDUP_EPSILON = 0.01
+
 
 def _apply_coord_transform(vertices):
     return [
         (x + _DXF_TO_VCF_OFFSET_X, y + _DXF_TO_VCF_OFFSET_Y)
         for x, y in vertices
     ]
+
+
+def _dedup_consecutive(vertices, eps=_DEDUP_EPSILON):
+    if not vertices:
+        return vertices
+    result = [vertices[0]]
+    for v in vertices[1:]:
+        dx = v[0] - result[-1][0]
+        dy = v[1] - result[-1][1]
+        if dx * dx + dy * dy > eps * eps:
+            result.append(v)
+    return result
+
+
+def _points_on_circle(vertices, tolerance=0.5):
+    n = len(vertices)
+    if n < 3:
+        return None
+    xs = [v[0] for v in vertices]
+    ys = [v[1] for v in vertices]
+    cx = (min(xs) + max(xs)) / 2.0
+    cy = (min(ys) + max(ys)) / 2.0
+    r = math.sqrt((max(xs) - min(xs)) ** 2 + (max(ys) - min(ys)) ** 2) / 2.0
+    if r < 1e-6:
+        return None
+    for v in vertices:
+        d = math.sqrt((v[0] - cx) ** 2 + (v[1] - cy) ** 2)
+        if abs(d - r) > tolerance:
+            return None
+    return {"cx": cx, "cy": cy, "radius": r}
 
 # ---------------------------------------------------------------------------
 # VCF spec builder
@@ -218,6 +251,7 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
         if not raw_vertices or len(raw_vertices) < 2:
             continue
         vertices = _apply_coord_transform(raw_vertices)
+        vertices = _dedup_consecutive(vertices)
         if len(vertices) < 2:
             continue
         etype = e.get("type", "")
@@ -237,6 +271,15 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
                     "cx": cx + _DXF_TO_VCF_OFFSET_X,
                     "cy": cy + _DXF_TO_VCF_OFFSET_Y,
                     "radius": r
+                }
+        else:
+            circle_info = _points_on_circle(vertices)
+            if circle_info:
+                elem["geom_type"] = "Circle"
+                elem["circle_params"] = {
+                    "cx": circle_info["cx"],
+                    "cy": circle_info["cy"],
+                    "radius": circle_info["radius"],
                 }
         vcf_elements.append(elem)
 

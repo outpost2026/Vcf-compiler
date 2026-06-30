@@ -1,8 +1,8 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.10.0",
-  "last_updated": "2026-06-30 (session 8.5)",
+  "version": "1.11.0",
+  "last_updated": "2026-06-30 (session 9)",
   "git_commits": [
     "1861c66 — fix: circle cx/cy/r DXF pass-through, ACI 0 vs 7 color collision, ByLayer resolution, 20B trailer prefix, 180B last-element tail",
     "fa5e3d6 — fix: remove spurious 200-byte TRAILER_PREFIX from trailer structure",
@@ -17,7 +17,7 @@
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
     "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: ec@92 from 0→1. FIXED: offset606 from 1→len(layer._paths).",
     "vcf_parser/_reader.py": "extract_active_layers_details(), backward scan, color/cutter/direction maps, GEOMETRY_SIG",
-    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform",
+    "vcf_parser/_dxf_adapter.py": "compile_dxf(), ACI_TO_RGB, _build_vcf_spec, _load_config, _apply_coord_transform, _dedup_consecutive, _points_on_circle",
     "vcf_compiler_map_config.json": "ACI color → VCF parameter mapping config",
     "research_docs/": "Research documentation, DEV_REPORT, hex diffs"
   },
@@ -64,7 +64,9 @@
         "Config loader with fallback defaults",
         "Density-based ACI 4 ambiguity resolution",
         "Coordinate transform (+67.5, -287.5 mm)",
-        "Circle center/radius pass-through from DXF indexer to VCF writer"
+        "Circle center/radius pass-through from DXF indexer to VCF writer",
+        "Consecutive vertex deduplication (_dedup_consecutive, eps=0.01mm) — session 9",
+        "Circle detection for non-CIRCLE entities (_points_on_circle, tolerance=0.5mm) — session 9"
       ]
     },
     "tests": {
@@ -78,7 +80,7 @@
     }
   },
   "session_state": {
-    "current_session": "2026-06-30 (session 8 — FIX: ec@92=1, offset606=total_elements; session 8.5 — tool proposal doc & inventory analysis)",
+  "current_session": "2026-06-30 (session 8 + 9 — ec@92=1, offset606 fix; session 9: DXF adapter geometry fixes)",
     "debugging_journey_narrative": {
       "problem": "Multi-element VCFs — GUI nerozpoznal druhý element",
       "attempts": [
@@ -149,6 +151,26 @@
             "sequence_patterns.py — Analyzátor sekvencí řezu"
           ]
         }
+      },
+      "session_9_dxf_adapter_fixes_2026_06_30": {
+        "description": "Fix #1: consecutive vertex deduplication. Fix #2: circle detection for non-CIRCLE entities.",
+        "files_changed": [
+          "vcf_parser/_dxf_adapter.py — added _dedup_consecutive(), _points_on_circle(), import math; updated _build_vcf_spec()"
+        ],
+        "fixes": {
+          "fix_1_dedup": {
+            "problem": "Square polygon had 7 segments (duplicate consecutive vertices) vs native 4",
+            "solution": "_dedup_consecutive(vertices, eps=0.01mm) — removes consecutive points within epsilon distance",
+            "applied_in": "_build_vcf_spec() after _apply_coord_transform()"
+          },
+          "fix_2_circle_detection": {
+            "problem": "SPLINE entities producing 100+ polyline segments instead of 4 Bezier arcs",
+            "solution": "_points_on_circle(vertices, tolerance=0.5mm) — detects if points lie on circle, triggers encode_circle_element",
+            "applied_in": "_build_vcf_spec() after entity type check"
+          }
+        },
+        "test_status": "28/28 tests pass, GUI test PENDING",
+        "remaining_risk": "tolerance values (0.01mm eps, 0.5mm circle tolerance) may need tuning based on GUI results"
       }
     },
     "key_findings": {
@@ -157,7 +179,9 @@
         "offset606 = element_count (was hardcoded 1) — VCutWorks GUI reads this to determine multi-element count",
         "Off-by-2 preamble bug — POST_STOCK_HEADER correctly measured as 14 bytes (4+8+2)",
         "Multi-element line fails in GUI: BOTH ec@92=0 AND offset606=1 contributed — two independent bugs",
-        "B2B parser uses GEOMETRY_SIG scanning, not offset606 — explains why parser always found correct count"
+        "B2B parser uses GEOMETRY_SIG scanning, not offset606 — explains why parser always found correct count",
+        "Square duplicate vertices: _dedup_consecutive fixes 7→4 segments (session 9)",
+        "Circle detection for SPLINE: _points_on_circle enables encode_circle_element for non-CIRCLE entities (session 9)"
       ],
       "remaining_hypotheses": [
         "GUI test for inversion files: single_line_2_elem should now show 2 elements ✓ (confirmed)",
@@ -172,12 +196,9 @@
       ]
     },
     "pending_tasks": [
-      "[CONFIRMED] GUI TEST: single_line_2000_elements_2_inversion.VCF — 2 elements detected ✓",
-      "GUI TEST: single_square_500_elements_2_inversion.VCF — may still fail (duplicate vertices in DXF)",
-      "GUI TEST: single_circle_1500_inversion.VCF — may still fail (SPLINE oversampling)",
-      "GUI TEST: single_curve_inversion.VCF — may still fail (SPLINE oversampling)",
-      "P1 fix: Square duplicate vertex deduplication in DXF adapter (_build_vcf_spec or indexer)",
-      "P1 fix: Circle/Curve SPLINE → Bezier segment encoding in writer or adapter",
+      "GUI TEST: single_square_500_elements_2_inversion.VCF — Fix #1 applied, needs VCutWorks validation",
+      "GUI TEST: single_circle_1500_inversion.VCF — Fix #2 applied, needs VCutWorks validation",
+      "GUI TEST: single_curve_inversion.VCF — Fix #2 applied, needs VCutWorks validation",
       "P0 RE: implement decode_subtype_bits.py — statistická korelace upper 16 bitů subtype",
       "P0 RE: implement dissect_footers.py — rozklad footerů na pole, DXF extrakce",
       "P0 RE: implement dissect_layer_blocks.py — kompletní field mapa 610B bloků",

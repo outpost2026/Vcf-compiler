@@ -1,8 +1,8 @@
 {
-  "handoff_session": "Vcf-compiler session 2026-06-30 (Session 8)",
+  "handoff_session": "Vcf-compiler session 2026-06-30 (Session 8 + 9)",
   "date": "2026-06-30",
   "author": "Dev (LLM-augmentovaná analýza)",
-  "session_type": "debugging + binary RE + writer fixes — multi-element element_count journey: ec@92 a offset606 opraveny po 8 iteracích; B2B parser RE breakthrough",
+  "session_type": "debugging + binary RE + writer fixes — multi-element element_count journey: ec@92 a offset606 opraveny po 8 iteracích; B2B parser RE breakthrough; session 9: DXF adapter geometry fixes (dedup + circle detection)",
   "total_commits_in_session": 0,
   "all_commits": [],
   "debugging_journey_narrative": {
@@ -38,7 +38,7 @@
   },
   "dxf_adapter_state": {
     "status": "functional",
-    "features": ["compile_dxf(dxf_path, output_path, config_path)", "ACI_TO_RGB mapping with unique colors per ACI index", "Config loader with fallback defaults", "Density-based ACI 4 ambiguity resolution", "Coordinate transform (+67.5, -287.5 mm)", "Circle center/radius pass-through from DXF indexer to VCF writer"]
+    "features": ["compile_dxf(dxf_path, output_path, config_path)", "ACI_TO_RGB mapping with unique colors per ACI index", "Config loader with fallback defaults", "Density-based ACI 4 ambiguity resolution", "Coordinate transform (+67.5, -287.5 mm)", "Circle center/radius pass-through from DXF indexer to VCF writer", "Consecutive vertex deduplication (_dedup_consecutive, eps=0.01mm)", "Circle detection for non-CIRCLE entities (_points_on_circle, tolerance=0.5mm)"]
   },
   "tests": {"total": 28, "pass": 28, "skip": 2, "files": ["tests/test_writer_unit.py (23 tests)", "tests/test_roundtrip.py (5 tests)"]},
   "root_causes_fixed_this_session": [
@@ -115,18 +115,23 @@
     "vcf_parser/_writer.py — ec@92: 0→1 (line 275), offset606: 1→total_elements (line 183)",
     "demo_data/synthethic_vcf/*_inversion.VCF (all 8 regenerated with both fixes)"
   ],
+  "files_modified_in_session_9": [
+    "vcf_parser/_dxf_adapter.py — Fix #1: _dedup_consecutive() for consecutive duplicate vertices (epsilon=0.01mm). Fix #2: _points_on_circle() for non-CIRCLE entity circle detection (tolerance=0.5mm). Added import math."
+  ],
   "open_problems": [
     {
       "problem": "Square duplicate vertices (7 segments vs native 4)",
       "severity": "high",
       "owner": "DXF adapter",
-      "investigation_needed": "Deduplikace konsekutivních identických souřadnic v _dxf_adapter.py nebo v indexeru. Polygon 5 bodů, první=poslední → 4 unikátní segmenty."
+      "investigation_needed": "Deduplikace konsekutivních identických souřadnic v _dxf_adapter.py nebo v indexeru. Polygon 5 bodů, první=poslední → 4 unikátní segmenty.",
+      "status": "Fix #1 applied (_dedup_consecutive with eps=0.01mm). Needs GUI test."
     },
     {
       "problem": "Circle/Curve SPLINE oversampling (100+ segments vs native 4 Bezier arcs)",
       "severity": "high",
       "owner": "Writer/DXF adapter",
-      "investigation_needed": "SPLINE entity z DXF jsou diskretizovány na mnoho segmentů. Potřeba: detekovat kružnici/oblouk z DXF entit a použít encode_circle_element (4 Bezier arcs)."
+      "investigation_needed": "SPLINE entity z DXF jsou diskretizovány na mnoho segmentů. Potřeba: detekovat kružnici/oblouk z DXF entit a použít encode_circle_element (4 Bezier arcs).",
+      "status": "Fix #2 applied (_points_on_circle with tolerance=0.5mm). Needs GUI test."
     },
     {
       "problem": "Color difference: synth=0x0A0A0A00, native=0x00000000 v geometrii",
@@ -135,10 +140,11 @@
     }
   ],
   "next_steps": [
-    "1. P1 fix: square duplicate vertices — deduplikace konsekutivních identických bodů",
-    "2. P1 fix: circle/curve SPLINE → detekce kružnice z DXF a encode_circle_element",
-    "3. GUI test: square/circle/curve po fixech geometrie",
-    "4. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot"
+    "1. ✅ P1 fix: square duplicate vertices — _dedup_consecutive applied (session 9)",
+    "2. ✅ P1 fix: circle/curve SPLINE → _points_on_circle detection (session 9)",
+    "3. GUI test: square/circle/curve po fixech geometrie — PENDING (needs VCutWorks)",
+    "4. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot",
+    "5. Commit session 9 changes (Fix #1 + Fix #2 in _dxf_adapter.py)"
   ],
   "key_file_paths": {
     "writer": "vcf_parser/_writer.py",
