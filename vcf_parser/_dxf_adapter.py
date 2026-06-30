@@ -146,21 +146,37 @@ def _dedup_consecutive(vertices, eps=_DEDUP_EPSILON):
     return result
 
 
-def _points_on_circle(vertices, tolerance=0.5):
-    n = len(vertices)
+def _fit_circle(points, max_deviation=5.0):
+    n = len(points)
     if n < 3:
         return None
-    xs = [v[0] for v in vertices]
-    ys = [v[1] for v in vertices]
-    cx = (min(xs) + max(xs)) / 2.0
-    cy = (min(ys) + max(ys)) / 2.0
-    r = math.sqrt((max(xs) - min(xs)) ** 2 + (max(ys) - min(ys)) ** 2) / 2.0
-    if r < 1e-6:
+    A = [[p[0], p[1], 1.0] for p in points]
+    b = [p[0] ** 2 + p[1] ** 2 for p in points]
+    At = list(zip(*A))
+    AtA = [[sum(At[i][k] * At[j][k] for k in range(n)) for j in range(3)] for i in range(3)]
+    Atb = [sum(At[i][k] * b[k] for k in range(n)) for i in range(3)]
+
+    def det3(m):
+        return (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+                - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+                + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]))
+
+    D = det3(AtA)
+    if abs(D) < 1e-12:
         return None
-    for v in vertices:
-        d = math.sqrt((v[0] - cx) ** 2 + (v[1] - cy) ** 2)
-        if abs(d - r) > tolerance:
-            return None
+    cx_n = [row[:] for row in AtA]; cx_n[0] = Atb[:]
+    cy_n = [row[:] for row in AtA]; cy_n[1] = Atb[:]
+    c_n = [row[:] for row in AtA]; c_n[2] = Atb[:]
+    cx = det3(cx_n) / (2 * D)
+    cy = det3(cy_n) / (2 * D)
+    c = det3(c_n) / D
+    r_squared = c + cx ** 2 + cy ** 2
+    if r_squared < 1e-12:
+        return None
+    r = math.sqrt(r_squared)
+    max_dev = max(abs(math.sqrt((p[0] - cx) ** 2 + (p[1] - cy) ** 2) - r) for p in points)
+    if max_dev > max_deviation:
+        return None
     return {"cx": cx, "cy": cy, "radius": r}
 
 # ---------------------------------------------------------------------------
@@ -273,7 +289,7 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
                     "radius": r
                 }
         elif etype == "SPLINE":
-            circle_info = _points_on_circle(vertices)
+            circle_info = _fit_circle(vertices)
             if circle_info:
                 elem["geom_type"] = "Circle"
                 elem["circle_params"] = {
