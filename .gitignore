@@ -10,3 +10,6 @@ build/
 !demo_data/binary_search_variants/*.VCF
 .env
 nul
+research_docs/RESULT_segment_geometry_histograms.json
+research_docs/element_types_catalog.json
+research_docs/RESULT_subtype_correlation_matrix.json
