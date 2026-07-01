@@ -331,7 +331,8 @@ class VcfWriter:
     def encode_circle_element(cx: float, cy: float, radius: float, layer: VcfLayer, layer_idx: int) -> bytes:
         pt_count = 4
         element_size = 45 + pt_count * 74
-        data = bytearray(element_size)
+        buf_size = 57 + pt_count * 74
+        data = bytearray(buf_size)
 
         data[0:8] = GEOMETRY_SIG
 
@@ -351,16 +352,16 @@ class VcfWriter:
 
         arcs = [
             (cx - radius, cy, cx, cy + radius,
-             cx - radius, cy + kr, cx - kr),
+             cx - radius, cy + kr, cx - kr, cy + radius),
             (cx, cy + radius, cx + radius, cy,
-             cx + kr, cy + radius, cx + radius),
+             cx + kr, cy + radius, cx + radius, cy + kr),
             (cx + radius, cy, cx, cy - radius,
-             cx + radius, cy - kr, cx + kr),
+             cx + radius, cy - kr, cx + kr, cy - radius),
             (cx, cy - radius, cx - radius, cy,
-             cx - kr, cy - radius, cx - radius),
+             cx - kr, cy - radius, cx - radius, cy - kr),
         ]
 
-        for i, (x1, y1, x2, y2, d0, d1, d2) in enumerate(arcs):
+        for i, (x1, y1, x2, y2, d0, d1, d2, d3) in enumerate(arcs):
             seg_start = type_offset + i * 74
             struct.pack_into('<d', data, seg_start + 14, x1)
             struct.pack_into('<d', data, seg_start + 22, y1)
@@ -369,6 +370,7 @@ class VcfWriter:
             struct.pack_into('<d', data, seg_start + 46, d0)
             struct.pack_into('<d', data, seg_start + 54, d1)
             struct.pack_into('<d', data, seg_start + 62, d2)
+            struct.pack_into('<d', data, seg_start + 70, d3)
 
         return bytes(data)
 
