@@ -156,4 +156,8 @@ This repo is part of a broader CNC/CAM automation platform. Key relationships:
 
 ## License
 
-MIT
+PolyForm Shield License 1.0.0 — commercial use requires a separate license agreement.
+
+See [LICENSE](./LICENSE) for full terms.
+
+Copyright (c) 2026 SYSTEQ

@@ -157,4 +157,8 @@ Toto repo je součástí širší CNC/CAM automatizační platformy:
 **Ondřej Soušek** — [outpost2026](https://github.com/outpost2026)  
 Reverzní inženýrství & clean-slate implementace Ruida VCutWorks binárního formátu pro CNC automatizaci.
 
-Licence: MIT
+Licence: PolyForm Shield License 1.0.0 — komerční využití vyžaduje samostatnou licenční smlouvu.
+
+Viz [LICENSE](./LICENSE) pro plná pravidla.
+
+Copyright (c) 2026 SYSTEQ
