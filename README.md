@@ -6,6 +6,8 @@
 
 # Vcf-compiler
 
+[![CI](https://github.com/outpost2026/Vcf-compiler/actions/workflows/ci.yml/badge.svg)](https://github.com/outpost2026/Vcf-compiler/actions/workflows/ci.yml)
+
 **Clean-slate VCF writer for Ruida VCutWorks (RDD6584G oscillating knife).**
 
 Generates binary `.VCF` files from DXF input or Python spec — compatible with VCutWorks CAM software, confirmed by GUI testing.
