@@ -1,0 +1,44 @@
+Scanning 35 VCF files...
+
+===============================================================================================
+                                         SUMMARY TABLE                                         
+===============================================================================================
+File                                              Size      Fmt   Elem  ec@92   off606   Match   Trl
+--------------------------------------------- -------- -------- ------ ------ -------- ------- -----
+1ks.VCF                                          66605  1.0.012      7      -        -     N/A   BAD
+2560x150 s fazetou 45st hl6.VCF                  55599  1.0.012      3      -        -     N/A    OK
+26ks skladba.VCF                                471711  1.0.013    183      1      183      OK   BAD
+26ks skladba_nesting.VCF                       1287228  1.0.013    573      1      213     MIS   BAD
+2790x1200 s fazetou.VCF                          55728  1.0.012      2      -        -     N/A    OK
+Arbyd_výrobní data_V1 20.5.2025.VCF            1108160  1.0.013    418      ?        ?     N/A   BAD
+big coffee 12.8.2790x1200 bezotočení.VCF         61062  1.0.012     13      -        -     N/A   BAD
+Big_coffee_dune_2790_600.VCF                     61837  1.0.012     14      -        -     N/A   BAD
+bigcoffee 12.8. 2790x1200.VCF                    61047  1.0.012     13      -        -     N/A   BAD
+botanic 2790 x1200.VCF                           83698  1.0.012     19      -        -     N/A   BAD
+botanic vše_3780.VCF                            741123  1.0.013   1091      ?        ?     N/A   BAD
+data řez.VCF                                     66932  1.0.012     30      -        -     N/A   BAD
+Fishbone 2790x1200.VCF                           61926  1.0.012     14      -        -     N/A   BAD
+FLUENZ BOLD M_Varianta A 2ks skladba.VCF        524410  1.0.012    136      -        -     N/A   BAD
+FLUENZ BOLD M_Varianta A.VCF                    204861  1.0.012     65      -        -     N/A   BAD
+FLUENZ BOLD S upr.VCF                           182579  1.0.012     44      -        -     N/A   BAD
+FLUENZ BOLD S_ozub kolo na objímku.VCF           65701  1.0.012      2      -        -     N/A   BAD
+FLUENZ BOLD S_Zdroj světla dole.VCF             210610  1.0.012     62      -        -     N/A   BAD
+FLUENZ BOLD S_Zdroj světla nahoře.VCF           222100  1.0.012     72      -        -     N/A   BAD
+FLUENZ L.VCF                                    343682  1.0.012    137      -        -     N/A   BAD
+FLUENZ M.VCF                                    185110  1.0.012     63      -        -     N/A   BAD
+FLUENZ S.VCF                                    204669  1.0.012     72      -        -     N/A   BAD
+FLUENZ XL.VCF                                   227206  1.0.012     78      -        -     N/A   BAD
+manchester vše_3781.VCF                         181472  1.0.013     72      ?        ?     N/A   BAD
+musica 2790x1200.VCF                            135245  1.0.012     49      -        -     N/A   BAD
+PCB.VCF                                         746544  1.0.013   1106      ?        ?     N/A   BAD
+small coffee 2790x1200.VCF                       71281  1.0.012     37      -        -     N/A   BAD
+small fishbone 2790x1200.VCF                     71900  1.0.012     26      -        -     N/A   BAD
+stripe sixty 1200x2790.VCF                      106720  1.0.012    155      -        -     N/A   BAD
+V měřítku.VCF                                   422663  1.0.013    660      1      660      OK   BAD
+vyrobni_data_Pernerka-Service for office_Cam   1014762  1.0.013   1754      ?        ?     N/A   BAD
+vyrobni_data_Pernerka-Service for office_Dar    464097  1.0.013    755      ?        ?     N/A   BAD
+vyrobni_data_Pernerka-Service for office_Mat   2430716  1.0.013   4159      ?        ?     N/A   BAD
+vyrobni_data_Pernerka-Service for office_Sav    523253  1.0.013    675      ?        ?     N/A   BAD
+vyrobni_data_Pernerka-Service for office_Ter    739267  1.0.013   1427      ?        ?     N/A   BAD
+-----------------------------------------------------------------------------------------------
+Total: 35 | offset606==sigs: 2 | mismatch: 1 | no_block: 9 | N/A(012): 23

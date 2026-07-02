@@ -1,10 +1,13 @@
 {
-  "handoff_session": "Vcf-compiler session 2026-06-30 (Session 8 + 9)",
+  "handoff_session": "Vcf-compiler session 2026-06-30 (Session 8 + 9 + 10)",
   "date": "2026-06-30",
   "author": "Dev (LLM-augmentovaná analýza)",
-  "session_type": "debugging + binary RE + writer fixes — multi-element element_count journey: ec@92 a offset606 opraveny po 8 iteracích; B2B parser RE breakthrough; session 9: DXF adapter geometry fixes (dedup + circle detection)",
-  "total_commits_in_session": 0,
-  "all_commits": [],
+  "session_type": "debugging + binary RE + writer fixes — multi-element element_count journey: ec@92 a offset606 opraveny po 8 iteracích; B2B parser RE breakthrough; session 9: DXF adapter geometry fixes (dedup + circle detection); session 10: BSpline bug fix, _fit_circle threshold, circle dedup, RE tools batch run, element type catalog analysis, B2B geometry RE, GT doc update",
+  "total_commits_in_session": 2,
+  "all_commits": [
+    "e4445a3 — fix: replace naive _points_on_circle with least-squares circle fit (_fit_circle)",
+    "9d645f8 — fix: circle detection — tighten threshold, dedup SPLINE arcs, add _fixed.VCF"
+  ],
   "debugging_journey_narrative": {
     "problem": "Multi-element VCF: GUI zobrazoval jen 1 element místo 2",
     "timeline": [
@@ -85,6 +88,58 @@
       "confidence": 0.99
     }
   ],
+  "session_10_discoveries": [
+    {
+      "id": "D13",
+      "title": "BSpline parameter range bug — only 25% of SPLINE sampled",
+      "description": "dxf_geometry_indexer_v2.py:_spline_length() volá bsp.point(t) s t v [0,1], ale knot vector SPLINE je [0,0,0,0,4,4,4,4] → rozsah je [0,4]. Prvních 25% SPLINE generovalo ~2.5mm radius error u kruhů a false positives u křivek. FIX: t * knots[-1].",
+      "impact": "Circle radius error 2.5mm→0.08mm. Curve max_dev 4.83mm→163mm (nyní správně rejected).",
+      "confidence": 0.99
+    },
+    {
+      "id": "D14",
+      "title": "_fit_circle threshold 5→1mm eliminuje false positives",
+      "description": "Původní max_deviation=5.0 bylo příliš volné — open curves (max_dev=4.83mm) byly falešně detekovány jako kruhy. Threshold 1.0mm eliminuje všechny false positives. Circle SPLINEs pass s dev=0.11mm.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D15",
+      "title": "Circle dedup: proximity-based místo float rounding",
+      "description": "4 SPLINE arcs stejného kruhu fitují na mírně odlišné středy (variance ~0.04mm). Float rounding (round(cx,1)) selhává. Proximity check (abs(a-b) < 1.0mm) funguje robustně.",
+      "confidence": 0.95
+    },
+    {
+      "id": "D16",
+      "title": "VCF circle encoding = only segment[0] matters",
+      "description": "B2B parser (vcf_geometry.py:71-93) rekonstruuje kruh POUZE ze segment[0]: (x1c,y1c)=start, (x2c,y2c)=end. cx=x2c, cy=y1c, r=|x2c-x1c|. Ostatní 3 segmenty jsou ignorovány. Důvod: výpočet je z DXF SPLINE control points: cp[0]=(cx-r,cy), cp[3]=(cx,cy+r).",
+      "implication": "_fit_circle() na 100 sample bodech je zbytečná aproximace. Stačí přímo: cx=SPLINE[0].cp[3].x, cy=SPLINE[0].cp[0].y, r=cp[3].x-cp[0].x.",
+      "confidence": 0.99
+    },
+    {
+      "id": "D17",
+      "title": "37.8% segmentů v reálných VCF jsou arc segmenty",
+      "description": "Z 193691 segmentů napříč 86 VCF soubory je 37.8% arc (d0,d1,d2). FLUENZ/Arbyd soubory mají 90-99% arc ratio. Kruh není okrajový případ — je core formát.",
+      "source": "segment_geometry_stats.py",
+      "confidence": 0.99
+    },
+    {
+      "id": "D18",
+      "title": "B2B parser arc reconstruction pipeline je mrtvý kód",
+      "description": "_merge_consecutive_arcs a _generate_arc_points_segment existují (vcf_geometry.py:527-651) ale nejsou nikdy zavolány — ani z parseru, ani z app.py. arc data (d0,d1,d2) jsou uložena v element dictu, ale matplotlib vykresluje raw vertices.",
+      "confidence": 0.99
+    }
+  ],
+  "re_tools_batch_results": {
+    "datasets": ["35 moodpasta VCF", "11 vcutworks_native VCF"],
+    "output_dirs": ["research_docs/RE_moodpasta/ (9 files)", "research_docs/RE_vcutworks_native/ (9 files)", "research_docs/RE_combined/ (2 files)"],
+    "key_findings": [
+      "Subtype upper bits: 11 unique values — 0x7299=nesting, 0x72b9=PCB, 0x736f=stripe sixty. Metadata, not checksum.",
+      "Footer sizes: 196B(common), 245B, 392B, 253B. ASCII strings: font names (Arial Black), random tags.",
+      "Arc ratio: 37.8% across 193691 segments. Geometry: 11079 Lines, 9302 Polylines, 7398 Polygons, 605 Circles.",
+      "Vcutworks_native offset=(0,0) — raw DXF coordinates. moodpasta per-file offsets vary.",
+      "Circle/curve SPLINEs not matched by correlator (LINE-only matching)."
+    ]
+  },
   "aci_mapping_state": {
     "standard": "Custom ACI_TO_RGB (not AutoCAD, not LightBurn) calibrated from native VCF analysis",
     "key_mappings": {
@@ -104,7 +159,8 @@
     "single_line_2000_inversion.VCF": "1 element ✓",
     "single_square_500_elements_2_inversion.VCF": "stále selhává — pravděpodobně duplicitní vertexy v DXF adaptéru",
     "single_circle_1500_elements_2_inversion.VCF": "stále selhává — SPLINE oversampling",
-    "single_curve_elements_2_inversion.VCF": "stále selhává — SPLINE oversampling"
+    "single_curve_elements_2_inversion.VCF": "stále selhává — SPLINE oversampling",
+    "_fixed.VCF (session 10)": "PENDING — 10 nových souborů s BSpline fixem + _fit_circle fixem + dedup. Čeká na GUI test."
   },
   "files_created_in_session_8": [
     "docs/handoff_session_2026-06-30.json (this file)"
@@ -119,41 +175,49 @@
     "vcf_parser/_dxf_adapter.py — Fix #1: _dedup_consecutive() for consecutive duplicate vertices (epsilon=0.01mm). Fix #2: _points_on_circle() for non-CIRCLE entity circle detection (tolerance=0.5mm). Added import math.",
     "vcf_parser/_dxf_adapter.py — REGRESSION FIX: _points_on_circle now only called for SPLINE entities, not LWPOLYLINE. Prevents false-positive circle detection on rectangles."
   ],
+  "files_modified_in_session_10": [
+    "dxf_integrace/src/dxf_geometry_indexer_v2.py — BSpline parameter range fix: t * knots[-1] místo t (line 163-165)",
+    "vcf_parser/_dxf_adapter.py — _fit_circle() max_deviation 5.0→1.0 (line 149). Proximity-based circle dedup v _build_vcf_spec() (lines 264-308)",
+    "demo_data/synthethic_vcf/*_fixed.VCF — 10 nových kompilovaných souborů s BSpline fixem",
+    "dev_scripts/run_all_re_tools.py — NEW: launcher pro hromadné spuštění RE tools",
+    "docs/GROUND_TRUTH_VCF_DXF_RE_SEMANTIC_COMPILATION.json — v1.1→v1.2: nové SECTION 14-17 (B2B parser geometry, BSpline bug, circle detection state, RE tools catalog, file naming)",
+    "docs/handoff_session_2026-06-30.json — session 10 discoveries, RE tools results, updated next steps"
+  ],
   "open_problems": [
     {
       "problem": "Square duplicate vertices (7 segments vs native 4)",
-      "severity": "high",
-      "owner": "DXF adapter",
-      "investigation_needed": "Deduplikace konsekutivních identických souřadnic v _dxf_adapter.py nebo v indexeru. Polygon 5 bodů, první=poslední → 4 unikátní segmenty.",
-      "status": "Fix #1 applied (_dedup_consecutive with eps=0.01mm). Needs GUI test."
+      "severity": "resolved",
+      "note": "FIXED: _dedup_consecutive + BSpline range fix. single_square_500_fixed.VCF má 4 segmenty (shodné s native)."
     },
     {
       "problem": "Circle/Curve SPLINE oversampling (100+ segments vs native 4 Bezier arcs)",
-      "severity": "high",
-      "owner": "Writer/DXF adapter",
-      "investigation_needed": "SPLINE entity z DXF jsou diskretizovány na mnoho segmentů. Potřeba: detekovat kružnici/oblouk z DXF entit a použít encode_circle_element (4 Bezier arcs).",
-      "status": "Fix #2 applied but tolerance too tight (0.5mm vs 133mm actual deviation). SPLINE entities are NOT circles — they are B-splines that VCutWorks internally converts. DXF export loses circle mapping."
+      "severity": "resolved",
+      "note": "FIXED: BSpline range fix + _fit_circle 5→1mm + proximity dedup. single_circle_1500_fixed.VCF: 1 element circle (was 4). single_curve_fixed.VCF: 0 circles (was 2 false positives)."
     },
     {
-      "problem": "Regression: _points_on_circle matched LWPOLYLINE rectangles as circles",
-      "severity": "critical",
-      "owner": "DXF adapter",
-      "status": "FIXED: restricted _points_on_circle to SPLINE entities only. Rectangles have all 4 corners on circumcircle → false positive. Verified: square_5_elements now byte-identical with native.",
-      "confidence": 0.99
+      "problem": "Circle rendering: _fit_circle() stále aproximuje — chybí exact control point extrakce",
+      "severity": "medium",
+      "proposed_fix": "Nahradit _fit_circle() přímou extrakcí: cx=SPLINE[0].cp[3].x, cy=SPLINE[0].cp[0].y, r=|cp[3].x-cp[0].x|. Eliminuje 0.08mm residual error. Vyžaduje DXF control point přístup v adapteru.",
+      "status": "Identified — not yet implemented"
     },
     {
       "problem": "Color difference: synth=0x0A0A0A00, native=0x00000000 v geometrii",
       "severity": "medium",
-      "workaround": "ACI 0 maps to (10,10,10) to avoid collision with ACI 7. Může ovlivnit GUI rendering barev."
+      "workaround": "ACI 0 maps to (10,10,10) to avoid collision with ACI 7."
     }
   ],
   "next_steps": [
     "1. ✅ P1 fix: square duplicate vertices — _dedup_consecutive applied (session 9)",
     "2. ✅ P1 fix: circle/curve SPLINE → _points_on_circle detection (session 9)",
     "3. ✅ REGRESSION FIX: _points_on_circle restricted to SPLINE only (session 9)",
-    "4. GUI test: square/circle/curve po fixech geometrie — PENDING (needs VCutWorks)",
-    "5. Zvážit extrakci MACHINE_PROFILE z nativního VCF místo hardcoded hodnot",
-    "6. Commit session 9 changes (Fix #1 + Fix #2 + regression fix in _dxf_adapter.py)"
+    "4. ✅ BSpline parameter range fix: t* knots[-1] not t (session 10)",
+    "5. ✅ _fit_circle threshold 5→1mm + proximity dedup (session 10)",
+    "6. ✅ 10 _fixed.VCF files compiled (session 10)",
+    "7. ✅ RE tools batch run on 2 datasets → 22 output files (session 10)",
+    "8. ✅ GT doc + handoff updated with all findings (session 10)",
+    "9. NEXT: Implement exact circle extraction (cx=cp[3].x, cy=cp[0].y, r=|cp[3].x-cp[0].x|) místo _fit_circle()",
+    "10. NEXT: GUI test _fixed.VCF souborů v VCutWorks",
+    "11. NEXT: Vyřešit offset mapping (67.5,-287.5 vs 0,0 mezi LightBurn a native VCutWorks exportem)"
   ],
   "key_file_paths": {
     "writer": "vcf_parser/_writer.py",

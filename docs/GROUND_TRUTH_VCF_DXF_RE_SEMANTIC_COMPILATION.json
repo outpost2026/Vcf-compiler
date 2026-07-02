@@ -1,11 +1,12 @@
 {
   "_gt_document": "GROUND_TRUTH_VCF_DXF_RE_SEMANTIC_COMPILATION",
-  "_version": "1.1",
-  "_date": "2026-06-29",
+  "_version": "1.2",
+  "_date": "2026-06-30",
   "_author": "SYSTEQ RE synthesis (LLM-augmented cross-source compilation)",
   "_purpose": "Strojově čitelná kompilace všech RE poznatků o VCF a DXF formátech pro okamžitý LLM kontext injekt",
   "_sources": [
     "Vcf-compiler/.ai_state.json (session state v1.7.0)",
+    "Vcf-compiler/docs/handoff_session_2026-06-30.json (session 8+9+10)",
     "Vcf-compiler/docs/handoff_session_2026-06-29.json (session 7)",
     "Vcf-compiler/docs/handoff_session_2026-06-27.json (session 6)",
     "Vcf-compiler/docs/VCF_Reverse_Engineering_Inference_Workflow_2026.md (metodika)",
@@ -19,9 +20,10 @@
     "Vcf-compiler/research_docs/DEV_REPORT_VCF_COMPILER_DEBUG_v1.md (debug report v2.0)",
     "Vcf-compiler/research_docs/REPORT_dev_phase_evolution.md (evoluční report)",
     "Vcf-compiler/research_docs/REPORT_early_dev_phase_anomaly_v1.md (anomálie)",
-    "Vcf-compiler/research_docs/Gemini_RD_VCF.txt (teoretický framework)",
     "Vcf-compiler/research_docs/element_types_catalog.md (element katalog)",
     "Vcf-compiler/research_docs/element_types_catalog.json (element data)",
+    "Vcf-compiler/research_docs/RE_moodpasta/ (všechny RE tool výstupy pro 35 firemních VCF)",
+    "Vcf-compiler/research_docs/RE_vcutworks_native/ (všechny RE tool výstupy pro 11 VCutWorks kompilovaných VCF)",
     "KB/New/01_METODIKY/01_reverse_engineering/VCF_Reverse_Engineering_Inference_Workflow_2026.md",
     "B2B-Knowledge-Base/04_KNOWLEDGE_BASE/01_reverse_engineering/GROUND_TRUTH_VCF_PARSER_ORIGIN_V1.0.json",
     "B2B-Knowledge-Base/04_KNOWLEDGE_BASE/01_reverse_engineering/RE_Methodology.md",
@@ -219,14 +221,22 @@
       "fix": "Block explosion: extrakce definice bloku, kopie entit, aplikace transformační matice entity.matrix_44()."
     },
     "entity_types": {
-      "LINE": "2 vertices, přímý přenos",
+      "LINE": "2 vertices, direct pass",
       "LWPOLYLINE": "Direct pass vertices",
       "POLYLINE": "Direct pass vertices",
-      "CIRCLE": "Speciální — DXF indexer diskretizuje na 36-segment polygon. Adaptér předává circle_cx/cy/radius pro přímé kódování 4 Bézier oblouků.",
-      "ARC": "Resample na N segmentů přes bulge math",
-      "SPLINE": "Resampled vertices",
-      "ELLIPSE": "Resampled vertices",
-      "INSERT": "Bloková reference — nutná exploze před zpracováním"
+      "CIRCLE": "Special: DXF indexer passes circle_cx/cy/radius. Adapter encodes 4 Bezier arcs directly.",
+      "ARC": "Resample to N segments via bulge math",
+      "SPLINE": "CRITICAL: BSpline evaluated at 100 parametric samples. Bug FIXED: parameter range now [0, knots[-1]] not [0,1]. Knot range [0,4] means only 25% of spline was sampled before fix.",
+      "ELLIPSE": "200 parametric samples",
+      "INSERT": "Block reference — requires explosion before processing"
+    },
+    "spline_to_circle_exact_extraction": {
+      "problem": "_fit_circle() uses least-squares on 100 discrete sample points → ~0.08mm approximation error. VCutWorks internally extracts circle from first SPLINE control points directly.",
+      "vcutworks_method": "VCutWorks reads segment[0] from VCF binary: (x1c,y1c)=segment[0].start, (x2c,y2c)=segment[0].end. Then cx=x2c, cy=y1c, r=|x2c-x1c|. This is EXACT — no fitting.",
+      "dxf_spline_control_point_mapping": "For a circle DXF exported as 4 SPLINE arcs: SPLINE[0] cp[3]=(cx, cy+r), cp[0]=(cx-r, cy). Therefore cx=cp[3].x, cy=cp[0].y, r=cp[3].x - cp[0].x.",
+      "verification": "single_circle_1500.dxf SPLINE[0]: cp[0]=(41.34,1729.60), cp[3]=(791.34,2479.60) → cx=791.34, cy=1729.60, r=750.00 (EXACT)",
+      "implication": "_fit_circle() should be REPLACED with direct control point extraction. No least-squares needed. Pass cx/cy/r from DXF SPLINE control points, not from sampled vertices.",
+      "confidence": 0.99
     },
     "by_layer_resolution": {
       "problem": "color=256 (ByLayer) bylo tvrdě kódováno na ACI 7. layer_colors dict byl vytvořen ale NIKDY POUŽIT.",
@@ -716,6 +726,84 @@
         "No performance/large-file stress tests (>1000 elements)"
       ]
     }
+  },
+
+  "==================================================================================": "",
+  "SECTION_14": "B2B PARSER — CIRCLE/ARC GEOMETRY RE (vcf_geometry.py)",
+  "==================================================================================": "",
+
+  "b2b_parser_geometry": {
+    "source_file": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src\\vcf_geometry.py",
+    "circle_detection": {"condition": "type_id == 1 and (subtype & 0xffff) == 3", "line": 59},
+    "circle_reconstruction": {
+      "lines": "71-93",
+      "method": "Uses only SEGMENT[0] data: x1c,y1c from segment_start+14, x2c,y2c from segment_start+30",
+      "formula": "cx = x2c, cy = y1c, radius = abs(x2c - x1c)",
+      "key_insight": "VCF circle encoding uses ONLY segment[0]'s (x1,y1) and (x2,y2) to define the circle. Other segments ignored for geometry.",
+      "implication": "encode_circle_element() must write EXACT cx/cy/r to segment[0]. Currently does — cx=x2c,y1c=r|. The d0/d1/d2 Bezier handles are NOT used by parser, only by dead arc reconstruction code."
+    },
+    "arc_data_reading": {
+      "method": "d0,d1 from offset+46, d2 from offset+62",
+      "interpretation": "d0,d1 = through-point (midpoint) of arc. Three-point circle fit via perpendicular bisector intersection.",
+      "status": "reconstruct_element_vertices (line 632) is NEVER CALLED — arc reconstruction pipeline exists but disconnected"
+    },
+    "dead_code": ["reconstruct_element_vertices@632", "_catmull_rom_centripetal@373", "_linear_subdivide@411"],
+    "matplotlib": "app.py renders ALL elements as raw ax.plot(vertices) — no arc/bezier special handling"
+  },
+
+  "==================================================================================": "",
+  "SECTION_15": "BSpline PARAMETER RANGE BUG + _fit_circle FIX",
+  "==================================================================================": "",
+
+  "bspline_bug": {
+    "location": "dxf_geometry_indexer_v2.py:_spline_length() line 163",
+    "bug": "bsp.point(t) used t in [0,1] but knot vector [0,0,0,0,4,4,4,4] spans [0,4] → only first 25% evaluated",
+    "fix": "u_max = knots[-1]; bsp.point(t * u_max) → full range",
+    "impact": "Circle: before fix 2.5mm radius error, after fix 0.08mm. Curves: before fix max_dev=4.83mm (false positive), after fix max_dev=163mm (correctly rejected).",
+    "verified": true,
+    "confidence": 0.99
+  },
+
+  "circle_detection_state": {
+    "method": "Kasa least-squares fit on 100 BSpline samples",
+    "threshold": "5.0→1.0mm — eliminates false positives on open curves (dev=163mm+)",
+    "dedup": "Proximity-based (1mm tolerance) — 4 SPLINE arcs → 1 circle element",
+    "remaining_issue": "Should use EXACT control point extraction: cx=SPLINE[0].cp[3].x, cy=SPLINE[0].cp[0].y, r=|cp[3].x-cp[0].x|",
+    "verification": "single_circle_1500_fixed.VCF: 1 elem, 157784B (matches native). single_curve_fixed.VCF: 0 circles (was 2 false positives).",
+    "confidence": 0.95
+  },
+
+  "==================================================================================": "",
+  "SECTION_16": "RE TOOLS — DEV_SCRIPTS KATALOG A VÝSTUPY",
+  "==================================================================================": "",
+
+  "re_tools": {
+    "output_base": "research_docs/RE_moodpasta/ + RE_vcutworks_native/ + RE_combined/",
+    "dataset_moodpasta": "35 firemních VCF z VCF_files_moodpasta",
+    "dataset_vcutworks": "11 VCF z Compile_vcutworks_native_vcf (testovací primitiva)",
+    "high_snr_tools": [
+      {"name": "dissect_layer_blocks.py", "output": "layer_block_field_map.md", "value": "VERY_HIGH — 19 známých fieldů + neznámá 4B okna"},
+      {"name": "dissect_footers.py", "output": "footer_field_hypotheses.md (163KB)", "value": "VERY_HIGH — 86 files/28384 elements. Footer sizes: 196B(80), 245B(40), 392B(2), 253B(2). ASCII strings: font names, file tags."},
+      {"name": "build_element_types_catalog.py", "output": "element_types_catalog.md (3.6MB)", "value": "VERY_HIGH — GT catalog: subtype mapping, pt_count ranges, 4 vs 8 float64/segment"},
+      {"name": "batch_correlate_dxf_vcf.py", "output": "correlation_master.md", "value": "VERY_HIGH — vcutworks_native offset=(0,0), moodpasta per-file offset"},
+      {"name": "decode_subtype_bits.py", "output": "subtype_upper_bit_hypotheses.md", "value": "HIGH — 11 unique upper-bit values. 0x7299=nesting, 0x72b9=PCB, 0x736f=stripe sixty"},
+      {"name": "diagnose_multi_element.py", "output": "diagnosis_output.txt (1.8KB)", "value": "HIGH — ec@92/offset606 validation"},
+      {"name": "segment_geometry_stats.py", "output": "segment_geometry_report.md", "value": "MEDIUM — 193691 segments, 37.8% arc ratio, 605 circles"}
+    ],
+    "gaps": ["Header field-by-field dissector", "Machine profile byte-level RE", "Trailer analyzer", "VCF→DXF decompiler", "Round-trip fidelity validator"]
+  },
+
+  "==================================================================================": "",
+  "SECTION_17": "FILE NAMING — ROZŠÍŘENÍ",
+  "==================================================================================": "",
+
+  "file_naming_convention": {
+    "_fixed": "NEW — Session 10. BSpline range fix + _fit_circle 5→1mm + circle dedup (4→1 element)",
+    "_ph4": "LATEST before Session 10 — 20B trailer, 180B tail, circle cx/cy/r pass-through",
+    "_ph3": "4B trailer (wrong), 196B footer for last elem (wrong)",
+    "_ph2": "200B TRAILER_PREFIX (wrong)",
+    "(no suffix)": "ORIGINAL",
+    "native": "VCutWorks exported — ground truth"
   },
 
   "==================================================================================": "",

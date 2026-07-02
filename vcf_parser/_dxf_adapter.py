@@ -146,10 +146,11 @@ def _dedup_consecutive(vertices, eps=_DEDUP_EPSILON):
     return result
 
 
-def _fit_circle(points, max_deviation=5.0):
+def _is_circular(points, max_deviation=1.0):
+    """Check if SPLINE points form a circular arc via least-squares fit."""
     n = len(points)
     if n < 3:
-        return None
+        return False
     A = [[p[0], p[1], 1.0] for p in points]
     b = [p[0] ** 2 + p[1] ** 2 for p in points]
     At = list(zip(*A))
@@ -163,7 +164,7 @@ def _fit_circle(points, max_deviation=5.0):
 
     D = det3(AtA)
     if abs(D) < 1e-12:
-        return None
+        return False
     cx_n = [row[:] for row in AtA]; cx_n[0] = Atb[:]
     cy_n = [row[:] for row in AtA]; cy_n[1] = Atb[:]
     c_n = [row[:] for row in AtA]; c_n[2] = Atb[:]
@@ -172,10 +173,34 @@ def _fit_circle(points, max_deviation=5.0):
     c = det3(c_n) / D
     r_squared = c + cx ** 2 + cy ** 2
     if r_squared < 1e-12:
-        return None
+        return False
     r = math.sqrt(r_squared)
     max_dev = max(abs(math.sqrt((p[0] - cx) ** 2 + (p[1] - cy) ** 2) - r) for p in points)
-    if max_dev > max_deviation:
+    return max_dev <= max_deviation
+
+
+def _extract_circle_from_vertices(vertices):
+    """Extract exact circle params from SPLINE arc endpoint vertices.
+
+    VCutWorks computes circle from segment[0] endpoints:
+    (x1c,y1c) = arc start, (x2c,y2c) = arc end.
+
+    For a 90-deg circle arc centered at (cx,cy) with radius r:
+    - Arcs 0,2 (same-sign delta): start=(cx∓r,cy), end=(cx,cy±r) → cx=x2c, cy=y1c
+    - Arcs 1,3 (opposite-sign delta): start=(cx,cy±r), end=(cx±r,cy) → cx=x1c, cy=y2c
+    """
+    if len(vertices) < 2:
+        return None
+    x1c, y1c = vertices[0]
+    x2c, y2c = vertices[-1]
+    dx = x2c - x1c
+    dy = y2c - y1c
+    if dx * dy > 0:
+        cx, cy = x2c, y1c
+    else:
+        cx, cy = x1c, y2c
+    r = max(abs(dx), abs(dy))
+    if r < 0.001:
         return None
     return {"cx": cx, "cy": cy, "radius": r}
 
@@ -261,6 +286,17 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
         aci_to_layer_index[aci] = len(vcf_layers) - 1
 
     vcf_elements = []
+    seen_circles = []
+
+    def _is_near(a, b, tol=1.0):
+        return abs(a - b) < tol
+
+    def _is_duplicate_circle(cx, cy, r):
+        for scx, scy, sr in seen_circles:
+            if _is_near(cx, scx) and _is_near(cy, scy) and _is_near(r, sr):
+                return True
+        return False
+
     for e in entities:
         ci = e["color_index"]
         raw_vertices = e.get("vertices", [])
@@ -271,9 +307,8 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
         if len(vertices) < 2:
             continue
         etype = e.get("type", "")
-        geom_type = "Circle" if etype == "CIRCLE" else "Polyline"
         elem = {
-            "geom_type": geom_type,
+            "geom_type": "Polyline",
             "vertices": vertices,
             "layer_index": aci_to_layer_index.get(ci, 0),
             "is_output_yes": True,
@@ -283,21 +318,25 @@ def _build_vcf_spec(entities, layer_card, tool_config, h1_default, feed_default)
             cy = e.get("circle_cy")
             r = e.get("circle_radius")
             if cx is not None and cy is not None and r is not None:
-                elem["circle_params"] = {
-                    "cx": cx + _DXF_TO_VCF_OFFSET_X,
-                    "cy": cy + _DXF_TO_VCF_OFFSET_Y,
-                    "radius": r
-                }
+                cx2 = cx + _DXF_TO_VCF_OFFSET_X
+                cy2 = cy + _DXF_TO_VCF_OFFSET_Y
+                if not _is_duplicate_circle(cx2, cy2, r):
+                    seen_circles.append((cx2, cy2, r))
+                    elem["geom_type"] = "Circle"
+                    elem["circle_params"] = {"cx": cx2, "cy": cy2, "radius": r}
+                    vcf_elements.append(elem)
         elif etype == "SPLINE":
-            circle_info = _fit_circle(vertices)
-            if circle_info:
-                elem["geom_type"] = "Circle"
-                elem["circle_params"] = {
-                    "cx": circle_info["cx"],
-                    "cy": circle_info["cy"],
-                    "radius": circle_info["radius"],
-                }
-        vcf_elements.append(elem)
+            if _is_circular(vertices):
+                circle_info = _extract_circle_from_vertices(vertices)
+                if not _is_duplicate_circle(circle_info["cx"], circle_info["cy"], circle_info["radius"]):
+                    seen_circles.append((circle_info["cx"], circle_info["cy"], circle_info["radius"]))
+                    elem["geom_type"] = "Circle"
+                    elem["circle_params"] = circle_info
+                    vcf_elements.append(elem)
+            else:
+                vcf_elements.append(elem)
+        else:
+            vcf_elements.append(elem)
 
     return {"layers": vcf_layers, "elements": vcf_elements}
 

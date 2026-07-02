@@ -1,0 +1,1247 @@
+{
+  "meta": {
+    "tool": "decode_subtype_bits.py",
+    "files_analyzed": 11,
+    "parser_source": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\vcf_parser_b2b\\src"
+  },
+  "per_file": [
+    {
+      "filename": "empty_canvas.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\empty_canvas.VCF",
+      "size_bytes": 156637,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "97260daab6f2cbb7ec8dd9491110d8a7",
+        "size_bytes": 156637
+      },
+      "element_count": 0,
+      "elements": [],
+      "upper_bits_summary": {
+        "unique_upper_bits": [],
+        "unique_upper_bits_hex": [],
+        "count": 0
+      },
+      "low16_summary": {
+        "unique_low16": [],
+        "unique_low16_hex": []
+      },
+      "type_ids": [],
+      "layers": [],
+      "layer_count": 0,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [],
+      "unique_cutters": []
+    },
+    {
+      "filename": "line_10_elements.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\line_10_elements.VCF",
+      "size_bytes": 160397,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "caa9a9fc06765f9b40c29e3b7793ddf6",
+        "size_bytes": 160397
+      },
+      "element_count": 10,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157557,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157872,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 158187,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 158502,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 158817,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 159132,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 159447,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 159762,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 160077,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        0
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_circle_1500.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_circle_1500.VCF",
+      "size_bytes": 157784,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "e4f1fb685ebd3889dd91f64947bccafa",
+        "size_bytes": 157784
+      },
+      "element_count": 1,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          3
+        ],
+        "unique_low16_hex": [
+          "0x0003"
+        ]
+      },
+      "type_ids": [
+        1
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_circle_1500_elements_2.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_circle_1500_elements_2.VCF",
+      "size_bytes": 158321,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "e5de095677da8c4a94ac5b9225d79912",
+        "size_bytes": 158321
+      },
+      "element_count": 2,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157779,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          3
+        ],
+        "unique_low16_hex": [
+          "0x0003"
+        ]
+      },
+      "type_ids": [
+        1
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_curve.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_curve.VCF",
+      "size_bytes": 157636,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "e446ba35de8a5816245543fecd54f044",
+        "size_bytes": 157636
+      },
+      "element_count": 1,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 2,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          3
+        ],
+        "unique_low16_hex": [
+          "0x0003"
+        ]
+      },
+      "type_ids": [
+        0
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_curve_elements_2.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_curve_elements_2.VCF",
+      "size_bytes": 158025,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "c954c8306dd4d9a676f88cdd5a236082",
+        "size_bytes": 158025
+      },
+      "element_count": 2,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 2,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157631,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 2,
+          "subtype": 3,
+          "subtype_hex": "0x00000003",
+          "subtype_low16": 3,
+          "subtype_low16_hex": "0x0003",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          3
+        ],
+        "unique_low16_hex": [
+          "0x0003"
+        ]
+      },
+      "type_ids": [
+        0
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_line_2000.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_line_2000.VCF",
+      "size_bytes": 157562,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "02676d803edaf1c400defe02a9d8c626",
+        "size_bytes": 157562
+      },
+      "element_count": 1,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        0
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_line_2000_elements_2.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_line_2000_elements_2.VCF",
+      "size_bytes": 157877,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "7c55eb6049e6308bf28223b3cd4e0325",
+        "size_bytes": 157877
+      },
+      "element_count": 2,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157557,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 0,
+          "pt_count": 1,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        0
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_square_500.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_square_500.VCF",
+      "size_bytes": 157784,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "727190866ea5d99ce53a0b53bcf8849d",
+        "size_bytes": 157784
+      },
+      "element_count": 1,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        1
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "single_square_500_elements_2.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\single_square_500_elements_2.VCF",
+      "size_bytes": 158321,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "57b1c2ac1eec4fba19b78175f71a8ae6",
+        "size_bytes": 158321
+      },
+      "element_count": 2,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157779,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        1
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    },
+    {
+      "filename": "square_5_elements.VCF",
+      "filepath": "C:\\Users\\PC\\Documents\\Repozitar_Dev\\_github\\Vcf-compiler\\demo_data\\native_vcf\\Compile_vcutworks_native_vcf\\square_5_elements.VCF",
+      "size_bytes": 159932,
+      "version": "1.0.013",
+      "file_hash": {
+        "md5_first_64": "71887e240e90a1632a649f7b07634711",
+        "md5_first_256": "f8b08c5be97c00c068cc518e9e527848",
+        "md5_full": "974b4e73d0813d4e190b1913f6f2d328",
+        "size_bytes": 159932
+      },
+      "element_count": 5,
+      "elements": [
+        {
+          "offset": 157242,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 157779,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 158316,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 158853,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        },
+        {
+          "offset": 159390,
+          "geom_color": 0,
+          "geom_color_hex": "0x00000000",
+          "type_id": 1,
+          "pt_count": 4,
+          "subtype": 0,
+          "subtype_hex": "0x00000000",
+          "subtype_low16": 0,
+          "subtype_low16_hex": "0x0000",
+          "subtype_upper16": 0,
+          "subtype_upper16_hex": "0x0000"
+        }
+      ],
+      "upper_bits_summary": {
+        "unique_upper_bits": [
+          0
+        ],
+        "unique_upper_bits_hex": [
+          "0x0000"
+        ],
+        "count": 1
+      },
+      "low16_summary": {
+        "unique_low16": [
+          0
+        ],
+        "unique_low16_hex": [
+          "0x0000"
+        ]
+      },
+      "type_ids": [
+        1
+      ],
+      "layers": [
+        {
+          "speed_mms": 200,
+          "cutter_type": "Vibrate cutter",
+          "cutter_type_id": 1,
+          "number_of_feeding": 1,
+          "start_height_h1_mm": 24.0,
+          "travel_safety_height_mm": 24.0,
+          "end_height_h2_mm": -0.2,
+          "total_cut_length_mm": 0.0,
+          "color_hex": "0x00000000",
+          "color_val": 0,
+          "color_rgb": [
+            0,
+            0,
+            0
+          ],
+          "direction": "N/A",
+          "direction_id": 0,
+          "v_slot_width_comp_mm": 0.0,
+          "starting_extension_mm": 0.0,
+          "ending_extension_mm": 0.0,
+          "is_output_yes": true,
+          "operation_type": "N/A",
+          "complexity": {
+            "avg_segment_length_mm": 0.0,
+            "curvature_index": 0.0,
+            "sharp_corners_count": 0,
+            "total_direction_changes": 0
+          },
+          "params_hash": -9220982653359992629
+        }
+      ],
+      "layer_count": 1,
+      "metadata_strings": [
+        "Arial Black",
+        "FS.SHX",
+        "Fs.SHX",
+        "RDVCUTFILEVER1.0.013",
+        "opravit"
+      ],
+      "unique_speeds": [
+        200
+      ],
+      "unique_cutters": [
+        "Vibrate cutter"
+      ]
+    }
+  ],
+  "correlation_matrix": {
+    "0x0000": {
+      "files": [
+        "line_10_elements.VCF",
+        "single_circle_1500.VCF",
+        "single_circle_1500_elements_2.VCF",
+        "single_curve.VCF",
+        "single_curve_elements_2.VCF",
+        "single_line_2000.VCF",
+        "single_line_2000_elements_2.VCF",
+        "single_square_500.VCF",
+        "single_square_500_elements_2.VCF",
+        "square_5_elements.VCF"
+      ],
+      "count": 10,
+      "speeds": [
+        200
+      ],
+      "cutters": [
+        "Vibrate cutter"
+      ],
+      "versions": [
+        "1.0.013"
+      ],
+      "type_ids": [
+        0,
+        1
+      ],
+      "unique_hashes_count": 1
+    }
+  },
+  "bit_field_analysis": {}
+}

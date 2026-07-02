@@ -10,6 +10,37 @@ build/
 !demo_data/binary_search_variants/*.VCF
 .env
 nul
+synthethic_vcf/
+
+# Large files (>5 MB) — never accidentally committed
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.bin
+*.exe
+*.dll
+*.so
+*.dylib
+*.parquet
+*.hdf5
+*.h5
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.onnx
+*.pb
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.flac
+
+# Large JSON research artifacts
 research_docs/RESULT_segment_geometry_histograms.json
+research_docs/**/RESULT_segment_geometry_histograms.json
 research_docs/element_types_catalog.json
 research_docs/RESULT_subtype_correlation_matrix.json
