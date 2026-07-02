@@ -7,6 +7,13 @@
 # Vcf-compiler
 
 [![CI](https://github.com/outpost2026/Vcf-compiler/actions/workflows/ci.yml/badge.svg)](https://github.com/outpost2026/Vcf-compiler/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-28%20pass-brightgreen)](https://github.com/outpost2026/Vcf-compiler/tree/main/tests)
+[![Python](https://img.shields.io/badge/python-3.10+-3776AB)](https://python.org)
+[![License](https://img.shields.io/badge/license-PolyForm%20Shield-orange)](./LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/outpost2026/Vcf-compiler)](https://github.com/outpost2026/Vcf-compiler/commits/main)
+
+**Clean-slate VCF writer...**
+
 
 **Clean-slate VCF writer for Ruida VCutWorks (RDD6584G oscillating knife).**
 
