@@ -1,9 +1,12 @@
 {
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
-  "version": "1.12.0",
-  "last_updated": "2026-06-30 (session 9)",
+  "version": "1.13.0",
+  "last_updated": "2026-07-03 (session 12 — architecture deepdive)",
   "git_commits": [
+    "c0178d7 — fix: remove Python 3.10 from matrix, fail-fast false",
+    "9d645f8 — fix: circle detection — tighten threshold, dedup SPLINE arcs, add _fixed.VCF",
+    "e4445a3 — fix: replace naive _points_on_circle with least-squares circle fit (_fit_circle)",
     "1861c66 — fix: circle cx/cy/r DXF pass-through, ACI 0 vs 7 color collision, ByLayer resolution, 20B trailer prefix, 180B last-element tail",
     "fa5e3d6 — fix: remove spurious 200-byte TRAILER_PREFIX from trailer structure",
     "73cd9d3 — feat: Phase 2 fixes — circle Bezier encoding, 196B element footer, multi-layer support",
@@ -12,7 +15,7 @@
     "15b8572 — fix: restore color@12 in encode_layer_block()",
     "f21429d — chore: git history analysis, add .ai_state.json"
   ],
-  "current_session": "2026-06-30 (session 10 — circle d3 fix: added cp2_y to Bezier arcs, element overflow 341→353B; reverted 57-offset, keep 45-offset + d3@+70; geometry unchanged)",
+  "current_session": "2026-07-03 (session 12 — reevaluace 'fundamental limitation' teze, architecture deepdive dokument)",
   "package_structure": {
     "vcf_parser/__init__.py": "Exports write(), compile_dxf(), VcfWriterError",
     "vcf_parser/_writer.py": "VcfWriter — header/body serialization, VcfLayer, encode_geometry_element, encode_circle_element, GEOMETRY_HEADER_TEMPLATE, MACHINE_PROFILE. FIXED: ec@92 from 0→1. FIXED: offset606 from 1→len(layer._paths).",
@@ -23,26 +26,27 @@
   },
   "implementation_status": {
     "writer": {
-      "version": "1.5",
-      "status": "functional — self-contained",
+      "version": "1.6",
+      "status": "functional — 0 byte diffs vs native na square_1_aci hlave/geometrii. Všechna známá pole korektní (P>0.95).",
       "features": [
         "Full 472B header: 54B preamble + 418B machine profile",
         "Header with magic (1.0.012/1.0.013) + 0x13 prefix + stock dims (1220×2900)",
         "257 layer blocks × 610 B (empty-first, active-last)",
         "Block index counter at [10] (uint16, 0-255 across empty blocks)",
         "8B linked-list (flag+color) on empty block #255 + active blocks 0..N-2",
-        "Layer block: output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, ec@92=1, h2@96, dir@104, vs_comp@106, ext@114/122",
+        "Layer block: output_flag@0, speed@4, color@12, cutter@32, color@76, h1@80, feed@88, ec@92=1, h2@96, dir@104, vs_comp@106, ext@114/122, field_40=5.0@40, field_197=64@197, field_198=0.5@198",
         "Last layer block offset606 = element_count (NOT hardcoded 1)",
         "GEOMETRY_HEADER_TEMPLATE (4× float64 1.0 at bytes 12-44)",
         "is_closed with 0.001 epsilon",
-        "encode_circle_element with 4 Bezier arcs (type=1, sub=3)",
-        "ELEMENT_FOOTER=196B (inter-element)",
+        "encode_circle_element with 4 Bezier arcs (type=1, sub=3), 8 float64 per segment",
+        "ELEMENT_FOOTER=196B (all elements — no ELEMENT_TAIL variant)",
         "Trailer: 5 zero bytes",
-        "VcfLayer with _path_types for circle detection"
+        "VcfLayer with _path_types for circle detection",
+        "ec@92=1 (has geometry flag, NOT element count)",
+        "offset606=total_elements (GUI reads this field)"
       ],
       "not_implemented": [
-        "Scrambling (raises UnsupportedFeatureError)",
-        "Remaining unknown block fields at offsets 40-47, 104, 176-177, 184-185, 197, 204-205"
+        "Scrambling (raises UnsupportedFeatureError)"
       ]
     },
     "reader": {
@@ -57,7 +61,7 @@
       ]
     },
     "dxf_adapter": {
-      "status": "functional",
+      "status": "functional — ⚠️ 2 known issues: (1) circle detection via _fit_circle (0.08mm residual) místo exact cp[3].x extrakce. (2) ACI config 5/15 pouze 'calibrated'. 0 unit testů.",
       "features": [
         "compile_dxf(dxf_path, output_path, config_path)",
         "ACI_TO_RGB mapping with unique colors per ACI index",
@@ -65,8 +69,10 @@
         "Density-based ACI 4 ambiguity resolution",
         "Coordinate transform (+67.5, -287.5 mm)",
         "Circle center/radius pass-through from DXF indexer to VCF writer",
-        "Consecutive vertex deduplication (_dedup_consecutive, eps=0.01mm) — session 9",
-        "Circle detection for non-CIRCLE entities (_points_on_circle, tolerance=0.5mm) — session 9"
+        "Consecutive vertex deduplication (_dedup_consecutive, eps=0.01mm)",
+        "Circle detection for non-CIRCLE entities (_is_circular via least-squares fit, max_dev=1.0mm)",
+        "Proximity-based circle dedup (epsilon 1.0mm)",
+        "SPLINE → Circle detection via _extract_circle_from_vertices (cp[3].x = cx, cp[0].y = cy)"
       ]
     },
     "tests": {
@@ -80,7 +86,7 @@
     }
   },
   "session_state": {
-    "current_session": "2026-06-30 (session 10 — circle d3 fix, 57→45 reversion)",
+    "current_session": "2026-07-03 (session 12 — architecture deepdive, reevaluace 'fundamental limitation')",
     "debugging_journey_narrative": {
       "problem": "Multi-element VCFs — GUI nerozpoznal druhý element",
       "attempts": [
@@ -191,6 +197,11 @@
       }
     },
     "key_findings": {
+      "session_12_reevaluation": {
+        "description": "Reevaluace 'Předchozí LLM tvrzení o fundamental limitation — parser a GUI používají různé element detection mechanisms'",
+        "verdict": "NEPRAVDIVÉ — všechny známé problémy byly standardní RE byte-level fixes. Writer je strukturálně korektní. Žádná fundamentální limitace neexistuje.",
+        "evidence": "ec@92=1 (has geometry flag), offset606=actual element count, direction@104=2, field_40/197/198 populated. Všechny známé fieldy v layer bloku jsou nastaveny korektně (P>0.95). DXF adapter má 2 zbývající problémy (circle detekce, ACI kalibrace) — oba standardní implementační úkoly."
+      },
       "resolved": [
         "ec@92 = 1 (was 0) — layer block flag meaning 'has geometry' (NOT element count)",
         "offset606 = element_count (was hardcoded 1) — VCutWorks GUI reads this to determine multi-element count",
@@ -216,16 +227,12 @@
       ]
     },
     "pending_tasks": [
-      "GUI TEST: single_square_500_elements_2_inversion.VCF — Fix #1 applied, needs VCutWorks validation",
-      "GUI TEST: single_circle_1500_inversion.VCF — Fix #2 applied, needs VCutWorks validation",
-      "GUI TEST: single_curve_inversion.VCF — Fix #2 applied, needs VCutWorks validation",
-      "GUI TEST: single_circle_1500.VCF — session 10: circle d3 fix — všechny 4 strany čtvrtkružnice?",
-      "GUI TEST: square_5_elements.VCF — session 10: multi-element funguje bez 'unknown elements'?",
-      "P0 RE: implement decode_subtype_bits.py — statistická korelace upper 16 bitů subtype",
-      "P0 RE: implement dissect_footers.py — rozklad footerů na pole, DXF extrakce",
-      "P0 RE: implement dissect_layer_blocks.py — kompletní field mapa 610B bloků",
-      "P1: implement segment_geometry_stats.py — distribuce délek/úhlů/křivostí",
-      "P1: implement analyze_writer_gaps.py — měření kvality writeru byte-po-byte"
+      "P1: Napsat unit testy pro DXF adapter (aktuálně 0 testů)",
+      "P2: GUI test multi-layer VCF (poslední neotestovaný scénář)",
+      "P3: Kalibrovat ACI 1,4,7 (N≥5 vzorků) pro zvýšení confidence 0.70→0.95",
+      "P4: GUI re-test všech inversion VCF po session 10 fixech (circle d3, BSpline, dedup)",
+      "P5: cp[3].x extrakce pro exact circle detekci (0.08mm→0.0mm residual)",
+      "P6: RE nástroje: decode_subtype_bits.py, dissect_footers.py, dissect_layer_blocks.py"
     ],
     "open_questions": [
       "Do regenerated inversion files load with correct element count in VCutWorks GUI? → YES for line_2_elem",
@@ -240,8 +247,11 @@
     ]
   },
   "dependencies": {
-    "runtime": ["dxf_integrace (for compile_dxf)"],
+    "runtime": ["dxf_integrace (for compile_dxf — lazy import, fallback přes PYTHONPATH)"],
     "dev": ["pytest>=8.0"],
-    "python": ">=3.11"
+    "python": ">=3.11",
+    "external_transitive": ["ezdxf (přes dxf_integrace)"],
+    "config": ["vcf_compiler_map_config.json (fallback built-in)"],
+    "internal_coupling": ["_writer.py → _reader.py (GEOMETRY_SIG, CUTTER_MAP, DIR_MAP)"]
   }
 }
