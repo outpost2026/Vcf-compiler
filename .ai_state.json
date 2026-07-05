@@ -2,7 +2,7 @@
   "project": "Vcf-compiler",
   "description": "Clean-slate serialization of Ruida VCF (VCutWorks) binary format for RDD6584G oscillating knife. DXF→VCF pipeline.",
   "version": "1.13.0",
-  "last_updated": "2026-07-03 (session 12 — architecture deepdive)",
+  "last_updated": "2026-07-03 (session 14 — DXF OOP refactor hotov, pending _dxf_adapter reconnect)",
   "git_commits": [
     "c0178d7 — fix: remove Python 3.10 from matrix, fail-fast false",
     "9d645f8 — fix: circle detection — tighten threshold, dedup SPLINE arcs, add _fixed.VCF",
@@ -232,7 +232,8 @@
       "P3: Kalibrovat ACI 1,4,7 (N≥5 vzorků) pro zvýšení confidence 0.70→0.95",
       "P4: GUI re-test všech inversion VCF po session 10 fixech (circle d3, BSpline, dedup)",
       "P5: cp[3].x extrakce pro exact circle detekci (0.08mm→0.0mm residual)",
-      "P6: RE nástroje: decode_subtype_bits.py, dissect_footers.py, dissect_layer_blocks.py"
+      "P6: RE nástroje: decode_subtype_bits.py, dissect_footers.py, dissect_layer_blocks.py",
+      "P7: Přepojit _dxf_adapter.py z index_dxf() → DxfIndexer().index() po OOP refactoru dxf_integrace"
     ],
     "open_questions": [
       "Do regenerated inversion files load with correct element count in VCutWorks GUI? → YES for line_2_elem",
@@ -247,7 +248,7 @@
     ]
   },
   "dependencies": {
-    "runtime": ["dxf_integrace (for compile_dxf — lazy import, fallback přes PYTHONPATH)"],
+    "runtime": ["dxf_integrace (for compile_dxf — volá DxfIndexer().index(), potřeba reconnect po OOP refactoru)"],
     "dev": ["pytest>=8.0"],
     "python": ">=3.11",
     "external_transitive": ["ezdxf (přes dxf_integrace)"],
