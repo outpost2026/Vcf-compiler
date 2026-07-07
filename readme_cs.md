@@ -103,7 +103,7 @@ vcf_parser/
 
 ## RE Analysis Toolkit (dev_scripts/)
 
-15 nástrojů pro hromadnou VCF analýzu, automatizovaných přes orchestrátor:
+14 nástrojů pro hromadnou VCF analýzu, automatizovaných přes orchestrátor:
 
 | Nástroj | Účel |
 |---------|-------|
@@ -202,7 +202,7 @@ pytest tests/ -v
 ```
 Vcf-compiler/
 ├── vcf_parser/            # Core knihovna (6 modulů, 1092 LOC)
-├── dev_scripts/           # 15 RE nástrojů + orchestrátor
+├── dev_scripts/           # 14 RE nástrojů + orchestrátor
 ├── research_docs/         # 10 RESULT_* výstupů + metodologické reporty
 ├── docs/                  # 17 dokumentů (ground truth, handoffy, anatomie, case study)
 ├── demo_data/             # VCF, DXF, JSON referenční soubory (16+ párů)

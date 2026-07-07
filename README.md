@@ -105,7 +105,7 @@ vcf_parser/
 
 ## RE Analysis Toolkit (dev_scripts/)
 
-15 reverse engineering tools for batch VCF analysis, automated via orchestrator:
+14 reverse engineering tools for batch VCF analysis, automated via orchestrator:
 
 | Tool | Purpose |
 |------|---------|
@@ -204,7 +204,7 @@ pytest tests/ -v
 ```
 Vcf-compiler/
 ├── vcf_parser/            # Core library (6 modules, 1092 LOC)
-├── dev_scripts/           # 15 RE analysis tools + orchestrator
+├── dev_scripts/           # 14 RE analysis tools + orchestrator
 ├── research_docs/         # 10 RESULT_* outputs + methodology reports
 ├── docs/                  # 17 documents (ground truth, handoffs, anatomy, case study)
 ├── demo_data/             # VCF, DXF, JSON reference files (16+ pairs)
