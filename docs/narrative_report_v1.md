@@ -287,7 +287,7 @@ Kopírované dokumenty v `docs/`:
 | Soubor | Zdroj | Popis |
 |--------|-------|-------|
 | `VCF_Reverse_Engineering_Inference_Workflow_2026.md` | `01_METODIKY/01_reverse_engineering/` | Kompletní RE workflow, 1276 ř., v1.1 |
-| `SYSTEQ_VCF_STACK_ANATOMY_V2.md` | `02_ANALÝZY/03_kodove_analyzy/` | Architektonická disekce vcf_parser_b2b stacku, 643 ř. |
+| `SYSTEQ_VCF_STACK_ANATOMY_V2.md` | `02_ANALYZY/03_kodove_analyzy/` | Architektonická disekce vcf_parser_b2b stacku, 643 ř. |
 | `RE_CASE_STUDY_VCUTWORKS_LIGHTBURN_v2.md` | `04_KNOWLEDGE_BASE/01_reverse_engineering/` | Kazuistika RE — 29 dní, V1→V22, 371 ř. |
 | `KNOWLEDGE_CORPUS_VCUTWORKS_LIGHTBURN.md` | `04_KNOWLEDGE_BASE/00_CNC_CAM/` | Znalostní korpus — VCF + DXF formáty, barevné mapování, 435 ř. |
 | `DXF_PREDICTIVE_PARSER_METHODOLOGY.md` | `04_KNOWLEDGE_BASE/00_CNC_CAM/` | Metodika prediktivního parseru DXF, včetně LightBurn→AutoCAD rozdílů |
